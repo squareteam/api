@@ -12,5 +12,5 @@ module RSpecMixin
 end
 
 RSpec.configure do |c|
-  c.include RSpecMixin 
+  c.include RSpecMixin
 end

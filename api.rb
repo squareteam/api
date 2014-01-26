@@ -1,12 +1,10 @@
-require 'sinatra/base'
-require File.expand_path  '../config/boot', __FILE__
-require File.expand_path  '../config/initializers', __FILE__
+require 'yodatra/base'
+require 'yodatra/logger'
 
-class Api < Sinatra::Base
-  register Sinatra::Boot
-  register Sinatra::Initializers
+class Api < Yodatra::Base
+  enable :sessions
+  register Yodatra::Logger
 
-  set :sessions, true
 
   #use Auth
   use UsersController
@@ -22,7 +20,7 @@ class Api < Sinatra::Base
   end
 
   get '/:dude' do
-    "Hello #{params['dude']}"
+    "Hello dude : #{params['dude']}"
   end
 
   get '/' do
