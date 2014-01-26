@@ -3,8 +3,8 @@ source 'https://rubygems.org'
 gem 'rake'
 
 gem 'sinatra'
-# ActiveRecords for Sinatra
-gem 'sinatra-activerecord'
+
+gem 'yodatra', '>= 0.1.1'
 
 # DB adapter
 gem 'mysql2', :group => :production

@@ -1,5 +1,6 @@
 require 'sinatra/activerecord'
+require 'yodatra'
 
-class Api
+class Api < Yodatra::Base
   register Sinatra::ActiveRecordExtension
 end
