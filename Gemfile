@@ -4,7 +4,7 @@ gem 'rake'
 
 gem 'sinatra'
 
-gem 'yodatra', '>= 0.1.1'
+gem 'yodatra', '>= 0.1.2'
 
 # DB adapter
 gem 'mysql2', :group => :production
