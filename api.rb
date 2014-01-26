@@ -1,10 +1,7 @@
 require 'yodatra/base'
-require 'yodatra/logger'
 
 class Api < Yodatra::Base
   enable :sessions
-  register Yodatra::Logger
-
 
   #use Auth
   use UsersController
