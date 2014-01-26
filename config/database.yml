@@ -1,0 +1,23 @@
+development:
+  adapter: sqlite3
+  database: db/development.sqlite3
+  pool: 5
+  timeout: 5000
+
+test:
+  adapter: sqlite3
+  database: db/test.sqlite3
+  pool: 5
+  timeout: 5000
+
+production:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  pool: 5
+  database: <%=ENV['ST_DB_NAME']%>
+  username: <%=ENV['ST_DB_USERNAME']%>
+  password: <%=ENV['ST__DB_PASSWORD']%>
+  host: <%=ENV['ST_DB_HOST']%>
+  port: <%=ENV['ST_DB_PORT']%>
+
