@@ -21,8 +21,11 @@ Create sqlite databases if they don't exist
 ```bash
 # For development env
 touch db/development.sqlite3
+brake db:schema:load
+
 # For test env
 touch db/test.sqlite3
+RACK_ENV=test brake db:schema:load
 ```
 
 Launching a development server

@@ -5,7 +5,6 @@ class PublicController < Yodatra::Base
   end
 
   get '/' do
-    logger.warn 'Trying the logger in warning level'
     'Hello Home'
   end
 

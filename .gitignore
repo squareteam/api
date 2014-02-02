@@ -3,3 +3,4 @@
 .idea
 .bundle
 log/
+db/*.sqlite3
