@@ -1,25 +1,18 @@
-class UsersController < Sinatra::Base
+require 'yodatra/model_controller'
 
-  before do
-    content_type 'application/json'
-  end
+class UsersController < Yodatra::ModelController
 
-  get '/users' do
-    User.all.to_json
-  end
+  disable :create, :delete
 
-  get '/users/:id' do
-    @one = User.find params['id']
-    @one.to_json
-  end
-
-  post '/users' do
+  # Todo pbkdf and salt
+  post '/register' do
     @one = User.new :name => params['name'], :email => params['email'], :pbkdf => 'TODO', :salt => 'TODO'
 
     if @one.save
       @one.to_json
     else
-      {:errors => @one.errors.full_messages}.to_json
+      status 400
+      @one.errors.full_messages.to_json
     end
   end
 
