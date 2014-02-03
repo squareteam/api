@@ -1,3 +1,16 @@
+GIT
+  remote: git://github.com/squareteam/yodatra
+  revision: bd21c09f217ac3ae0667da26761aa07167dae534
+  ref: bd21c09f217ac3ae0667da26761aa07167dae534
+  specs:
+    yodatra (0.1.4)
+      rack (~> 1.4)
+      rack-protection (~> 1.4)
+      sinatra (~> 1.4.4, >= 1.4.4)
+      sinatra-activerecord
+      sinatra-contrib (~> 1.4.2, >= 1.4.2)
+      sinatra-logger
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -18,11 +31,14 @@ GEM
       tzinfo (~> 0.3.37)
     arel (4.0.1)
     atomic (1.1.14)
-    backports (3.4.1)
+    backports (3.5.0)
     builder (3.1.4)
     diff-lcs (1.2.5)
     i18n (0.6.9)
+    metaclass (0.0.2)
     minitest (4.7.5)
+    mocha (1.0.0)
+      metaclass (~> 0.0.1)
     multi_json (1.8.4)
     mysql2 (0.3.15)
     rack (1.5.2)
@@ -61,18 +77,12 @@ GEM
       atomic
     tilt (1.4.1)
     tzinfo (0.3.38)
-    yodatra (0.1.4)
-      rack (~> 1.4)
-      rack-protection (~> 1.4)
-      sinatra (~> 1.4.4, >= 1.4.4)
-      sinatra-activerecord
-      sinatra-contrib (~> 1.4.2, >= 1.4.2)
-      sinatra-logger
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  mocha
   mysql2
   rack-test
   rake
@@ -80,4 +90,4 @@ DEPENDENCIES
   rspec
   sinatra
   sqlite3
-  yodatra (>= 0.1.4)
+  yodatra!

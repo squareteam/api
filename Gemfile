@@ -4,7 +4,7 @@ gem 'rake'
 
 gem 'sinatra'
 
-gem 'yodatra', '>= 0.1.4'
+gem 'yodatra', :git => 'git://github.com/squareteam/yodatra', :ref => 'bd21c09f217ac3ae0667da26761aa07167dae534'
 
 # DB adapter
 gem 'mysql2', :group => :production
@@ -17,6 +17,7 @@ group :development, :test do
 
   gem 'rack-test', require: 'rack/test'
   gem 'rspec'
+  gem 'mocha', require: false
 end
 
 
