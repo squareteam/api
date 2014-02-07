@@ -1,4 +1,5 @@
 require 'yodatra/model_controller'
+require 'yodatra/crypto'
 
 class UsersController < Yodatra::ModelController
 
@@ -6,7 +7,9 @@ class UsersController < Yodatra::ModelController
 
   # Todo pbkdf and salt
   post '/register' do
-    @one = User.new :name => params['name'], :email => params['email'], :pbkdf => 'TODO', :salt => 'TODO'
+
+    salt, pbkdf = Yodatra::Crypto.generate_pbkdf(params[:password])
+    @one = User.new :email => params[:identifier], :pbkdf => pbkdf, :salt => salt
 
     if @one.save
       @one.to_json
