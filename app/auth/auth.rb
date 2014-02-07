@@ -24,53 +24,41 @@ Authentification functions.
       - St-Identifier : the identifier of the user
       - St-Timestamp  : the timestamp
       - St-Hash       : the compute hash
-
-  TODO:
-    // Generate token by computing identifier with salt+hash using HMAC_SHA256
-    func GenToken(identifier string) ([]byte, error) {
-        tsalt2, err := api.Uncache(identifier + ":SALT2")
-    var salt2 []byte
-    if err != nil || tsalt2 == nil {
-        salt2 = api.Rand(8)
-    if salt2 == nil {
-        log.Println("GenToken: Fail to gen random salt")
-    return nil, errors.New("GenToken: fail Rand salt")
-    }
-    user, err := models.GetUser(identifier)
-    if err != nil {
-        return nil, err
-    }
-
-    ctx := hmac.New(sha256.New, append(salt2, user.PBKDF...))
-    ctx.Write([]byte(identifier))
-    token := ctx.Sum(nil)
-
-    api.Cache(identifier+":SALT2", authtimeout, salt2)
-    api.Cache(identifier+":TOKEN", authtimeout, token)
-    } else {
-        salt2 = tsalt2.([]byte)
-    api.Expire(identifier+":SALT2", authtimeout)
-    api.Expire(identifier+":TOKEN", authtimeout)
-    }
-    return salt2, nil
-    }
-
-    // Use to logout
-    func DeleteToken(identifier string) {
-      api.RmCache(identifier + ":SALT2")
-      api.RmCache(identifier + ":TOKEN")
-    }
-
-    // Generate PBKDF2_SHA256
-    func GenPBKDF(password, salt []byte) []byte {
-      _, hash := api.PBKDF2_SHA256(password, salt)
-      return hash
-    }
 =end
 
 require File.expand_path '../cache', __FILE__
 
 class Auth < Rack::Auth::AbstractHandler
+
+  AUTH_TIMEOUT = ENV['AUTH_TIMEOUT'] || (3600)
+
+  class << self
+    def cache
+      @cache ||= Cache.new
+    end
+
+    def generate_token(identifier, pbkdf)
+      cached_salt2 = cache.get("#{identifier}:SALT2")
+
+      if cached_salt2.nil?
+        salt2 = SecureRandom.random_bytes(8)
+
+        hmac = OpenSSL::HMAC.new(salt2+pbkdf, 'sha256')
+        hmac << "#{identifier}:"
+        token = hmac.digest
+
+        cache.set("#{identifier}:SALT2", AUTH_TIMEOUT, salt2)
+        cache.set("#{identifier}:TOKEN", AUTH_TIMEOUT, token)
+      else
+        salt2 = cached_salt2
+
+        cache.expire("#{identifier}:SALT2", AUTH_TIMEOUT)
+        cache.expire("#{identifier}:TOKEN", AUTH_TIMEOUT)
+      end
+
+      salt2
+    end
+  end
 
   def call(env)
 
@@ -98,8 +86,8 @@ class Auth < Rack::Auth::AbstractHandler
       hmac << "#{data}"
       return false if hmac.digest != hash
 
-      cache.expire "#{identifier}:SALT2", AUTH_TIMEOUT
-      cache.expire "#{identifier}:TOKEN", AUTH_TIMEOUT
+      cache.expire "#{identifier}:SALT2", Auth::AUTH_TIMEOUT
+      cache.expire "#{identifier}:TOKEN", Auth::AUTH_TIMEOUT
       true
     end
 
@@ -150,8 +138,6 @@ class Auth < Rack::Auth::AbstractHandler
     TIMESTAMP_KEY = %w(St-Timestamp)
     HASH_KEY = %w(St-Hash)
     ID_KEY = %w(St-Identifier)
-
-    AUTH_TIMEOUT = ENV['AUTHTIMEOUT'] || (3600)
 
     def timestamp_key
       @timestamp_key ||= TIMESTAMP_KEY.detect { |key| @env.has_key?(key) }

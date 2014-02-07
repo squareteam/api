@@ -16,3 +16,5 @@ task :run do
   ENV['ST_HOST'] ||= 'localhost'
   `bundle exec rackup -p #{ENV['ST_PORT']} -o #{ENV['ST_HOST']}`
 end
+
+task :default => :spec

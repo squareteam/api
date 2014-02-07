@@ -7,7 +7,7 @@ class Cache
   end
 
   def set(key, timeout, data)
-    @redis.set(key, data, :ex => timeout)
+    @redis.setex(key, timeout, data)
   end
 
   def get(key)
