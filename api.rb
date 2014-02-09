@@ -27,7 +27,7 @@ class Api < Yodatra::Base
   NO_ROUTE_PROC = lambda do
     status 400
     content_type 'application/json'
-    ['Nothing around here'].to_json
+    [Errors::NO_ROUTE].to_json
   end
 
   get //, &NO_ROUTE_PROC
