@@ -43,29 +43,75 @@ describe 'Squareteam authentication' do
 
   end
 
-  context 'when all headers are present and user has already logged in and sends the correct headers' do
+  context 'when all headers are present and user has already logged in' do
     before do
       @token = 'f291e66d2306ad7984aa22bf2923b41245ecfa7b19a3c94c824583ebc197fcec'
       @identifier = 'test@test.fr'
     end
 
-    it 'should succeed' do
-      @r.set "#{@identifier}:TOKEN", [@token].pack('H*')
-      timestamp = (Time.now).to_s
-      http_url = '/private'
-      data = {}
+    context 'GETting a private route' do
+      it 'should succeed' do
+        @r.set "#{@identifier}:TOKEN", [@token].pack('H*')
+        timestamp = (Time.now).to_s
+        http_url = '/private'
+        data = {}
 
-      hmac = OpenSSL::HMAC.new([@token].pack('H*'), 'sha256')
-      hmac << "GET:"
-      hmac << "#{http_url}:"
-      hmac << "#{timestamp}:"
-      hmac << ""
-      hash = hmac.digest.unpack('H*').first
+        hmac = OpenSSL::HMAC.new([@token].pack('H*'), 'sha256')
+        hmac << "GET:"
+        hmac << "#{http_url}:"
+        hmac << "#{timestamp}:"
+        hmac << ""
+        hash = hmac.digest.unpack('H*').first
 
-      get http_url, data, {ST_TIMESTAMP_HEADER => timestamp, ST_HASH_HEADER => hash, ST_ID_HEADER => @identifier}
+        get http_url, data, {ST_TIMESTAMP_HEADER => timestamp, ST_HASH_HEADER => hash, ST_ID_HEADER => @identifier}
 
-      last_response.should be_ok
+        last_response.should be_ok
+      end
     end
+
+    context 'GETting a non existent route' do
+      it 'fails with a msg' do
+        @r.set "#{@identifier}:TOKEN", [@token].pack('H*')
+        timestamp = (Time.now).to_s
+        http_url = '/'
+        data = {}
+
+        hmac = OpenSSL::HMAC.new([@token].pack('H*'), 'sha256')
+        hmac << "GET:"
+        hmac << "#{http_url}:"
+        hmac << "#{timestamp}:"
+        hmac << ""
+        hash = hmac.digest.unpack('H*').first
+
+        get http_url, data, {ST_TIMESTAMP_HEADER => timestamp, ST_HASH_HEADER => hash, ST_ID_HEADER => @identifier}
+
+        expect(last_response.status).to be(400)
+        expect(last_response.body).to match(/Nothing around here/)
+      end
+    end
+
+    context 'Logout' do
+      it 'should be possible and remove tokens from the cache' do
+        @r.set "#{@identifier}:TOKEN", [@token].pack('H*')
+        timestamp = (Time.now).to_s
+        http_url = '/logout'
+        data = {}
+
+        hmac = OpenSSL::HMAC.new([@token].pack('H*'), 'sha256')
+        hmac << "GET:"
+        hmac << "#{http_url}:"
+        hmac << "#{timestamp}:"
+        hmac << ""
+        hash = hmac.digest.unpack('H*').first
+
+        get http_url, data, {ST_TIMESTAMP_HEADER => timestamp, ST_HASH_HEADER => hash, ST_ID_HEADER => @identifier}
+
+        last_response.should be_ok
+        expect(@r.get "#{@identifier}:TOKEN").to be_nil
+        expect(@r.get "#{@identifier}:SALT2").to be_nil
+      end
+    end
+
   end
 
 end

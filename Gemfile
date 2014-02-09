@@ -15,6 +15,7 @@ group :development, :test do
   # DB adapter
   gem 'sqlite3'
 
+  gem 'simplecov'
   gem 'rack-test', require: 'rack/test'
   gem 'rspec'
 end
