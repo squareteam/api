@@ -4,3 +4,4 @@
 .bundle
 log/
 db/*.sqlite3
+coverage/

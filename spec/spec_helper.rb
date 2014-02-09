@@ -1,6 +1,10 @@
 ENV['RACK_ENV'] ||= 'test'
 require 'rack/test'
 require 'rspec'
+require 'simplecov'
+SimpleCov.start do
+  add_filter 'db/'
+end
 
 require File.expand_path '../../api.rb', __FILE__
 
