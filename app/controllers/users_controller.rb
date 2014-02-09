@@ -1,6 +1,6 @@
-require 'yodatra/model_controller'
+require 'yodatra/models_controller'
 
-class UsersController < Yodatra::ModelController
+class UsersController < Yodatra::ModelsController
 
   disable :read_all, :read, :create, :delete
 
