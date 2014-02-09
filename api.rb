@@ -2,12 +2,7 @@ require 'yodatra/base'
 require 'yodatra/logger'
 require 'yodatra/api_formatter'
 
-require File.expand_path 'app/auth/auth.rb'
-
 class Api < Yodatra::Base
-  configure do
-    enable :sessions
-  end
   use Yodatra::Logger
   use Yodatra::ApiFormatter do |status, headers, response|
     if headers['Content-Type'] =~ /application\/json/
@@ -16,9 +11,7 @@ class Api < Yodatra::Base
       errors = valid ? '' : '?'
       replace = /.\?./
       body = response.empty? ? '' : response.first
-      response = {:data => data, :errors => errors}.to_json.gsub(replace, body)
-
-      headers['Content-Length'] = response.length.to_s
+      response = [{:data => data, :errors => errors}.to_json.gsub(replace, body)]
     end
     [status, headers, response]
   end
@@ -28,6 +21,8 @@ class Api < Yodatra::Base
   use Auth
 
   use UsersController
+
+  use PrivateController
 
   NO_ROUTE_PROC = lambda do
     status 400

@@ -2,42 +2,35 @@ require File.expand_path '../../spec_helper.rb', __FILE__
 require File.expand_path '../../../app/auth/auth.rb', __FILE__
 
 describe 'Users controller' do
+  context 'with no authentification' do
+    it 'responds with a 401 not authorized' do
+      get '/users/me'
 
-  before do
-    allow_any_instance_of(Auth::Request).to receive(:provided?).and_return(true)
-    allow_any_instance_of(Auth::Request).to receive(:invalid_timestamp).and_return(nil)
-    allow_any_instance_of(Auth::Request).to receive(:token).and_return('fake')
-    allow_any_instance_of(Auth::Request).to receive(:valid?).and_return(true)
-  end
-
-  describe 'registration process' do
-    context 'when the email has already been taken' do
-      before do
-        @email_already_taken = 'test@test.fr'
-        post '/register', {:password => 'test', :identifier => @email_already_taken}
-      end
-
-      it 'responds with a 400 and an explicit error message' do
-        post '/register', {:password => 'test', :identifier => @email_already_taken}
-
-        last_response.should_not be_ok
-        expect(last_response.body).to match(/Email has already been taken/)
-      end
+      last_response.status.should be 401
     end
+  end
+  describe 'GET my profile' do
+    context 'with an authenticated request' do
 
-    context 'when everything is fine' do
-      it 'creates a user in the db' do
-        expect {
-          post('/register', {:password => 'test', :identifier => 'test2@test.fr'})
-        }.to change(User, :count).by(1)
+      before do
+        User.destroy_all
+
+        allow_any_instance_of(Auth::Request).to receive(:provided?).and_return(true)
+        allow_any_instance_of(Auth::Request).to receive(:invalid_timestamp).and_return(nil)
+        allow_any_instance_of(Auth::Request).to receive(:token).and_return('fake')
+        allow_any_instance_of(Auth::Request).to receive(:valid?).and_return(true)
+
+        @existing_email = 'test@test.fr'
+        @existing_user_from_hash = {:name => 'crazy_hat', :email => @existing_email}
+        User.create @existing_user_from_hash.merge(:pbkdf => 'fake', :salt => 'fake')
+      end
+
+      it 'responds with my profile' do
+        get '/users/me', {}, ST_ID_HEADER => @existing_email
 
         last_response.should be_ok
+        expect(last_response.body).to match(@existing_user_from_hash.to_json)
       end
     end
   end
-
-  after do
-    User.destroy_all
-  end
-
 end
