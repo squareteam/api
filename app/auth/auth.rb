@@ -84,7 +84,7 @@ class Auth < Rack::Auth::AbstractHandler
       hmac << "#{http_url}:"
       hmac << "#{timestamp}:"
       hmac << "#{data}"
-      return false if hmac.digest != hash
+      return false if hmac.digest.unpack('H*').first != hash
 
       cache.expire "#{identifier}:SALT2", Auth::AUTH_TIMEOUT
       cache.expire "#{identifier}:TOKEN", Auth::AUTH_TIMEOUT
@@ -129,15 +129,15 @@ class Auth < Rack::Auth::AbstractHandler
       @env['QUERY_STRING']
     end
 
+    TIMESTAMP_KEY = %w(HTTP_ST_TIMESTAMP)
+    HASH_KEY = %w(HTTP_ST_HASH)
+    ID_KEY = %w(HTTP_ST_IDENTIFIER)
+
     private
 
     def cache
       @cache ||= Cache.new
     end
-
-    TIMESTAMP_KEY = %w(St-Timestamp)
-    HASH_KEY = %w(St-Hash)
-    ID_KEY = %w(St-Identifier)
 
     def timestamp_key
       @timestamp_key ||= TIMESTAMP_KEY.detect { |key| @env.has_key?(key) }

@@ -1,15 +1,11 @@
 require File.expand_path 'app/auth/auth.rb'
+require File.expand_path 'app/api/errors.rb'
+require 'yodatra/crypto'
 
 class PublicController < Yodatra::Base
 
-  API_LOGIN_FAIL = 'Login fail'
-
-  get '/status404' do
-    status 404
-  end
-
-  get '/' do
-    'Hello Home'
+  before do
+    content_type 'application/json'
   end
 
   put '/login' do
@@ -17,12 +13,30 @@ class PublicController < Yodatra::Base
 
     if @one.nil?
       status 400
-      [API_LOGIN_FAIL].to_json
-    else
-      salt2 = Auth.generate_token(@one.email, @one.pbkdf)
-      {:salt1 => @one.salt, :salt2 => salt2}.to_json
+      halt [Errors::LOGIN_FAIL].to_json
     end
 
+    salt2 = Auth.generate_token(@one.email, @one.pbkdf)
+    {:salt1 => @one.salt.unpack('H*').first, :salt2 => salt2.unpack('H*').first}.to_json
   end
+
+  post '/register' do
+    if params[:password].nil?
+      status 400
+      halt [Errors::NO_PASSWORD_PROVIDED].to_json
+    end
+
+    salt, pbkdf = Yodatra::Crypto.generate_pbkdf(params[:password])
+    @one = User.new :email => params[:identifier], :pbkdf => pbkdf, :salt => salt
+
+    if @one.save
+      @one.as_json(:except => [:pbkdf, :salt]).to_json
+    else
+      status 400
+      @one.errors.full_messages.to_json
+    end
+  end
+
+
 
 end

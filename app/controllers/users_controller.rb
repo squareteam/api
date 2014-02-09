@@ -1,22 +1,20 @@
 require 'yodatra/model_controller'
-require 'yodatra/crypto'
 
 class UsersController < Yodatra::ModelController
 
-  disable :create, :delete
+  disable :read_all, :read, :create, :delete
 
-  # Todo pbkdf and salt
-  post '/register' do
-
-    salt, pbkdf = Yodatra::Crypto.generate_pbkdf(params[:password])
-    @one = User.new :email => params[:identifier], :pbkdf => pbkdf, :salt => salt
-
-    if @one.save
-      @one.to_json
-    else
+  get '/users/me' do
+    @one = User.find_by_email(request.env['REMOTE_USER'])
+    if @one.nil?
       status 400
-      @one.errors.full_messages.to_json
+      [Errors::ID_NOT_FOUND].to_json
+    else
+      @one.as_json(read_scope).to_json
     end
   end
 
+  def read_scope
+    {:only => [:name, :email]}
+  end
 end
