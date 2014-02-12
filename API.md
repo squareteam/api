@@ -7,21 +7,21 @@ Each user is identified by his email address.
 
 ### To register
 
-    - Client sends ```identifier``` and ```password```
+    - Client sends __identifier__ and __password__
     - Server generates SALT1 (8 bytes)
-    - Server stores ```identifier```, ```SALT1``` and ```PBKDF2_SHA256(SALT1, password)```
+    - Server stores __identifier__, __SALT1__ and __PBKDF2_SHA256(SALT1, password)__
 
 ### Login
 
 The login step is to generate a session token:
 
-    - Client sends his ```identifier```
-    - Server generates ```SALT2``` (8 bytes)
-    - Server sends back ```SALT1``` and ```SALT2```
-    - Client computes ```TOKEN = HMAC_SHA256(SALT2+PBKDF2_SHA256(SALT1, password), identifier)```
-    - Server computes the same ```TOKEN```
-    - Client stores ```TOKEN``` for the session
-    - Server stores ```TOKEN``` and ```SALT2``` in cache with a TTL
+    - Client sends his __dentifier__
+    - Server generates __SALT2__ (8 bytes)
+    - Server sends back __SALT1__ and __SALT2__
+    - Client computes __TOKEN = HMAC_SHA256(SALT2+PBKDF2_SHA256(SALT1, password), identifier)__
+    - Server computes the same __TOKEN__
+    - Client stores __TOKEN__ for the session
+    - Server stores __TOKEN__ and __SALT2__ in cache with a TTL
 
 ### Authenticated request
 
@@ -30,7 +30,7 @@ The login step is to generate a session token:
 BLOB = "key1=value1&key2=value2&key3=value3..."
 ```
 
-2. Client generates a ```TIMESTAMP```
+2. Client generates a __TIMESTAMP__
 
 3. Client computes - using his token - :
 ```
