@@ -1,4 +1,4 @@
-Squareteam API
+Squareteam
 ===
 
 This is the backend of Squareteam. Written in Ruby with Sinatra.
