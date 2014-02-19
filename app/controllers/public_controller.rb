@@ -8,6 +8,10 @@ class PublicController < Yodatra::Base
     content_type 'application/json'
   end
 
+  get '/' do
+    "hello world".to_json
+  end
+
   put '/login' do
     @one = User.find_by_email(params[:identifier])
 
