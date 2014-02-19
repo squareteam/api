@@ -7,32 +7,32 @@ Each user is identified by his email address.
 
 ### To register
 
-    - Client sends ```identifier``` and ```password```
+    - Client sends identifier and password
     - Server generates SALT1 (8 bytes)
-    - Server stores ```identifier```, ```SALT1``` and ```PBKDF2_SHA256(SALT1, password)```
+    - Server stores identifier, SALT1 and PBKDF2_SHA256(SALT1, password)
 
 ### Login
 
 The login step is to generate a session token:
 
-    - Client sends his ```identifier```
-    - Server generates ```SALT2``` (8 bytes)
-    - Server sends back ```SALT1``` and ```SALT2```
-    - Client computes ```TOKEN = HMAC_SHA256(SALT2+PBKDF2_SHA256(SALT1, password), identifier)```
-    - Server computes the same ```TOKEN```
-    - Client stores ```TOKEN``` for the session
-    - Server stores ```TOKEN``` and ```SALT2``` in cache with a TTL
+    - Client sends his identifier
+    - Server generates SALT2 (8 bytes)
+    - Server sends back SALT1 and SALT2
+    - Client computes TOKEN = HMAC_SHA256(SALT2+PBKDF2_SHA256(SALT1, password), identifier)
+    - Server computes the same TOKEN
+    - Client stores TOKEN for the session
+    - Server stores TOKEN and SALT2 in cache with a TTL
 
 ### Authenticated request
 
-1. Client must generate a blob from the request data sorted by key:
+1. Client must generate a __BLOB__ from the request data sorted by key:
 ```
 BLOB = "key1=value1&key2=value2&key3=value3..."
 ```
 
-2. Client generates a ```TIMESTAMP```
+2. Client generates a __TIMESTAMP__
 
-3. Client computes - using his token - :
+3. Client computes a __HASH__ (using his token)
 ```
 HASH = HMAC_SHA256(TOKEN, HTTP_Method + ":" + URL_PATH + ":" + TIMESTAMP + ":" + BLOB)
 ```
