@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 gem 'rake'
 
 gem 'sinatra'
+gem 'rack-rewrite'
 
 gem 'yodatra', '>= 0.1.6'
 
