@@ -4,10 +4,7 @@ require File.expand_path '../../../app/auth/auth.rb', __FILE__
 describe 'Public controller' do
 
   before do
-    allow_any_instance_of(Auth::Request).to receive(:provided?).and_return(true)
-    allow_any_instance_of(Auth::Request).to receive(:invalid_timestamp).and_return(nil)
-    allow_any_instance_of(Auth::Request).to receive(:token).and_return('fake')
-    allow_any_instance_of(Auth::Request).to receive(:valid?).and_return(true)
+
   end
 
   describe 'registration process' do
