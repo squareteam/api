@@ -5,7 +5,7 @@ gem 'rake'
 gem 'sinatra'
 gem 'rack-rewrite'
 
-gem 'yodatra', '>= 0.1.6'
+gem 'yodatra', '>= 0.1.7'
 
 # DB adapter
 gem 'mysql2', :group => :production
