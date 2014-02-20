@@ -64,13 +64,20 @@ class Auth < Rack::Auth::AbstractHandler
 
     auth = Request.new(env)
 
-    return unauthorized('St auth headers not found') unless auth.provided?
-    return unauthorized(auth.invalid_timestamp) unless auth.invalid_timestamp.nil?
-    return unauthorized('Failed to retrieve token') if auth.token.nil?
-    return unauthorized('Invalid auth') unless auth.valid?
+    return api_unauthorized('St auth headers not found') unless auth.provided?
+    return api_unauthorized(auth.invalid_timestamp) unless auth.invalid_timestamp.nil?
+    return api_unauthorized('Failed to retrieve token') if auth.token.nil?
+    return api_unauthorized('Invalid auth') unless auth.valid?
 
     env['REMOTE_USER'] = auth.identifier
     @app.call(env)
+  end
+
+  def api_unauthorized(message)
+    status, headers, body = unauthorized(message)
+    headers['Content-Type'] = 'application/json'
+    body << [Errors::UNAUTHORIZED].to_json
+    [status, headers, body]
   end
 
   class Request < Rack::Auth::AbstractRequest
