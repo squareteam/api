@@ -44,7 +44,7 @@ class Auth < Rack::Auth::AbstractHandler
         salt2 = SecureRandom.random_bytes(8)
 
         hmac = OpenSSL::HMAC.new(salt2+pbkdf, 'sha256')
-        hmac << "#{identifier}:"
+        hmac << "#{identifier}"
         token = hmac.digest
 
         cache.set("#{identifier}:SALT2", AUTH_TIMEOUT, salt2)
@@ -107,8 +107,8 @@ class Auth < Rack::Auth::AbstractHandler
     end
 
     def invalid_timestamp
-      return 'Timestamp expired' if timestamp < (Time.now-2.minutes).to_s
-      return 'Timestamp too recent' if timestamp > (Time.now+2.minutes).to_s
+      return 'Timestamp expired' if timestamp < (Time.now-2.minutes).to_i.to_s
+      return 'Timestamp too recent' if timestamp > (Time.now+2.minutes).to_i.to_s
       nil
     end
 

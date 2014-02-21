@@ -17,25 +17,25 @@ describe 'Squareteam authentication' do
     end
 
     it 'wrong timestamp' do
-      get '/users', {}, {ST_TIMESTAMP_HEADER => (Time.now-3.minutes).to_s, ST_HASH_HEADER => '*', ST_ID_HEADER => '*'}
+      get '/users', {}, {ST_TIMESTAMP_HEADER => (Time.now-3.minutes).to_i.to_s, ST_HASH_HEADER => '*', ST_ID_HEADER => '*'}
       last_response.should_not be_ok
       expect(last_response.headers['WWW-Authenticate']).to eq('Timestamp expired')
 
-      get '/users', {}, {ST_TIMESTAMP_HEADER => (Time.now+3.minutes).to_s, ST_HASH_HEADER => '*', ST_ID_HEADER => '*'}
+      get '/users', {}, {ST_TIMESTAMP_HEADER => (Time.now+3.minutes).to_i.to_s, ST_HASH_HEADER => '*', ST_ID_HEADER => '*'}
       last_response.should_not be_ok
       expect(last_response.headers['WWW-Authenticate']).to eq('Timestamp too recent')
     end
 
     it 'missing token' do
       @r.del '*:TOKEN'
-      get '/users', {}, {ST_TIMESTAMP_HEADER => (Time.now).to_s, ST_HASH_HEADER => '*', ST_ID_HEADER => '*'}
+      get '/users', {}, {ST_TIMESTAMP_HEADER => (Time.now).to_i.to_s, ST_HASH_HEADER => '*', ST_ID_HEADER => '*'}
       last_response.should_not be_ok
       expect(last_response.headers['WWW-Authenticate']).to eq('Failed to retrieve token')
     end
 
     it 'invalid authentication' do
       @r.set '*:TOKEN', 'my_token'
-      get '/users', {}, {ST_TIMESTAMP_HEADER => (Time.now).to_s, ST_HASH_HEADER => '*', ST_ID_HEADER => '*'}
+      get '/users', {}, {ST_TIMESTAMP_HEADER => (Time.now).to_i.to_s, ST_HASH_HEADER => '*', ST_ID_HEADER => '*'}
       last_response.should_not be_ok
       expect(last_response.headers['WWW-Authenticate']).to eq('Invalid auth')
       @r.del '*:TOKEN'
@@ -52,7 +52,7 @@ describe 'Squareteam authentication' do
     context 'GETting a private route' do
       it 'should succeed' do
         @r.set "#{@identifier}:TOKEN", [@token].pack('H*')
-        timestamp = (Time.now).to_s
+        timestamp = (Time.now).to_i.to_s
         http_url = '/private'
         data = {}
 
@@ -72,8 +72,8 @@ describe 'Squareteam authentication' do
     context 'GETting a non existent route' do
       it 'fails with a msg' do
         @r.set "#{@identifier}:TOKEN", [@token].pack('H*')
-        timestamp = (Time.now).to_s
-        http_url = '/'
+        timestamp = (Time.now).to_i.to_s
+        http_url = '/nothing/to/do/here'
         data = {}
 
         hmac = OpenSSL::HMAC.new([@token].pack('H*'), 'sha256')
@@ -93,7 +93,8 @@ describe 'Squareteam authentication' do
     context 'Logout' do
       it 'should be possible and remove tokens from the cache' do
         @r.set "#{@identifier}:TOKEN", [@token].pack('H*')
-        timestamp = (Time.now).to_s
+        # Timestamp (/!\ Unix time .to_i!)
+        timestamp = (Time.now).to_i.to_s
         http_url = '/logout'
         data = {}
 
