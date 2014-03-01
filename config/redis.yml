@@ -1,0 +1,2 @@
+host: <%=ENV['ST_REDIS_HOST']%>
+port: <%=ENV['ST_REDIS_PORT']%>
