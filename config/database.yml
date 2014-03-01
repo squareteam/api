@@ -15,11 +15,10 @@ preprod:
   encoding: utf8
   reconnect: false
   pool: 5
-  database: <%=ENV['PREPROD_ST_DB_NAME']%>
-  username: <%=ENV['PREPROD_ST_DB_USERNAME']%>
-  password: <%=ENV['PREPROD_ST_DB_PASSWORD']%>
-  host: <%=ENV['PREPROD_ST_DB_HOST']%>
-  port: <%=ENV['PREPROD_ST_DB_PORT']%>
+  database: <%=ENV['OPENSHIFT_APP_NAME']%>
+  username: <%=ENV['OPENSHIFT_MYSQL_DB_USERNAME']%>
+  password: <%=ENV['OPENSHIFT_MYSQL_DB_PASSWORD']%>
+  host: <%=ENV['OPENSHIFT_MYSQL_DB_HOST']%>
 
 production:
   adapter: mysql2
