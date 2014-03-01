@@ -1,0 +1,83 @@
+#user  nobody;
+worker_processes  1;
+
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+
+#pid        logs/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    # Set root directory of the passenger gem here
+    passenger_root /usr/local/rvm/gems/ruby-2.0.0-p353@global/gems/passenger-4.0.35;
+    # Set ruby binary here
+    # You can use a ruby wrapper to set ENV variables for passenger startup
+    # E.G. -rwx------ www-data www-data ruby_env_wrapper
+    #
+    #      #!/bin/bash
+    #      export VAR=myvar
+    #	   /usr/bin/ruby $*
+    #
+    passenger_ruby /api/ruby_env_wrapper;
+    passenger_default_user www-data;
+    passenger_default_group www-data;
+
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+    #                  '$status $body_bytes_sent "$http_referer" '
+    #                  '"$http_user_agent" "$http_x_forwarded_for"';
+
+    #access_log  logs/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    #keepalive_timeout  0;
+    keepalive_timeout  65;
+
+    #gzip  on;
+
+    server {
+    	# Serve here the sinatra app
+	# BEWARE: root needs to point to public/ directory
+	location /api {
+	  root /api/public;
+	  passenger_enabled on;
+	}
+        listen       80;
+        server_name  localhost;
+
+        #access_log  logs/host.access.log  main;
+
+	# Serve here the frontend
+        location / {
+            root   /www/public;
+            index  index.html index.htm;
+        }
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /www/public;
+        }
+
+        # deny access to .htaccess files, if Apache's document root
+        # concurs with nginx's one
+        #
+        #location ~ /\.ht {
+        #    deny  all;
+        #}
+    }
+
+}

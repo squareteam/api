@@ -137,33 +137,6 @@ Errors:
 
     /
 
-# TODO :
-
-### GET /user/organizations
-
-**Authentification needed.**
-
-Returns all organizations which the user is subscribed to.
-
-Parameter:
-
-    /
-
-Result OK:
-
-    [
-        {
-            "id"     : relation_id,
-            "orga_id": organization_id,
-            "user_id": user_id,
-            "admin"  : user_is_admin
-        },
-    ]
-
-Errors:
-
-    /
-
 ### GET /organization/:id
 
 **Authentification needed.**
@@ -222,3 +195,29 @@ Errors:
 
     - errors: "api.orga_violation" (HTTP 400)
 
+# TODO :
+
+### GET /user/organizations
+
+**Authentification needed.**
+
+Returns all organizations which the user is subscribed to.
+
+Parameter:
+
+    /
+
+Result OK:
+
+    [
+        {
+            "id"     : relation_id,
+            "orga_id": organization_id,
+            "user_id": user_id,
+            "admin"  : user_is_admin
+        },
+    ]
+
+Errors:
+
+    /
