@@ -87,10 +87,10 @@ class Auth < Rack::Auth::AbstractHandler
       require 'base64'
 
       hmac = OpenSSL::HMAC.new(token, 'sha256')
-      hmac << "#{http_method}:"
-      hmac << "#{http_url}:"
+      hmac << "#{request.request_method}:"
+      hmac << "#{request.path}:"
       hmac << "#{timestamp}:"
-      hmac << "#{data}"
+      hmac << "#{request.query_string}"
       return false if hmac.digest.unpack('H*').first != hash
 
       cache.expire "#{identifier}:SALT2", Auth::AUTH_TIMEOUT
@@ -122,18 +122,6 @@ class Auth < Rack::Auth::AbstractHandler
 
     def timestamp
       @env[timestamp_key]
-    end
-
-    def http_method
-      @env['REQUEST_METHOD']
-    end
-
-    def http_url
-      @env['PATH_INFO']
-    end
-
-    def data
-      @env['QUERY_STRING']
     end
 
     TIMESTAMP_KEY = %w(HTTP_ST_TIMESTAMP)
