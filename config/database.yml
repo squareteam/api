@@ -10,7 +10,7 @@ test:
   pool: 5
   timeout: 5000
 
-preprod:
+production:
   adapter: mysql2
   encoding: utf8
   reconnect: false
@@ -19,15 +19,4 @@ preprod:
   username: <%=ENV['OPENSHIFT_MYSQL_DB_USERNAME']%>
   password: <%=ENV['OPENSHIFT_MYSQL_DB_PASSWORD']%>
   host: <%=ENV['OPENSHIFT_MYSQL_DB_HOST']%>
-
-production:
-  adapter: mysql2
-  encoding: utf8
-  reconnect: false
-  pool: 5
-  database: <%=ENV['ST_DB_NAME']%>
-  username: <%=ENV['ST_DB_USERNAME']%>
-  password: <%=ENV['ST_DB_PASSWORD']%>
-  host: <%=ENV['ST_DB_HOST']%>
-  port: <%=ENV['ST_DB_PORT']%>
-
+  port: <%=ENV['OPENSHIFT_MYSQL_DB_PORT']%>
