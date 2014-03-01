@@ -3,7 +3,7 @@ require 'redis'
 class Cache
 
   def initialize(url = nil)
-    @redis = ::REDIS_CONFIG ? Redis.new : Redis.new(::REDIS_CONFIG)
+    @redis = ::REDIS_CONFIG ? Redis.new(::REDIS_CONFIG) : Redis.new
   end
 
   def set(key, timeout, data)
