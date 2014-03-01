@@ -4,7 +4,7 @@ class UsersController < Yodatra::ModelsController
 
   disable :read_all, :read, :create, :delete
 
-  get '/users/me' do
+  get '/user/me' do
     @one = User.find_by_email(request.env['REMOTE_USER'])
     if @one.nil?
       status 400
