@@ -21,6 +21,7 @@ class Api < Yodatra::Base
   use Auth
 
   use UsersController
+  use OrganizationsController
 
   use PrivateController
 
