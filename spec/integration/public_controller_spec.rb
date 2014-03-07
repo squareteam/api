@@ -40,7 +40,7 @@ describe 'Public controller' do
     context 'when everything is fine' do
       it 'creates a user in the db' do
         expect {
-          post('/register', {:password => 'test', :identifier => 'test2@test.fr'})
+          post('/user', {:password => 'test', :identifier => 'test2@test.fr'})
         }.to change(User, :count).by(1)
 
         last_response.should be_ok
