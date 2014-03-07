@@ -5,6 +5,7 @@ gem 'rake'
 gem 'sinatra'
 gem 'rack-rewrite'
 
+gem 'activerecord', '4.0.2'
 gem 'yodatra', '>= 0.1.8'
 
 # DB adapter
