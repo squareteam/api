@@ -2,7 +2,7 @@
   define([], function() {
     return {
       'api': {
-        'url': 'http://dev.squareteam.io/api'
+        'url': 'http://alpha-squareteam.rhcloud.com/api'
       }
     };
   });

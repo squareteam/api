@@ -13,7 +13,7 @@
         return helpers[method];
       };
       return Backbone.sync = function(method, model, options) {
-        var data, secure, url;
+        var data, request, secure, url;
         if (!(method === "create" || method === "read" || method === "update" || method === "delete")) {
           throw new Error("Api.sync: method not supported " + method);
         } else {
@@ -21,12 +21,14 @@
         }
         url = model.url;
         data = {};
-        if (model.secure != null) {
-          secure = model.secure(method);
-        } else {
-          secure = true;
+        if ((options.data == null) && model && (method === 'create' || method === 'update' || method === 'patch')) {
+          data = options.attrs || model.toJSON(options);
         }
-        return services.get('api.extras')[methodMapper(method)](url, data, secure).then(options.success)["catch"](options.error);
+        secure = model.secure != null ? model.secure(method) : true;
+        console.log(options);
+        request = services.get('api.extras')[methodMapper(method)](url, data, secure);
+        request.then(options.success);
+        return request["catch"](options.error);
       };
     };
   });

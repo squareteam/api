@@ -1,10 +1,6 @@
 (function() {
   define(['core/session', 'core/models', 'core/router', 'core/api', 'core/api/sync'], function(Session, Models, Router, Api, ApiBackboneSync) {
     return {
-      Router: Router,
-      Session: Session,
-      Api: Api,
-      Models: Models,
       injectTo: function(container) {
         ApiBackboneSync(container);
         container.set('core.router', function(services) {

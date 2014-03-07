@@ -3,7 +3,10 @@
     return function(services) {
       var form, user,
         _this = this;
-      user = new Models.User();
+      user = new Models.User({
+        name: "test",
+        email: "test@test.fr"
+      });
       form = new Backbone.Form({
         model: user
       }).render();
@@ -17,7 +20,7 @@
         errors = form.commit();
         if (_.size(errors) === 0) {
           user.set(form.getValue());
-          return user.save();
+          return user.save({});
         }
       });
     };

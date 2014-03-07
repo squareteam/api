@@ -1,13 +1,11 @@
 (function() {
-  var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
-
   define(['app', 'when', "core/session/providers", 'core/models', 'cryptojs.pbkdf2', 'cryptojs.hmac.sha256'], function(app, When, SessionProviders, Models) {
     return function(services) {
       var Session, SessionAnonymous, supports_html5_storage;
       supports_html5_storage = function() {
         var e;
         try {
-          return __indexOf.call(window, 'localStorage') >= 0 && window['localStorage'] !== null;
+          return window.hasOwnProperty('localStorage') && window['localStorage'] !== null;
         } catch (_error) {
           e = _error;
           return false;
@@ -108,11 +106,12 @@
         }
         defer = When.defer();
         provider = SessionProviders.Memory;
-        if (trusted_browser && supports_html5_storage()) {
+        if (trusted_browser && supports_html5_storage() !== false) {
           provider = SessionProviders.LocalStorage;
         } else if (trusted_browser) {
           provider = SessionProviders.Cookies;
         }
+        console.log("Session.login(" + login + ", " + password + ", trusted_browser = " + trusted_browser + ") : " + provider);
         tryLogin = services.get('api.extras').update('/login', {
           identifier: login
         }, false);
