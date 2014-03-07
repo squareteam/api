@@ -1,9 +1,15 @@
 require 'yodatra/base'
 require 'yodatra/logger'
 require 'yodatra/api_formatter'
+require 'yodatra/throttling'
 
+# ############## #
+# Squareteam API #
+# ############## #
+# Main Entrypoint
 class Api < Yodatra::Base
   use Yodatra::Logger
+  use Yodatra::Throttle, {:redis_conf => ::REDIS_CONFIG}
   use Yodatra::ApiFormatter do |status, headers, response|
     if headers['Content-Type'] =~ /application\/json/
       valid = status >= 200 && status < 300

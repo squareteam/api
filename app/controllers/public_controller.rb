@@ -24,7 +24,7 @@ class PublicController < Yodatra::Base
     {:salt1 => @one.salt.unpack('H*').first, :salt2 => salt2.unpack('H*').first}.to_json
   end
 
-  post '/register' do
+  post %r{/register|/user} do
     if params[:password].nil?
       status 400
       halt [Errors::NO_PASSWORD_PROVIDED].to_json
