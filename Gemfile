@@ -5,7 +5,7 @@ gem 'rake'
 gem 'sinatra'
 gem 'rack-rewrite'
 
-gem 'yodatra', :branch => 'master', :git => 'https://github.com/squareteam/yodatra'
+gem 'yodatra', '>= 0.1.8'
 
 # DB adapter
 gem 'mysql2', :group => :production
