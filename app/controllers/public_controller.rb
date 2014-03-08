@@ -31,7 +31,7 @@ class PublicController < Yodatra::Base
     end
 
     salt, pbkdf = Yodatra::Crypto.generate_pbkdf(params[:password])
-    @one = User.new :email => params[:identifier]||params[:email], :pbkdf => pbkdf, :salt => salt
+    @one = User.new :email => params[:identifier]||params[:email], :pbkdf => pbkdf, :salt => salt, :name => params[:name]
 
     if @one.save
       @one.as_json(:except => [:pbkdf, :salt]).to_json
