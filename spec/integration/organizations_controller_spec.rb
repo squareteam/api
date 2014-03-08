@@ -27,12 +27,14 @@ describe 'Organizations controller' do
     end
 
     describe 'POST an organization' do
+      before do
+        Organization.destroy_all
+      end
       it 'responds with the data of the organization' do
         expect {
           post '/organization', {:name => 'swcc'}
+          last_response.should be_ok
         }.to change(Organization, :count).by(1)
-
-        last_response.should be_ok
       end
     end
 

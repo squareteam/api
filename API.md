@@ -67,11 +67,11 @@ A bad request always return data = null and a HTTP code != 200.
 A successfull request always return a 200 HTTP code and error = "".
 
 
-### POST /register
+### POST /user
 
 Parameters:
 
-    "identifier": email,
+    "identifier"|"email": email,
     "password"  : password
 
 Result OK:
