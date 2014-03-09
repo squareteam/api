@@ -17,4 +17,8 @@ class UsersController < Yodatra::ModelsController
   def read_scope
     {:only => [:id, :name, :email]}
   end
+
+  def user_params
+    params.select{ |k,v| %w(name email).include?(k.to_s) }
+  end
 end

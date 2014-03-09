@@ -26,11 +26,11 @@ describe 'Public controller' do
     context 'when the email has already been taken' do
       before do
         @email_already_taken = 'test@test.fr'
-        post '/user', {:password => 'test', :identifier => @email_already_taken}
+        post '/user', {:password => 'test', :identifier => @email_already_taken, :name => 'test'}
       end
 
       it 'responds with a 400 and an explicit error message' do
-        post '/user', {:password => 'test', :identifier => @email_already_taken}
+        post '/user', {:password => 'test', :identifier => @email_already_taken, :name => 'test'}
 
         last_response.status.should be 400
         expect(last_response.body).to match(/Email has already been taken/)
@@ -40,7 +40,7 @@ describe 'Public controller' do
     context 'when everything is fine' do
       it 'creates a user in the db' do
         expect {
-          post('/user', {:password => 'test', :identifier => 'test2@test.fr'})
+          post('/user', {:password => 'test', :identifier => 'test2@test.fr', :name => ''})
         }.to change(User, :count).by(1)
 
         last_response.should be_ok
@@ -56,7 +56,7 @@ describe 'Public controller' do
     context 'with an existing user' do
       before do
         @existing_identifier = 'test@example.com'
-        post '/user', {:password => 'test', :identifier => 'test@example.com'}
+        post '/user', {:password => 'test', :identifier => 'test@example.com', :name => ''}
       end
       it 'responds with two salts' do
         put '/login', {:identifier => @existing_identifier}
