@@ -68,7 +68,7 @@ GEM
       atomic (>= 1.1.7, < 2)
     tilt (1.4.1)
     tzinfo (0.3.38)
-    yodatra (0.1.8)
+    yodatra (0.2.0)
       rack (~> 1.4)
       rack-protection (~> 1.4)
       sinatra (~> 1.4.4, >= 1.4.4)
@@ -90,4 +90,4 @@ DEPENDENCIES
   simplecov
   sinatra
   sqlite3
-  yodatra (>= 0.1.8)
+  yodatra (>= 0.2.0)
