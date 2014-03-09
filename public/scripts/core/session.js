@@ -90,7 +90,7 @@
               auth: auth
             });
             services.get('core.api').Api.proceed(request).then((function(response) {
-              return defer.resolver.resolve(new Session(auth, new Models.User(response.data), provider));
+              return defer.resolver.resolve(new Session(auth, new Models.User(response), provider));
             })["catch"](function(error) {
               console.error("fails to validate session " + error);
               return defer.resolver.reject('session.invalid');
@@ -127,7 +127,7 @@
             });
             check_session = services.get('core.api').Api.proceed(request);
             check_session.then((function(response) {
-              return defer.resolver.resolve(new Session(auth, new Models.User(response.data), new provider));
+              return defer.resolver.resolve(new Session(auth, new Models.User(response), new provider));
             }));
             return check_session["catch"](function(error) {
               console.error("fails to validate session " + error);

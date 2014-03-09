@@ -72,7 +72,8 @@
           acl: false
         });
         return this.router.route('home', 'home', function() {
-          return console.log('home');
+          console.log('home');
+          return $(".squareteam-layout").html("<h1>Home</h1><p>Hi " + (_this.container.get('session').user.get('name')) + "</p>");
         });
       };
 

@@ -12,8 +12,12 @@
         if (_.size(errors) === 0) {
           login_request = services.get('core.session').login(form.getValue('email'), form.getValue('password'), true);
           login_request.then(function(session) {
-            _this.container.set('session', session);
-            return _this.container.get('app').router.navigate('/home');
+            session.save();
+            services.set('session', session);
+            return services.get('app').router.navigate('/home', {
+              trigger: true,
+              replace: true
+            });
           });
           return login_request["catch"](function(e) {
             return $(".squareteam-layout .alert").html(e.toString()).show();

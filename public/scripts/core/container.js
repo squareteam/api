@@ -22,11 +22,7 @@
       }
 
       Container.prototype.set = function(name, closure) {
-        if (this.services[name] != null) {
-          throw new ContainerError("use extend() to augment existing service");
-        } else {
-          return this.services[name] = closure;
-        }
+        return this.services[name] = closure;
       };
 
       Container.prototype.setSingleton = function(name, closure) {

@@ -25,7 +25,6 @@
           data = options.attrs || model.toJSON(options);
         }
         secure = model.secure != null ? model.secure(method) : true;
-        console.log(options);
         request = services.get('api.extras')[methodMapper(method)](url, data, secure);
         request.then(options.success);
         return request["catch"](options.error);
