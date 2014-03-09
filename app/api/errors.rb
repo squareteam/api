@@ -3,5 +3,6 @@ class Errors
   ID_NOT_FOUND = 'Your email does not exist, therefore you do not exist..'
   NO_PASSWORD_PROVIDED = 'No password given'
   NO_ROUTE = 'Nothing around here'
+  NOT_FOUND = 'api.not_found'
   UNAUTHORIZED = 'api.unauthorized'
 end
