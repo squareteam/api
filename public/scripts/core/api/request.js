@@ -1,5 +1,5 @@
 (function() {
-  define(['core/api/exception', 'cryptojs.hmac.sha256'], function(ApiException) {
+  define(['core/api/exception', 'config', 'cryptojs.hmac.sha256'], function(ApiException, app_config) {
     var ApiRequest;
     return ApiRequest = (function() {
       function ApiRequest(config, secure) {
@@ -20,7 +20,7 @@
       }
 
       ApiRequest.prototype.headers = function() {
-        var blob, headers, hmac;
+        var blob, headers, hmac, url;
         if (this.secure) {
           if (!this.auth.isValid()) {
             throw new ApiException(401, 'session_invalid');
@@ -36,6 +36,7 @@
             "St-Timestamp": Math.round((+new Date()) / 1000)
           };
           hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, this.auth.token);
+          url = this.url.replace(app_config.api.base, '');
           hmac.update("" + this.method + ":");
           hmac.update("" + url + ":");
           hmac.update("" + headers['St-Timestamp'] + ":");

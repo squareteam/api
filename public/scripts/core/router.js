@@ -1,7 +1,7 @@
 (function() {
   var __slice = [].slice;
 
-  define(['when', 'when-sequence', 'loglevel', 'backbone'], function(When, When_sequence, log) {
+  define(['when', 'when-sequence', 'loglevel', 'jquery', 'backbone'], function(When, When_sequence, log, $) {
     /*
        Yoda Router
     */
@@ -58,7 +58,18 @@
       },
       boot: function() {
         console.info('Router.boot !');
-        Backbone.history.start();
+        $(document).on('click', 'a:not([data-bypass])', function(evt) {
+          var href, protocol;
+          href = $(this).attr('href');
+          protocol = this.protocol + '//';
+          if (href && href.slice(protocol.length) !== protocol) {
+            evt.preventDefault();
+            return Backbone.history.navigate(href, true);
+          }
+        });
+        Backbone.history.start({
+          pushState: true
+        });
         if (Backbone.history.fragment.length === 0 && this.default_route !== null) {
           log.info("boot on " + this.default_route);
           return this.navigate(this.default_route, {
