@@ -1,5 +1,5 @@
 (function() {
-  define(["core/api/auth"], function(ApiAuth) {
+  define(["core/api/auth", 'jquery.cookie'], function(ApiAuth) {
     var ProviderCookie;
     ProviderCookie = (function() {
       function ProviderCookie() {}
@@ -7,7 +7,7 @@
       ProviderCookie.prototype.retrieve = function() {
         var auth, values;
         if (!ProviderCookie.empty()) {
-          values = $.cookies("ST_SESSION");
+          values = $.cookie("ST_SESSION");
           auth = new ApiAuth(values[0], values[1]);
           if (!auth.isValid()) {
             throw new Error("ApiAuth invalid");
@@ -21,7 +21,7 @@
 
       ProviderCookie.prototype.store = function(api_auth) {
         if (api_auth.isValid()) {
-          return $.cookies("ST_SESSION", "" + api_auth.identifier + ":" + api_auth.token);
+          return $.cookie("ST_SESSION", "" + api_auth.identifier + ":" + api_auth.token);
         } else {
           throw new Error("ApiAuth invalid");
         }
@@ -35,7 +35,7 @@
 
     })();
     ProviderCookie.empty = function() {
-      return typeof ($.cookies("ST_SESSION")) === "undefined";
+      return typeof ($.cookie("ST_SESSION")) === "undefined";
     };
     return ProviderCookie;
   });
