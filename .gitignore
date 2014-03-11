@@ -6,3 +6,4 @@ log/
 db/*.sqlite3
 coverage/
 vendor/
+ruby_wrapper
