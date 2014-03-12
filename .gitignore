@@ -6,3 +6,5 @@ log/
 db/*.sqlite3
 coverage/
 public/scripts/config.js
+vendor/
+ruby_wrapper
