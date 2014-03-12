@@ -54,6 +54,9 @@
               ifNot: '/login'
             }
           }
+        },
+        "session": {
+          "autoload": true
         }
       });
       app_configure.then(function(app) {
@@ -63,8 +66,11 @@
         app.routes();
         return app.router.boot();
       });
-      return app_configure["catch"](function(e) {
+      app_configure["catch"](function(e) {
         return console.error("App error : " + e);
+      });
+      return app_configure.done(function() {
+        return console.log(arguments);
       });
     });
   });

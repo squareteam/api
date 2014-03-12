@@ -37,6 +37,8 @@ require.config({
         },
         app: {
             deps: [
+                //https://github.com/cujojs/when/blob/master/docs/api.md#debugging-promises
+                '../bower_components/when/monitor/console',
                 'underscore',
                 'backbone',
                 'jquery',

@@ -1,5 +1,5 @@
 (function() {
-  define(['core/api/exception', 'config', 'cryptojs.hmac.sha256'], function(ApiException, app_config) {
+  define(['core/api/exception', 'cryptojs.hmac.sha256'], function(ApiException) {
     var ApiRequest;
     return ApiRequest = (function() {
       function ApiRequest(config, secure) {
@@ -36,7 +36,7 @@
             "St-Timestamp": Math.round((+new Date()) / 1000)
           };
           hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, this.auth.token);
-          url = this.url.replace(app_config.api.base, '');
+          url = /env=dev/.test(window.location) ? this.url.replace('/api', '') : this.url;
           hmac.update("" + this.method + ":");
           hmac.update("" + url + ":");
           hmac.update("" + headers['St-Timestamp'] + ":");

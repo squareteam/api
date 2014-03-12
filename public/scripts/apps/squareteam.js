@@ -10,16 +10,20 @@
       }
 
       SquareteamApp.prototype.configure = function(config) {
-        var defer;
+        var defer,
+          _this = this;
         defer = When.defer();
         this.router = this.container.get('core.router')(config.router);
         if ((config.session != null) && config.session.autoload) {
           this.container.get('core.session').restore().done(function(session) {
-            this.container.set('session', session);
-            return defer.resolver.resolve(this);
+            _this.container.set('session', session);
+            return defer.resolver.resolve(_this);
           }, function(e) {
-            defer.resolver.reject();
-            return console.info(e);
+            _this.container.set("session", new (_this.container.get('core.session')).Anonymous());
+            if (e.toString() === 'session.invalid') {
+              _this.router.setFlash('Session expired, please login');
+            }
+            return defer.resolver.resolve(_this);
           });
         } else {
           this.container.set("session", new (this.container.get('core.session')).Anonymous());

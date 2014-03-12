@@ -7,7 +7,7 @@
       ProviderLocalStorage.prototype.retrieve = function() {
         var values;
         if (!ProviderLocalStorage.empty()) {
-          values = localStorage.getItem("ST_SESSION");
+          values = localStorage.getItem("ST_SESSION").split(':');
           return new ApiAuth(values[0], values[1]);
         } else {
           return null;
@@ -30,7 +30,7 @@
 
     })();
     ProviderLocalStorage.empty = function() {
-      return localStorage.getItem("ST_SESSION") !== null;
+      return localStorage.getItem("ST_SESSION") === null;
     };
     return ProviderLocalStorage;
   });

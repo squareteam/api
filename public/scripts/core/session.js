@@ -67,16 +67,19 @@
         return hmac.finalize();
       };
       Session.restore = function() {
-        var auth, defer, found, provider, request;
+        var auth, checkSession, defer, found, provider, request;
         defer = When.defer();
         found = false;
         provider = null;
-        _.each(SessionProviders, function(provider) {
-          found = found || provider.empty();
-          if (!provider.empty()) {
-            provider = provider;
+        _.each(SessionProviders, function(p) {
+          if (!p.empty() && !found) {
+            provider = new p();
+            found = true;
           }
         });
+        if (found) {
+          console.log("session found", provider);
+        }
         if (!found) {
           defer.resolver.reject('session.anonymous');
         } else {
@@ -84,17 +87,20 @@
           if (!auth) {
             defer.resolver.reject('session.anonymous');
           } else {
+            auth.token = CryptoJS.enc.Hex.parse(auth.token);
             request = new (services.get('core.api').Request)({
-              url: "/user/me",
+              url: "/api/user/me",
               method: "GET",
               auth: auth
             });
-            services.get('core.api').Api.proceed(request).then((function(response) {
+            checkSession = services.get('core.api').Api.proceed(request);
+            checkSession.then((function(response) {
               return defer.resolver.resolve(new Session(auth, new Models.User(response), provider));
-            })["catch"](function(error) {
-              console.error("fails to validate session " + error);
-              return defer.resolver.reject('session.invalid');
             }));
+            checkSession["catch"](function(error) {
+              provider.destroy();
+              return defer.resolver.reject('session.invalid');
+            });
           }
         }
         return defer.promise;

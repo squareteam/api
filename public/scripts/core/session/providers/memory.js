@@ -29,7 +29,7 @@
 
     })();
     ProviderMemory.empty = function() {
-      return auth != null;
+      return true;
     };
     return ProviderMemory;
   });

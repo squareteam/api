@@ -7,7 +7,7 @@
       ProviderCookie.prototype.retrieve = function() {
         var auth, values;
         if (!ProviderCookie.empty()) {
-          values = $.cookie("ST_SESSION");
+          values = $.cookie("ST_SESSION").split(':');
           auth = new ApiAuth(values[0], values[1]);
           if (!auth.isValid()) {
             throw new Error("ApiAuth invalid");

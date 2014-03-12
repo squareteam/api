@@ -20,7 +20,14 @@
             });
           });
           return login_request["catch"](function(e) {
-            return $(".squareteam-layout .alert").html(e.toString()).show();
+            var message;
+            message = "server are busy, try again in few minutes";
+            if (e.toString() === "session.invalid") {
+              message = "Wrong password";
+            } else if (e.toString() === "login.fail") {
+              message = "Wrong email";
+            }
+            return $(".squareteam-layout .alert").html(message).show();
           });
         }
       };
@@ -33,6 +40,9 @@
       }).render();
       $(".squareteam-layout").html(login_tpl());
       $(".squareteam-layout .form").append(form.el);
+      if (services.get('app').router.getFlash().length) {
+        $(".squareteam-layout .alert").html(services.get('app').router.getFlash().join('<br>')).show();
+      }
       $('.squareteam-layout .btn-primary').on('click', submit);
       return form.on('submit', submit);
     };
