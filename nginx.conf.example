@@ -16,7 +16,7 @@ events {
 
 http {
     passenger_root /usr/local/rvm/gems/ruby-2.0.0-p353@global/gems/passenger-4.0.35;
-    passenger_ruby /usr/local/rvm/gems/ruby-2.0.0-p353@global/wrappers/ruby;
+    passenger_ruby /api/ruby_wrapper;
     passenger_default_user www-data;
     passenger_default_group www-data;
 
