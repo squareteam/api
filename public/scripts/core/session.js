@@ -1,6 +1,6 @@
 (function() {
   define(['app', 'when', "core/session/providers", 'core/models', 'cryptojs.pbkdf2', 'cryptojs.hmac.sha256'], function(app, When, SessionProviders, Models) {
-    return function(services) {
+    return function(ctx) {
       var Session, SessionAnonymous, supports_html5_storage;
       supports_html5_storage = function() {
         var e;
@@ -41,13 +41,17 @@
         };
 
         Session.prototype.logout = function() {
-          var defer;
+          var defer, logout,
+            _this = this;
           defer = When.defer();
-          services.get('api.extras').update('logout', function(err, response) {
-            this.provider.destroy();
-            return defer.resolver[err != null ? err : {
-              'reject': 'fullfil'
-            }](err);
+          logout = ctx.get('apiExtras').read('/logout');
+          logout.then(function() {
+            _this.provider.destroy();
+            ctx.get('app').session = new Session.Anonymous();
+            return defer.resolver.resolve();
+          });
+          logout["catch"](function() {
+            return defer.resolver.reject();
           });
           return defer.promise;
         };
@@ -88,14 +92,14 @@
             defer.resolver.reject('session.anonymous');
           } else {
             auth.token = CryptoJS.enc.Hex.parse(auth.token);
-            request = new (services.get('core.api').Request)({
+            request = new (ctx.get('coreApi').Request)({
               url: "/api/user/me",
               method: "GET",
               auth: auth
             });
-            checkSession = services.get('core.api').Api.proceed(request);
+            checkSession = ctx.get('coreApi').Api.proceed(request);
             checkSession.then((function(response) {
-              return defer.resolver.resolve(new Session(auth, new Models.User(response), provider));
+              return defer.resolver.resolve(new Session(auth, new (ctx.get('models').User)(response), provider));
             }));
             checkSession["catch"](function(error) {
               provider.destroy();
@@ -118,22 +122,22 @@
           provider = SessionProviders.Cookies;
         }
         console.log("Session.login(" + login + ", " + password + ", trusted_browser = " + trusted_browser + ") : " + provider);
-        tryLogin = services.get('api.extras').update('/login', {
+        tryLogin = ctx.get('apiExtras').update('/login', {
           identifier: login
         }, false);
         tryLogin.then(function(response) {
           var auth, check_session, request;
           if ((response.salt1 != null) && (response.salt2 != null)) {
             console.log("salts : " + response.salt1 + ", " + response.salt2);
-            auth = new (services.get('core.api').Auth)(login, Session.getToken(login, password, CryptoJS.enc.Hex.parse(response.salt1), CryptoJS.enc.Hex.parse(response.salt2)));
-            request = new (services.get('core.api').Request)({
+            auth = new (ctx.get('coreApi').Auth)(login, Session.getToken(login, password, CryptoJS.enc.Hex.parse(response.salt1), CryptoJS.enc.Hex.parse(response.salt2)));
+            request = new (ctx.get('coreApi').Request)({
               url: "/api/user/me",
               method: "GET",
               auth: auth
             });
-            check_session = services.get('core.api').Api.proceed(request);
+            check_session = ctx.get('coreApi').Api.proceed(request);
             check_session.then((function(response) {
-              return defer.resolver.resolve(new Session(auth, new Models.User(response), new provider));
+              return defer.resolver.resolve(new Session(auth, new (ctx.get('models').User)(response), new provider));
             }));
             return check_session["catch"](function(error) {
               console.error("fails to validate session " + error);

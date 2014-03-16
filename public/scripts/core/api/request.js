@@ -20,15 +20,16 @@
       }
 
       ApiRequest.prototype.headers = function() {
-        var blob, headers, hmac, url;
+        var blob, headers, hmac, url,
+          _this = this;
         if (this.secure) {
           if (!this.auth.isValid()) {
             throw new ApiException(401, 'session_invalid');
           }
           blob = [];
           _.each(_.keys(this.data).sort(), function(key) {
-            if (this.data.hasOwnProperty(key)) {
-              return blob.push(("" + key + "=") + encodeURIComponent(this.data[key]));
+            if (_this.data.hasOwnProperty(key)) {
+              return blob.push(("" + key + "=") + encodeURIComponent(_this.data[key]));
             }
           });
           headers = {

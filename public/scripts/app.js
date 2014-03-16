@@ -1,51 +1,62 @@
 (function() {
-  define(['core/container', 'core/core', 'apps/squareteam', 'config'], function(Container, Core, Squareteam, Config) {
-    var container;
-    container = new Container(true);
-    Core.injectTo(container);
-    container.set('config', function() {
-      return Config;
-    });
-    container.set('api.extras', function(services) {
-      var _publish;
-      _publish = {};
-      _.each({
-        "read": "GET",
-        "destroy": "DELETE",
-        "update": "PUT",
-        "create": "POST"
-      }, function(http_method, helper) {
+  define(['core/container', 'core/core', 'apps/squareteam', 'config', "when"], function(Container, Core, Squareteam, Config, When) {
+    var ApiExtras, ctx,
+      _this = this;
+    ctx = di.createContext();
+    window.ctx = ctx;
+    ctx.register('config').object(Config);
+    Core.injectTo(ctx);
+    ctx.register('session').object(new ctx.get('coreSession').Anonymous);
+    ApiExtras = (function() {
+      function ApiExtras() {
+        this.dependencies = "coreApi,config,app";
+      }
+
+      ApiExtras.prototype.ready = function() {
         var _this = this;
-        return _publish[helper] = function(url, data, secure) {
-          var config, request;
-          if (data == null) {
-            data = null;
-          }
-          if (secure == null) {
-            secure = true;
-          }
-          config = {
-            url: services.get('config').api.url + url,
-            data: data,
-            method: http_method
-          };
-          if (secure) {
-            if (!services.get('core.session').isAuthenticated()) {
-              throw new Error('session.invalid');
+        return _.each({
+          "read": "GET",
+          "destroy": "DELETE",
+          "update": "PUT",
+          "create": "POST"
+        }, function(http_method, helper) {
+          return _this[helper] = function(url, data, secure) {
+            var config, deferError, request;
+            if (data == null) {
+              data = null;
             }
-            config.secure = true;
-            config.auth = services.get('core.session').auth;
-          }
-          request = new (services.get('core.api').Request)(config, secure);
-          return services.get('core.api').Api.proceed(request);
-        };
-      });
-      return _publish;
-    });
-    return container.bound(function(services) {
-      var app_configure,
-        _this = this;
-      app_configure = (new Squareteam(services)).configure({
+            if (secure == null) {
+              secure = true;
+            }
+            config = {
+              url: _this.config.api.base + url,
+              data: data,
+              method: http_method
+            };
+            if (secure) {
+              if (!_this.app.session.isAuthenticated()) {
+                deferError = When.defer();
+                deferError.resolver.reject();
+                return deferError.promise;
+              }
+              config.secure = true;
+              config.auth = _this.app.session.auth;
+            }
+            request = new _this.coreApi.Request(config, secure);
+            return _this.coreApi.Api.proceed(request);
+          };
+        });
+      };
+
+      return ApiExtras;
+
+    })();
+    ctx.register("apiExtras", ApiExtras);
+    ctx.register("app", Squareteam);
+    ctx.get('app').on('ready', function() {
+      var app_configure;
+      ctx.get('app').setContext(ctx);
+      app_configure = ctx.get('app').configure({
         "router": {
           "default_route": "/home",
           "default_configurators": {
@@ -60,19 +71,15 @@
         }
       });
       app_configure.then(function(app) {
-        services.set('app', app);
-        console.info("app booted");
         app.configurators();
         app.routes();
         return app.router.boot();
       });
-      app_configure["catch"](function(e) {
+      return app_configure["catch"](function(e) {
         return console.error("App error : " + e);
       });
-      return app_configure.done(function() {
-        return console.log(arguments);
-      });
     });
+    return ctx.initialize();
   });
 
 }).call(this);

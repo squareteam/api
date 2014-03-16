@@ -19,7 +19,9 @@ require.config({
         'hbs/i18nprecompile': '../bower_components/require-handlebars-plugin/hbs/i18nprecompile',
         'hbs/json2': '../bower_components/require-handlebars-plugin/hbs/json2',
         'backbone-forms': '../bower_components/backbone-forms/distribution.amd/backbone-forms',
-        'backbone-forms-bootstrap': '../bower_components/backbone-forms/distribution.amd/templates/bootstrap3'
+        'backbone-forms-bootstrap': '../bower_components/backbone-forms/distribution.amd/templates/bootstrap3',
+
+        'di-lite' : '../bower_components/di-lite/dist/di-lite'
     },
     shim: {
         jquery: {
@@ -39,6 +41,7 @@ require.config({
             deps: [
                 //https://github.com/cujojs/when/blob/master/docs/api.md#debugging-promises
                 '../bower_components/when/monitor/console',
+                'di-lite',
                 'underscore',
                 'backbone',
                 'jquery',

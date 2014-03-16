@@ -1,6 +1,6 @@
 (function() {
   define(['hbs!apps/public/templates/login', 'core/models'], function(login_tpl, Models) {
-    return function(services) {
+    return function(ctx) {
       var form, submit, user,
         _this = this;
       submit = function(e) {
@@ -10,11 +10,11 @@
         }
         errors = form.commit();
         if (_.size(errors) === 0) {
-          login_request = services.get('core.session').login(form.getValue('email'), form.getValue('password'), true);
+          login_request = ctx.get('coreSession').login(form.getValue('email'), form.getValue('password'), true);
           login_request.then(function(session) {
             session.save();
-            services.set('session', session);
-            return services.get('app').router.navigate('/home', {
+            ctx.get('app').session = session;
+            return ctx.get('app').router.navigate('/home', {
               trigger: true,
               replace: true
             });
@@ -31,7 +31,7 @@
           });
         }
       };
-      user = new Models.User({
+      user = new (ctx.get('models').User)({
         email: "test@test.fr"
       });
       form = new Backbone.Form({
@@ -40,8 +40,8 @@
       }).render();
       $(".squareteam-layout").html(login_tpl());
       $(".squareteam-layout .form").append(form.el);
-      if (services.get('app').router.getFlash().length) {
-        $(".squareteam-layout .alert").html(services.get('app').router.getFlash().join('<br>')).show();
+      if (ctx.get('app').router.getFlash().length) {
+        $(".squareteam-layout .alert").html(ctx.get('app').router.getFlash()[0]).show();
       }
       $('.squareteam-layout .btn-primary').on('click', submit);
       return form.on('submit', submit);

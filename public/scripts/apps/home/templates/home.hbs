@@ -1,0 +1,19 @@
+<h2>
+   Hi {{ user.email }} 
+   {{#if user.name.length }}
+      ({{ user.name }})
+   {{/if}}
+</h2>
+<h3>
+   Organizations :
+</h3>
+<p class="organizations">
+   Loading...
+</p>
+
+
+<p>
+   <a href="#logout">
+      Logout
+   </a>
+</p>

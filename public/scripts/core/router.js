@@ -8,9 +8,10 @@
 
     var Router;
     return Router = Backbone.Router.extend({
-      initialize: function(options, services) {
+      initialize: function(options) {
         var _this = this;
-        this.services = services;
+        console.log('Router', options);
+        this.dependencies = 'session';
         this.flashes = [];
         this.flash_ttl = 2;
         this.default_configurators = options.default_configurators || {};
@@ -24,6 +25,9 @@
             return _this.flash_ttl--;
           }
         });
+      },
+      setApp: function(app) {
+        return this.app = app;
       },
       configurator: function(name, handler) {
         if (this._configurators[name] != null) {
@@ -41,28 +45,27 @@
         }
         return _.each(routes, function(route) {
           return Backbone.Router.prototype.route.call(_this, route, name, function() {
-            var params, _configurators;
+            var configurators_with_defaults, params, _configurators;
             params = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
             _configurators = [];
-            configurators = _.extend(_.clone(_this.default_configurators), configurators);
-            console.info("route " + name + " with configurators =", configurators);
-            configurators = _.each(_.clone(configurators), function(configurator_config, configurator_name) {
+            configurators_with_defaults = _.extend(_.clone(_this.default_configurators), configurators);
+            console.info("route " + name + " with configurators =", configurators_with_defaults);
+            _.each(configurators_with_defaults, function(configurator_config, configurator_name) {
               var configurator_scope;
               if (configurator_config !== false) {
                 configurator_scope = function() {
                   var defer;
                   defer = When.defer();
-                  _this._configurators[configurator_name].call(_this, _this.services, route, configurator_config, defer.resolver.resolve, defer.resolver.reject);
+                  _this._configurators[configurator_name].call(_this, _this.app, route, configurator_config, defer.resolver.resolve, defer.resolver.reject);
                   return defer.promise;
                 };
                 return _configurators.push(configurator_scope);
               }
             });
             return When_sequence(_configurators).done(function() {
-              console.info('yeh');
               return callback(params, this.services);
             }, function(e) {
-              return console.info('neh!', e);
+              return console.info('route rejected by configurator', e);
             });
           });
         });

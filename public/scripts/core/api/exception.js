@@ -8,7 +8,7 @@
       }
 
       ApiException.prototype.toString = function() {
-        return "ApiError(" + this.code + "): " + this.reason;
+        return "ApiException(" + this.code + "): " + this.reason;
       };
 
       ApiException.prototype.getReason = function() {
