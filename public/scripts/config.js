@@ -2,7 +2,8 @@
   define([], function() {
     return {
       'api': {
-        'url': 'http://dev.squareteam.io/api'
+        'host': 'http://alpha-squareteam.rhcloud.com',
+	'base': '/api'
       }
     };
   });
