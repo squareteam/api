@@ -90,7 +90,7 @@ class Auth < Rack::Auth::AbstractHandler
       hmac << "#{request.request_method}:"
       hmac << "#{request.path}:"
       hmac << "#{timestamp}:"
-      hmac << "#{request.query_string}"
+      hmac << "#{Rack::Utils.build_query(request.params.sort)}"
       return false if hmac.digest.unpack('H*').first != hash
 
       cache.expire "#{identifier}:SALT2", Auth::AUTH_TIMEOUT
