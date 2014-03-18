@@ -6,7 +6,9 @@ describe 'Organizations controller' do
   context 'with an authenticated request' do
 
     before do
-      User.destroy_all
+      Organization.destroy_all
+
+      @user = User.last || User.create(:email => 'test@test.fr', :pbkdf => 'fff', :salt => 'fff')
 
       allow_any_instance_of(Auth::Request).to receive(:provided?).and_return(true)
       allow_any_instance_of(Auth::Request).to receive(:invalid_timestamp).and_return(nil)
@@ -35,6 +37,20 @@ describe 'Organizations controller' do
           post '/organization', {:name => 'swcc'}
           last_response.should be_ok
         }.to change(Organization, :count).by(1)
+      end
+    end
+
+
+    describe 'POST an organization nested on a user' do
+      before do
+        Organization.destroy_all
+      end
+      it 'responds with the data of the organization' do
+        expect {
+          post "/user/#{@user.id}/organizations", {:name => 'test_orga'}
+          last_response.should be_ok
+        }.to change(Organization, :count).by(1)
+        expect { Organization.last.users.to include @user }
       end
     end
 
