@@ -86,11 +86,20 @@ class Auth < Rack::Auth::AbstractHandler
       require 'openssl'
       require 'base64'
 
+      params = request.params.sort.map do |key,value|
+        if value.is_a?(Hash) && !value[:tempfile].nil?
+          [key, Digest::MD5.hexdigest(File.read(value[:tempfile]))]
+        else
+          [key, value]
+        end
+      end if request.form_data?
+      blob = params ? Rack::Utils.build_query(params) : ''
+
       hmac = OpenSSL::HMAC.new(token, 'sha256')
       hmac << "#{request.request_method}:"
       hmac << "#{request.path}:"
       hmac << "#{timestamp}:"
-      hmac << "#{Rack::Utils.build_query(request.params.sort)}"
+      hmac << "#{blob}"
       return false if hmac.digest.unpack('H*').first != hash
 
       cache.expire "#{identifier}:SALT2", Auth::AUTH_TIMEOUT
