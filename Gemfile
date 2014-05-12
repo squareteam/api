@@ -4,6 +4,7 @@ gem 'rake'
 
 gem 'sinatra'
 gem 'rack-rewrite'
+gem 'rack-uploads', '0.2.1'
 
 gem 'activerecord', '4.0.2'
 gem 'yodatra', '>= 0.2.0'

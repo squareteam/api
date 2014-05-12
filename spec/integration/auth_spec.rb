@@ -69,6 +69,29 @@ describe 'Squareteam authentication' do
       end
     end
 
+    context 'POSTing a private route' do
+      before do
+        Organization.destroy_all
+      end
+      it 'should succeed' do
+        @r.set "#{@identifier}:TOKEN", [@token].pack('H*')
+        timestamp = (Time.now).to_i.to_s
+        http_url = '/organizations'
+        data = {:name => 'st'}
+
+        hmac = OpenSSL::HMAC.new([@token].pack('H*'), 'sha256')
+        hmac << "POST:"
+        hmac << "#{http_url}:"
+        hmac << "#{timestamp}:"
+        hmac << "name=st"
+        hash = hmac.digest.unpack('H*').first
+
+        post http_url, data, {ST_TIMESTAMP_HEADER => timestamp, ST_HASH_HEADER => hash, ST_ID_HEADER => @identifier}
+
+        last_response.should be_ok
+      end
+    end
+
     context 'GETting a non existent route' do
       it 'fails with a msg' do
         @r.set "#{@identifier}:TOKEN", [@token].pack('H*')
