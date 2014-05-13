@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
-  validates_presence_of :email, :pbkdf, :salt
-  validates :email, :uniqueness => true, format: { with: /\A\w{1}(\w|\.|\+)*\w{1}@\w{1}(\w|\.)*(\.){1}(\w|\.)*\w{1}\Z/ }
+  validates_presence_of :email, :pbkdf, :salt, message: 'api.{{value}}_missing'
+  validates :email, uniqueness: { message: 'api.{{value}}_already_taken' }, format: { with: /\A\w{1}(\w|\.|\+)*\w{1}@\w{1}(\w|\.)*(\.){1}(\w|\.)*\w{1}\Z/, message: 'api.{{value}}_violation' }
 
   has_many :members
   has_many :organizations, :through => :members
