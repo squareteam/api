@@ -80,7 +80,8 @@ Result OK:
 
 Errors:
 
-    - errors: "api.email_violation" (HTTP 400)
+    - "api.email_violation" (HTTP 400)
+    - "api.email_already_taken" (HTTP 400)
 
 ### PUT /login
 
