@@ -20,7 +20,7 @@ describe 'Public controller' do
         post '/user', {:password => 'hello@example.com'}
 
         last_response.status.should be 400
-        expect(last_response.body).to match(/Email can't be blank/)
+        expect(last_response.body).to match(/api.violation/)
       end
     end
     context 'when the email has already been taken' do
@@ -33,7 +33,7 @@ describe 'Public controller' do
         post '/user', {:password => 'test', :identifier => @email_already_taken, :name => 'test'}
 
         last_response.status.should be 400
-        expect(last_response.body).to match(/Email has already been taken/)
+        expect(last_response.body).to match(/api\..*already_taken/)
       end
     end
 
