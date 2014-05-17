@@ -12,7 +12,7 @@ describe 'Public controller' do
         post '/user', {:identifier => 'hello@example.com'}
 
         last_response.status.should be 400
-        expect(last_response.body).to match(/No password given/)
+        expect(last_response.body).to match(/api\.no_password/)
       end
     end
     context 'when no email is given' do
@@ -20,7 +20,7 @@ describe 'Public controller' do
         post '/user', {:password => 'hello@example.com'}
 
         last_response.status.should be 400
-        expect(last_response.body).to match(/api.violation/)
+        expect(last_response.body).to match(/api\.violation/)
       end
     end
     context 'when the email has already been taken' do
@@ -53,19 +53,40 @@ describe 'Public controller' do
   end
 
   describe 'login' do
-    context 'with an existing user' do
+    context 'with an existing squareteam user' do
       before do
         @existing_identifier = 'test@example.com'
-        post '/user', {:password => 'test', :identifier => 'test@example.com', :name => ''}
+        post '/user', {:password => 'test', :identifier => @existing_identifier, :name => ''}
       end
-      it 'responds with two salts' do
+      it 'responds with two salts and caches the login token' do
         put '/login', {:identifier => @existing_identifier}
 
         last_response.should be_ok
 
         user = User.find_by_email(@existing_identifier)
-        response_expected = {:salt1 => user.salt.unpack('H*').first, :salt2 => Auth.generate_token(user.email, user.pbkdf).unpack('H*').first}.to_json
+        expect(user.provider).to eql 'squareteam'
+        salt = Auth.login(user) # This should only take token and salts from cache as we already logged in
+        response_expected = {:salt1 => user.salt.unpack('H*').first, :salt2 => salt.unpack('H*').first}.to_json
         expect(last_response.body).to match(response_expected)
+        expect(Auth.cache.get("#{user.email}:TOKEN")).should_not be_nil
+      end
+    end
+    context 'with an external github user (via oauth)' do
+      before do
+        get '/auth/github/callback', { 'omniauth.auth' => mock_auth_hash }
+      end
+      it 'responds with two salts and caches the login token' do
+        put '/login', {:identifier => 'john@external.com'}
+
+        last_response.should be_ok
+
+        user = User.find_by_email('john@external.com')
+        expect(user.provider).to eql 'github'
+        user.provider = 'squareteam' # Fake a st user in order to not reset the user's salt
+        salt = Auth.login(user) # This should only take token and salts from cache as we already logged in
+        response_expected = {:salt1 => user.salt.unpack('H*').first, :salt2 => salt.unpack('H*').first}.to_json
+        expect(last_response.body).to match(response_expected)
+        expect(Auth.cache.get("#{user.email}:TOKEN")).should_not be_nil
       end
     end
     context 'when the user does not exist' do
