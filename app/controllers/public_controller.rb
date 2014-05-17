@@ -1,6 +1,7 @@
 require File.expand_path 'app/auth/auth.rb'
 require File.expand_path 'app/api/errors.rb'
 require 'yodatra/crypto'
+require 'digest/sha1'
 
 class PublicController < Yodatra::Base
 
@@ -15,13 +16,16 @@ class PublicController < Yodatra::Base
   put '/login' do
     @one = User.find_by_email(params[:identifier])
 
-    if @one.nil?
+    # Login can potentially reset user's pbkdf and salt (if they are connected by oauth)
+    salt2 = Auth.login(@one)
+    if salt2.nil?
       status 400
       halt [Errors::LOGIN_FAIL].to_json
+    else
+      # Thus make sure to reload the user
+      @one = @one.reload
+      {:salt1 => @one.salt.unpack('H*').first, :salt2 => salt2.unpack('H*').first}.to_json
     end
-
-    salt2 = Auth.generate_token(@one.email, @one.pbkdf)
-    {:salt1 => @one.salt.unpack('H*').first, :salt2 => salt2.unpack('H*').first}.to_json
   end
 
   post '/user' do
@@ -31,7 +35,16 @@ class PublicController < Yodatra::Base
     end
 
     salt, pbkdf = Yodatra::Crypto.generate_pbkdf(params[:password])
-    @one = User.new :email => params[:identifier]||params[:email], :pbkdf => pbkdf, :salt => salt, :name => params[:name]
+    email = params[:identifier]||params[:email]
+    uid = email.nil? ? nil : Digest::SHA1.hexdigest(email)
+    @one = User.new(
+      :uid => uid,
+      :provider => 'squareteam',
+      :email => email,
+      :pbkdf => pbkdf,
+      :salt => salt,
+      :name => params[:name]
+    )
 
     if @one.save
       @one.as_json(:except => [:pbkdf, :salt]).to_json

@@ -3,7 +3,8 @@ require 'redis'
 class Cache
 
   def initialize(url = nil)
-    @redis = ::REDIS_CONFIG ? Redis.new(::REDIS_CONFIG) : Redis.new
+    config = Squareteam::Application::CONFIG.redis
+    @redis = config ? Redis.new(config) : Redis.new
   end
 
   def set(key, timeout, data)

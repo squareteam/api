@@ -37,23 +37,32 @@ class Auth < Rack::Auth::AbstractHandler
       @cache ||= Cache.new
     end
 
-    def generate_token(identifier, pbkdf)
-      cached_salt2 = cache.get("#{identifier}:SALT2")
+    def login(user)
+      return nil if user.nil?
+
+      cached_salt2 = cache.get "#{user.email}:SALT2"
+      cached_oauth = cache.get "#{user.email}:OAUTH"
+      keep_going = true
+      if user.provider != 'squareteam'
+        keep_going = cached_oauth.blank? ? false : user.oauth_login(cached_oauth)
+      end
+
+      return nil unless keep_going
 
       if cached_salt2.nil?
         salt2 = SecureRandom.random_bytes(8)
 
-        hmac = OpenSSL::HMAC.new(salt2+pbkdf, 'sha256')
-        hmac << "#{identifier}"
+        hmac = OpenSSL::HMAC.new(salt2+user.pbkdf, 'sha256')
+        hmac << "#{user.email}"
         token = hmac.digest
 
-        cache.set("#{identifier}:SALT2", AUTH_TIMEOUT, salt2)
-        cache.set("#{identifier}:TOKEN", AUTH_TIMEOUT, token)
+        cache.set("#{user.email}:SALT2", AUTH_TIMEOUT, salt2)
+        cache.set("#{user.email}:TOKEN", AUTH_TIMEOUT, token)
       else
         salt2 = cached_salt2
 
-        cache.expire("#{identifier}:SALT2", AUTH_TIMEOUT)
-        cache.expire("#{identifier}:TOKEN", AUTH_TIMEOUT)
+        cache.expire("#{user.email}:SALT2", AUTH_TIMEOUT)
+        cache.expire("#{user.email}:TOKEN", AUTH_TIMEOUT)
       end
 
       salt2
