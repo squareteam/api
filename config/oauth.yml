@@ -1,0 +1,3 @@
+github:
+  key: <%=ENV['GITHUB_APP_KEY']%>
+  secret: <%=ENV['GITHUB_APP_SECRET']%>

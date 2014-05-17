@@ -1,6 +1,6 @@
 class Role < ActiveRecord::Base
-  validates_presence_of :name, :permissions, :team, message: 'api.{{value}}_missing'
-  validates_uniqueness_of :name, scope: [:team], message: 'api.{{value}}_already_taken'
+  validates_presence_of :name, :permissions, :team, message: 'api.missing'
+  validates_uniqueness_of :name, scope: [:team], message: 'api.%{value}_already_taken'
 
   belongs_to :team
 

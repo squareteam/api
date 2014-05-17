@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140209211623) do
+ActiveRecord::Schema.define(version: 20140517120313) do
 
   create_table "members", force: true do |t|
     t.integer  "organization_id",                 null: false
@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(version: 20140209211623) do
   create_table "roles", force: true do |t|
     t.string   "name",        limit: 125,             null: false
     t.integer  "team_id",                             null: false
-    t.integer  "permissions", limit: 8,   default: 0, null: false
+    t.integer  "permissions", limit: 32,  default: 0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -60,14 +60,14 @@ ActiveRecord::Schema.define(version: 20140209211623) do
   add_index "user_roles", ["user_id", "role_id"], name: "index_user_roles_on_user_id_and_role_id", unique: true
 
   create_table "users", force: true do |t|
-    t.string   "name",       limit: 100, default: "", null: false
-    t.string   "email",      limit: 100,              null: false
-    t.binary   "pbkdf",      limit: 256,              null: false
-    t.binary   "salt",       limit: 256,              null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.string "name",     limit: 100, default: "", null: false
+    t.string "email",    limit: 100,              null: false
+    t.binary "pbkdf",    limit: 256,              null: false
+    t.binary "salt",     limit: 256,              null: false
+    t.string "provider", limit: 100, default: "", null: false
+    t.string "uid",      limit: 254, default: "", null: false
   end
 
-  add_index "users", ["email"], name: "index_users_on_email"
+  add_index "users", ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
 
 end

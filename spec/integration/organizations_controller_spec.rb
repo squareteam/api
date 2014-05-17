@@ -29,17 +29,31 @@ describe 'Organizations controller' do
     end
 
     describe 'POST an organization' do
-      before do
-        Organization.destroy_all
+      context 'that does not exist' do
+        before do
+          Organization.destroy_all
+        end
+        it 'responds with the data of the organization' do
+          expect {
+            post '/organization', {:name => 'swcc'}
+            last_response.should be_ok
+          }.to change(Organization, :count).by(1)
+        end
       end
-      it 'responds with the data of the organization' do
-        expect {
-          post '/organization', {:name => 'swcc'}
-          last_response.should be_ok
-        }.to change(Organization, :count).by(1)
+      context 'that already exist' do
+        before do
+          Organization.destroy_all
+          Organization.create(:name => 'swcc')
+        end
+        it 'responds with an error message' do
+          expect {
+            post '/organization', {:name => 'swcc'}
+            last_response.should_not be_ok
+            expect(last_response).to match /api.swcc_already_taken/
+          }.not_to change(Organization, :count)
+        end
       end
     end
-
 
     describe 'POST an organization nested on a user' do
       before do

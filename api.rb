@@ -6,10 +6,19 @@ require 'yodatra/throttling'
 # ############## #
 # Squareteam API #
 # ############## #
-# Main Entrypoint
 class Api < Yodatra::Base
+  VERSION = '0.1.2'
+  config = Squareteam::Application::CONFIG
   use Yodatra::Logger
-  use Yodatra::Throttle, {:redis_conf => ::REDIS_CONFIG}
+  use Yodatra::Throttle, redis_conf: config.redis
+
+  # Omniauth
+  use Rack::Session::Redis, redis_server: config.redis, :expire_after => 30
+  use ::OmniAuth::Builder do
+    provider :github, config.oauth[:github]['key'], config.oauth[:github]['secret']
+  end
+
+  # ST api formatter
   use Yodatra::ApiFormatter do |status, headers, response|
     if headers['Content-Type'] =~ /application\/json/
       valid = status >= 200 && status < 300
@@ -22,14 +31,17 @@ class Api < Yodatra::Base
     [status, headers, response]
   end
 
+  # Omniauth callback
+  use OmniauthController
+
   use PublicController
 
+  # ST auth barrier
   use Auth
 
   use UsersController
   use OrganizationsController
   use MembersController
-
   use PrivateController
 
   NO_ROUTE_PROC = lambda do

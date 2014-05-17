@@ -109,7 +109,7 @@ describe 'Squareteam authentication' do
         get http_url, data, {ST_TIMESTAMP_HEADER => timestamp, ST_HASH_HEADER => hash, ST_ID_HEADER => @identifier}
 
         expect(last_response.status).to be(400)
-        expect(last_response.body).to match(/Nothing around here/)
+        expect(last_response.body).to match(/api.no_route/)
       end
     end
 

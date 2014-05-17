@@ -17,7 +17,7 @@ describe 'Crypto' do
     @redis.flushall
   end
 
-  describe 'Token generation' do
+  describe 'Login' do
     context 'with given inputs' do
       before do
         SALT2 = @salt2
@@ -28,7 +28,8 @@ describe 'Crypto' do
         end
       end
       it 'generates a correct token' do
-        salt = Auth.generate_token(@identifier, [@pbkdf].pack('H*'))
+        user = OpenStruct.new email: @identifier, pbkdf: [@pbkdf].pack('H*'), provider: 'squareteam'
+        salt = Auth.login(user)
         token = @redis.get "#{@identifier}:TOKEN"
 
         expect(salt.unpack('H*').first).to eq @salt2
