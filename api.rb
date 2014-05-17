@@ -7,6 +7,7 @@ require 'yodatra/throttling'
 # Squareteam API #
 # ############## #
 class Api < Yodatra::Base
+  VERSION = '0.1.2'
   config = Squareteam::Application::CONFIG
   use Yodatra::Logger
   use Yodatra::Throttle, redis_conf: config.redis
