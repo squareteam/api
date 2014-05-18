@@ -1,7 +1,7 @@
 require 'yodatra/models_controller'
 
+# API controller to manage Users
 class UsersController < Yodatra::ModelsController
-
   disable :read_all, :read, :create, :delete
 
   get '/user/me' do
@@ -15,10 +15,16 @@ class UsersController < Yodatra::ModelsController
   end
 
   def read_scope
-    {:only => [:id, :name, :email]}
+    self.class.read_scope
   end
 
   def user_params
-    params.select{ |k,v| %w(name email).include?(k.to_s) }
+    params.select { |k, _| %w(name email).include?(k.to_s) }
+  end
+
+  class << self
+    def read_scope
+      { only: [:id, :name, :email] }
+    end
   end
 end
