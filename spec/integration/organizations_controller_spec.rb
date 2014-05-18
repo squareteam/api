@@ -20,11 +20,12 @@ describe 'Organizations controller' do
       it 'responds with the data of the organization' do
         post '/organization', {:name => 'squareteam'}
         existing_organization = Organization.find_by_name('squareteam')
+        existing_organization.users << @user
 
         get "/organization/#{existing_organization.id}", {}
 
         last_response.should be_ok
-        expect(last_response.body).to include(existing_organization.to_json(:only => [:name, :id], :include => [:members]))
+        expect(last_response.body).to include(existing_organization.to_json(OrganizationsController.read_scope))
       end
     end
 
