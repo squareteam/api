@@ -20,6 +20,7 @@ gem 'redis-rack'
 # Omniauth
 gem 'omniauth-github', '1.1.2'
 
+gem 'rspec'
 group :development, :test do
   # DB adapter
   gem 'sqlite3'
@@ -31,5 +32,4 @@ group :development, :test do
   # Testing
   gem 'simplecov'
   gem 'rack-test', require: 'rack/test'
-  gem 'rspec'
 end
