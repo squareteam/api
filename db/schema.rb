@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(version: 20140517120313) do
   create_table "roles", force: true do |t|
     t.string   "name",        limit: 125,             null: false
     t.integer  "team_id",                             null: false
-    t.integer  "permissions", limit: 32,  default: 0, null: false
+    t.integer  "permissions", default: 0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

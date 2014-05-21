@@ -1,5 +1,8 @@
 #!/bin/bash
-export ST_DB_NAME=st_db
-export ST_DB_USERNAME=root
+export PREPROD_ST_DB_NAME=st
+export PREPROD_ST_DB_USERNAME=root
+export PREPROD_ST_DB_PASSWORD=root
+export PREPROD_ST_DB_HOST=localhost
+export PREPROD_ST_DB_HOST=3306
 exec "/usr/local/rvm/gems/ruby-2.0.0-p353@global/wrappers/ruby" "$@"
 
