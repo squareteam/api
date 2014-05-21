@@ -15,8 +15,8 @@ events {
 
 
 http {
-    passenger_root /usr/local/rvm/gems/ruby-2.0.0-p353@global/gems/passenger-4.0.35;
-    passenger_ruby /api/ruby_wrapper;
+    passenger_root /usr/local/rvm/gems/ruby-2.0.0-p353@global/gems/passenger-4.0.41;
+    passenger_ruby /app/ruby_wrapper;
     passenger_default_user www-data;
     passenger_default_group www-data;
 
@@ -39,11 +39,11 @@ http {
 
     server {
         location / {
-           root /www/public;
+           root /app/public;
            try_files $uri /index.html;
         }
 	location /api {
-       	   root /api/public;
+       	   root /app/public;
     	   passenger_enabled on;
 	}
 
