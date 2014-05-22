@@ -163,8 +163,8 @@ end
 
 Vagrant::VERSION >= "1.1.0" and Vagrant.configure("2") do |config|
   config.vm.hostname = 'dev.squareteam.io'
-  config.vm.network :forwarded_port, :host => 80, :guest => 80
   config.vm.network :private_network, ip: "192.168.168.2"
+  config.vm.synced_folder '.', '/vagrant', :nfs => true
 end
 
 

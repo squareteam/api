@@ -45,6 +45,7 @@ http {
 	location /api {
        	   root /app/public;
     	   passenger_enabled on;
+	   passenger_app_env production;
 	}
 
         listen       80;
