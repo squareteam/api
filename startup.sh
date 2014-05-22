@@ -8,7 +8,7 @@ pushd /app
 cp /app/ruby_wrapper.example /app/ruby_wrapper
 
 . /usr/local/rvm/scripts/rvm; /usr/local/rvm/gems/ruby-2.0.0-p353@global/bin/bundle install --deployment --without development test
-. /usr/local/rvm/scripts/rvm; . /app/.preprod.env; RACK_ENV=preprod /usr/local/rvm/gems/ruby-2.0.0-p353@global/bin/bundle exec rake db:setup
+. /usr/local/rvm/scripts/rvm; . /app/.prod.env; RACK_ENV=production /usr/local/rvm/gems/ruby-2.0.0-p353@global/bin/bundle exec rake db:setup
 popd 
 
 # Configure&Launch NGINX
