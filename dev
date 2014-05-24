@@ -2,7 +2,7 @@
 #
 # Helper script to build & run your dev stack inside a Docker container
 # Usage: dev <COMMAND> <APP>
-#        COMMAND: up | halt
+#        COMMAND: up | halt | destroy | logs
 #        APP    : Give a name to your container
 #
  
@@ -11,7 +11,7 @@ if [[ -z $1 || -z $2 ]]
 then
     echo "Helper script to build & run your dev stack inside a Docker container
  Usage: dev <COMMAND> <APP> [<PATH_TO_APP> to mount on /app]
-        COMMAND: up | halt
+        COMMAND: up | halt | destroy | logs
         APP    : Give a name to your container"
     exit 1
 else
@@ -36,16 +36,23 @@ then
     # if container is not running
     if [[ -z "$CONTAINER_ID" ]]
     then
- 
+	
 	# if container image is not built
 	if [[ -z "$CONTAINER_IMAGE" ]]
 	then
 	    # Build Docker image
 	    sudo docker build -t $NAME .
 	fi
- 
-	# Run docker image in a container
-	CONTAINER_ID=$(sudo docker run -p 80:80 -p 22 -v $REPO:/app -d $NAME)
+	
+	CONTAINER_STOPPED=$(sudo docker ps -a | grep $NAME | awk '{print $1}')
+	if [[ -z "$CONTAINER_STOPPED" ]]; then    
+	    # Run docker image in a container
+	    CONTAINER_ID=$(sudo docker run -p 80:80 -p 22 -v $REPO:/app -d $NAME)
+	else
+	    # Run stopped container
+	    CONTAINER_ID=$(sudo docker start $CONTAINER_STOPPED)
+	fi
+	    
     fi
  
     # Get container's IP
@@ -56,14 +63,30 @@ then
 
 # COMMAND != up
 else
-
     # if container is not running
     if [[ -z "$CONTAINER_ID" ]]
     then
-	echo "No container with the name '$NAME' is running, did you spell the name correctly?"
+	CONTAINER_STOPPED=$(sudo docker ps -a | grep $NAME | awk '{print $1}')
+	if [[ -z "$CONTAINER_STOPPED" ]]; then
+	    echo "No container with the name '$NAME' is running, did you spell the name correctly?"
+	else
+	    if [[ $COMMAND == "halt" ]]; then
+		echo "The container '$NAME' is already stopped."	    
+	    elif [[ $COMMAND == "destroy" ]]; then
+		sudo docker rm -f $CONTAINER_STOPPED
+		echo "Stopped and removed successfully"
+	    fi
+	fi
     else
-	sudo docker stop $CONTAINER_ID
-	echo "Stopped successfully"
+	if [[ $COMMAND == "halt" ]]; then
+	    sudo docker stop $CONTAINER_ID
+	    echo "Stopped successfully"
+	elif [[ $COMMAND == "destroy" ]]; then
+	    sudo docker rm -f $CONTAINER_ID
+	    echo "Stopped and removed successfully"
+	elif [[ $COMMAND == "logs" ]]; then
+	    sudo docker logs -f $CONTAINER_ID
+	    echo "Stopped successfully"
+	fi
     fi
-
 fi
