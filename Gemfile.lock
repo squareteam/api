@@ -1,3 +1,11 @@
+GIT
+  remote: git://github.com/popox/omniauth-behance.git
+  revision: dd774c35ac9ade471a5b2852b745c9341381b44e
+  specs:
+    omniauth-behance (0.1.0)
+      omniauth
+      omniauth-oauth2
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -129,6 +137,7 @@ PLATFORMS
 DEPENDENCIES
   activerecord (= 4.0.2)
   mysql2
+  omniauth-behance!
   omniauth-github (= 1.1.2)
   pry
   pry-debugger
