@@ -19,6 +19,7 @@ gem 'redis-rack'
 
 # Omniauth
 gem 'omniauth-github', '1.1.2'
+gem 'omniauth-behance', :github => 'popox/omniauth-behance'
 
 gem 'rspec'
 group :development, :test do

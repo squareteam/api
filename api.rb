@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'yodatra/base'
 require 'yodatra/logger'
 require 'yodatra/api_formatter'
@@ -16,6 +17,7 @@ class Api < Yodatra::Base
   use Rack::Session::Redis, redis_server: config.redis, :expire_after => 30
   use ::OmniAuth::Builder do
     provider :github, config.oauth[:github]['key'], config.oauth[:github]['secret']
+    provider :behance, config.oauth[:behance]['key'], config.oauth[:behance]['secret'], { scope: 'collection_read|wip_read|project_read' }
   end
 
   # ST api formatter

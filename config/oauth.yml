@@ -1,3 +1,6 @@
 github:
   key: <%=ENV['GITHUB_APP_KEY']%>
   secret: <%=ENV['GITHUB_APP_SECRET']%>
+behance:
+  key: <%=ENV['BEHANCE_APP_KEY']%>
+  secret: <%=ENV['BEHANCE_APP_SECRET']%>
