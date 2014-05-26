@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem 'rake'
 
 gem 'sinatra'
-gem 'yodatra', '>= 0.2.11'
+gem 'yodatra', '>= 0.3.0'
 
 gem 'rack-rewrite'
 gem 'rack-uploads', '0.2.1'
