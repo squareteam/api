@@ -1,3 +1,19 @@
+if [ ! -f /var/lib/mysql/ibdata1 ]; then
+	
+  mysql_install_db
+
+  mysqld_safe &
+  sleep 10s
+
+  echo "GRANT ALL ON *.* TO root@'%' IDENTIFIED BY 'root' WITH GRANT OPTION; FLUSH PRIVILEGES" | mysql
+  echo "DROP USER 'root'@'localhost';" | mysql
+  echo "DROP USER 'root'@'127.0.0.1';" | mysql
+  echo "DROP USER 'root'@'::1';" | mysql
+
+  killall mysqld
+  sleep 10s
+
+fi
 
 redis-server &
 
