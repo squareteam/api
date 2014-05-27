@@ -2,7 +2,7 @@ require 'yodatra/models_controller'
 
 # API controller to manage Users
 class UsersController < Yodatra::ModelsController
-  disable :read_all, :read, :create, :delete
+  disable :read_all, :create, :delete
 
   get '/user/me' do
     @one = User.find_by_email(request.env['REMOTE_USER'])
