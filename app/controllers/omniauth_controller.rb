@@ -11,14 +11,18 @@ class OmniauthController < Sinatra::Base
   get '/auth/:provider/callback' do
     one = User.send "find_or_create_from_#{params[:provider]}", auth_hash
     url = Squareteam::Application::CONFIG.app_url
-    identifier = auth_hash.info.email
-    oauth_token = auth_hash.credentials.token
-    # Validity of the oauth_token is OAUTH_TIMEOUT
-    Auth.cache.set "#{identifier}:OAUTH", OAUTH_TIMEOUT, oauth_token
-    path = one.nil? ? '/#/register' : "/#/login?email=#{identifier}"
-    response.set_cookie 'st.oauth', value: oauth_token, expires: Time.now + OAUTH_TIMEOUT, path: '/'
+    if one.nil?
+      path = '/#/register?'
+    else
+      identifier = one.email
+      oauth_token = auth_hash.credentials.token
+      # Validity of the oauth_token is OAUTH_TIMEOUT
+      Auth.cache.set "#{identifier}:OAUTH", OAUTH_TIMEOUT, oauth_token
+      response.set_cookie 'st.oauth', value: oauth_token, expires: Time.now + OAUTH_TIMEOUT, path: '/'
+      path = "/#/login?email=#{identifier}&"
+    end
 
-    redirect "#{url}#{path}"
+    redirect "#{url}#{path}provider=#{params[:provider]} "
   end
 
   private
