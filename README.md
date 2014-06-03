@@ -28,13 +28,18 @@ touch db/test.sqlite3
 RACK_ENV=test brake db:schema:load
 ```
 
-Launching a development server
+## Launching a develoment console
+```bash
+bundle exec ruby console
+``
+
+## Launching a development server
 ```bash
 brake run
 ```
 Served by default on ```http://localhost:8000/```
 
-Launching all specs
+## Launching all specs
 ```bash
 brake spec
 ```
