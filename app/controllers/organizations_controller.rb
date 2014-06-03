@@ -1,9 +1,13 @@
 require 'yodatra/models_controller'
 
-# API controller to serve organizationsx
+# API controller to serve organizations
 class OrganizationsController < Yodatra::ModelsController
   def read_scope
     self.class.read_scope
+  end
+
+  def organization_params
+    params.select { |k, v| ["teams", "users", "name"].include?(k) }
   end
 
   class << self

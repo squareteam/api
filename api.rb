@@ -41,7 +41,6 @@ class Api < Yodatra::Base
 
   use UsersController
   use OrganizationsController
-  use MembersController
   use PrivateController
 
   NO_ROUTE_PROC = lambda do

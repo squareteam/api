@@ -6,13 +6,12 @@ class User < ActiveRecord::Base
   validates :uid,
             uniqueness: { scope: :provider }
 
-  has_many :members
-  has_many :organizations, :through => :members
-
   has_many :user_roles
   has_many :roles, :through => :user_roles
 
   has_many :teams, :through => :roles
+
+  has_many :organizations, :through => :teams
 
   # @ensure !token.blank?
   def oauth_login(token)
