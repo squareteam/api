@@ -6,4 +6,7 @@ class Organization < ActiveRecord::Base
   has_many :members
   has_many :users, through: :members
   has_many :admins, -> { where(members: { admin: true }) }, through: :members, source: :user
+  has_many :teams
+
+  accepts_nested_attributes_for :users, :teams
 end
