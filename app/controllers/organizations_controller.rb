@@ -7,7 +7,7 @@ class OrganizationsController < Yodatra::ModelsController
   end
 
   def organization_params
-    params.select { |k, v| ["teams", "users", "name"].include?(k) }
+    params.select { |k, v| ["teams_attributes", "users_attributes", "name"].include?(k) }
   end
 
   class << self
