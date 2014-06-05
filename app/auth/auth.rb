@@ -91,18 +91,44 @@ class Auth < Rack::Auth::AbstractHandler
 
   class Request < Rack::Auth::AbstractRequest
 
+
+    # Fast, without infinite loop checking toString helper
+    def generate_blob(data)
+      def encodeUriQuery(val)
+        Rack::Utils.escape(val).gsub(/%40/, '@').
+                    gsub(/%3A/, ':').
+                    gsub(/%24/, '$').
+                    gsub(/%2C/, ',').
+                    gsub(/%20/, '+')
+      end
+
+      def dirty_stringify(value, key=nil)
+        buffer = []
+        if value.is_a?(Hash)
+          value.sort.each do |k,v|
+            buffer << dirty_stringify(v, !key.nil? ? [key,'{', k ,'}'].join('') : k)
+          end
+          return buffer.join '&'
+        elsif value.is_a?(Array)
+          value.each do |v|
+            buffer << dirty_stringify(v, [key,'[]'].join(''))
+          end
+          buffer.join '&'
+        else
+          [key, '=', encodeUriQuery(value)].join ''
+        end
+      end
+
+      dirty_stringify data
+    end
+
+
     def valid?
       require 'openssl'
       require 'base64'
+      require 'json'
 
-      params = request.params.sort.map do |key,value|
-        if value.is_a?(Hash) && !value[:tempfile].nil?
-          [key, Digest::MD5.hexdigest(File.read(value[:tempfile]))]
-        else
-          [key, value]
-        end
-      end if request.form_data?
-      blob = params ? Rack::Utils.build_query(params) : ''
+      blob = request.params ? generate_blob(request.params) : ''
 
       hmac = OpenSSL::HMAC.new(token, 'sha256')
       hmac << "#{request.request_method}:"
