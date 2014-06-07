@@ -4,5 +4,5 @@ class UserRole < ActiveRecord::Base
 
   belongs_to :user
   belongs_to :team
-  has_many :roles
+  has_one :role
 end
