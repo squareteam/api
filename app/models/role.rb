@@ -4,7 +4,6 @@ class Role < ActiveRecord::Base
 
   belongs_to :team
 
-  has_many :user_roles
   has_many :users, through: :user_roles
 
   def add_permission(permission)
