@@ -38,6 +38,9 @@ apt-get update -q
 # Install docker.  'apt-get install' is idempotent.
 apt-get install -q -y lxc-docker
 
+# Install gaudi
+apt-get install -q -y gaudi
+
 usermod -a -G docker "$user"
 
 tmp=`mktemp -q` && {
