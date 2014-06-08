@@ -9,7 +9,7 @@ gem 'rack-rewrite'
 gem 'rack-uploads', '0.2.1'
 
 # DB adapter
-gem 'mysql2', :group => :production
+gem 'mysql2'
 gem 'activerecord', '4.0.2'
 gem 'sinatra-activerecord', '1.4.0'
 
@@ -21,13 +21,15 @@ gem 'redis-rack'
 gem 'omniauth-github', '1.1.2'
 
 gem 'rspec'
-group :development, :test do
-  # DB adapter
-  gem 'sqlite3'
-
+group :development do
   # Debug
   gem 'pry'
-  gem 'pry-debugger'
+  #gem 'pry-debugger'
+end
+
+group :test do
+  # DB adapter
+  gem 'sqlite3'
 
   # Testing
   gem 'simplecov'
