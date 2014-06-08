@@ -1,2 +1,2 @@
-host: <%=ENV['ST_REDIS_HOST']%>
-port: <%=ENV['ST_REDIS_PORT']%>
+host: redis
+port: 6379
