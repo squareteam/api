@@ -7,9 +7,7 @@ class User < ActiveRecord::Base
             uniqueness: { scope: :provider }
 
   has_many :user_roles
-
   has_many :teams, :through => :user_roles
-
   has_many :organizations, :through => :teams
 
   accepts_nested_attributes_for :user_roles, :teams
