@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'yodatra/base'
 require 'yodatra/logger'
 require 'yodatra/api_formatter'

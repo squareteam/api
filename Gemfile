@@ -28,9 +28,6 @@ group :development do
 end
 
 group :test do
-  # DB adapter
-  gem 'sqlite3'
-
   # Testing
   gem 'simplecov'
   gem 'rack-test', require: 'rack/test'
