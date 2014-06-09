@@ -6,7 +6,7 @@ require 'base64'
 describe 'Squareteam files upload controller' do
 
   before do
-    @r = Redis.new
+    @r = Redis.new Squareteam::Application::CONFIG.redis
   end
 
   context 'when all headers are present and user has already logged in' do
