@@ -1,10 +1,10 @@
 class User < ActiveRecord::Base
-  validates_presence_of :email, :pbkdf, :salt, message: 'api.missing'
+  validates_presence_of :email, :pbkdf, :salt
   validates :email,
-            uniqueness: { message: 'api.%{value}_already_taken' },
+            uniqueness: true,
             format: { with: /\A\w{1}(\w|\.|\+)*\w{1}@\w{1}(\w|\.)*(\.){1}(\w|\.)*\w{1}\Z/, message: 'api.violation' }
   validates :uid,
-            uniqueness: { scope: :provider, message: 'api.user_already_exist' }
+            uniqueness: { scope: :provider }
 
   has_many :members
   has_many :organizations, :through => :members

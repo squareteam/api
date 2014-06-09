@@ -1,0 +1,5 @@
+# Load a console in the context of the API
+require './api.rb'
+require 'irb'
+ARGV.clear # otherwise all script parameters get passed to IRB
+IRB.start

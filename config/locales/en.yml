@@ -1,0 +1,9 @@
+en:
+  # Default error messages
+  errors:
+    format: "%{message}.%{attribute}"
+    messages:
+      empty: "api.no_empty"
+      blank: "api.missing_attribute"
+      present: "api.must_be_blank"
+      taken: "api.already_taken"

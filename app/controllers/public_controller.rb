@@ -14,18 +14,7 @@ class PublicController < Yodatra::Base
   end
 
   put '/login' do
-    @one = User.find_by_email(params[:identifier])
-
-    # Login can potentially reset user's pbkdf and salt (if they are connected by oauth)
-    salt2 = Auth.login(@one)
-    if salt2.nil?
-      status 400
-      halt [Errors::LOGIN_FAIL].to_json
-    else
-      # Thus make sure to reload the user
-      @one = @one.reload
-      {:salt1 => @one.salt.unpack('H*').first, :salt2 => salt2.unpack('H*').first}.to_json
-    end
+    login params[:identifier]
   end
 
   post '/user' do
@@ -47,11 +36,27 @@ class PublicController < Yodatra::Base
     )
 
     if @one.save
-      @one.as_json(:except => [:pbkdf, :salt]).to_json
+      login @one.email
     else
       status 400
       @one.errors.full_messages.to_json
     end
   end
+  
+  private
 
+  def login(identifier)
+    @one = User.find_by_email(identifier)
+
+    # Login can potentially reset user's pbkdf and salt (if they are connected by oauth)
+    salt2 = Auth.login(@one)
+    if salt2.nil?
+      status 400
+      halt [Errors::LOGIN_FAIL].to_json
+    else
+      # Thus make sure to reload the user
+      @one = @one.reload
+      {:salt1 => @one.salt.unpack('H*').first, :salt2 => salt2.unpack('H*').first}.to_json
+    end
+  end
 end
