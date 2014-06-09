@@ -6,7 +6,7 @@ require 'base64'
 describe 'Squareteam authentication' do
 
   before do
-    @r = Redis.new
+    @r = Redis.new Squareteam::Application::CONFIG.redis
   end
 
   context 'when it fails the WWW-Authenticate header should explain why in case of' do
