@@ -3,13 +3,13 @@ source 'https://rubygems.org'
 gem 'rake'
 
 gem 'sinatra'
-gem 'yodatra', '>= 0.2.11'
+gem 'yodatra', '>= 0.3.0'
 
 gem 'rack-rewrite'
 gem 'rack-uploads', '0.2.1'
 
 # DB adapter
-gem 'mysql2', :group => :production
+gem 'mysql2'
 gem 'activerecord', '4.0.2'
 gem 'sinatra-activerecord', '1.4.0'
 
@@ -22,14 +22,13 @@ gem 'omniauth-github', '1.1.2'
 gem 'omniauth-behance', :github => 'popox/omniauth-behance'
 
 gem 'rspec'
-group :development, :test do
-  # DB adapter
-  gem 'sqlite3'
-
+group :development do
   # Debug
   gem 'pry'
-  gem 'pry-debugger'
+  #gem 'pry-debugger'
+end
 
+group :test do
   # Testing
   gem 'simplecov'
   gem 'rack-test', require: 'rack/test'

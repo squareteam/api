@@ -50,7 +50,7 @@ describe 'Organizations controller' do
           expect {
             post '/organization', {:name => 'swcc'}
             last_response.should_not be_ok
-            expect(last_response).to match /api.swcc_already_taken/
+            expect(last_response.body).to match /api.already_taken/
           }.not_to change(Organization, :count)
         end
       end
