@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(version: 20140603194500) do
     t.datetime "updated_at"
   end
 
-  add_index "organizations", ["name"], name: "index_organizations_on_name", unique: true
+  add_index "organizations", ["name"], name: "index_organizations_on_name", unique: true, using: :btree
 
   create_table "project_accesses", force: true do |t|
     t.string  "object_type", null: false
@@ -41,7 +41,7 @@ ActiveRecord::Schema.define(version: 20140603194500) do
     t.integer "project_id",  null: false
   end
 
-  add_index "project_accesses", ["object_id", "object_type"], name: "index_project_accesses_on_object_id_and_object_type"
+  add_index "project_accesses", ["object_id", "object_type"], name: "index_project_accesses_on_object_id_and_object_type", using: :btree
 
   create_table "projects", force: true do |t|
     t.string   "title",       limit: 125,  null: false
@@ -53,13 +53,10 @@ ActiveRecord::Schema.define(version: 20140603194500) do
 
   create_table "roles", force: true do |t|
     t.string   "name",        limit: 125,             null: false
-    t.integer  "team_id",                             null: false
     t.integer  "permissions", limit: 8,   default: 0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  add_index "roles", ["name", "team_id"], name: "index_roles_on_name_and_team_id", unique: true
 
   create_table "task_comments", force: true do |t|
     t.string   "text",       limit: 5000, null: false
@@ -69,11 +66,12 @@ ActiveRecord::Schema.define(version: 20140603194500) do
     t.datetime "updated_at"
   end
 
-  add_index "task_comments", ["task_id"], name: "index_task_comments_on_task_id"
+  add_index "task_comments", ["task_id"], name: "index_task_comments_on_task_id", using: :btree
 
   create_table "tasks", force: true do |t|
-    t.string   "title",       limit: 125,  null: false
-    t.string   "description", limit: 5000, null: false
+    t.string   "title",       limit: 125,                  null: false
+    t.string   "description", limit: 5000,                 null: false
+    t.boolean  "closed",                   default: false
     t.datetime "deadline"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -86,17 +84,18 @@ ActiveRecord::Schema.define(version: 20140603194500) do
     t.datetime "updated_at"
   end
 
-  add_index "teams", ["name", "organization_id"], name: "index_teams_on_name_and_organization_id", unique: true
-  add_index "teams", ["name"], name: "index_teams_on_name", unique: true
+  add_index "teams", ["name", "organization_id"], name: "index_teams_on_name_and_organization_id", unique: true, using: :btree
+  add_index "teams", ["name"], name: "index_teams_on_name", unique: true, using: :btree
 
   create_table "user_roles", force: true do |t|
     t.integer  "user_id",    null: false
     t.integer  "role_id",    null: false
+    t.integer  "team_id",    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "user_roles", ["user_id", "role_id"], name: "index_user_roles_on_user_id_and_role_id", unique: true
+  add_index "user_roles", ["user_id", "team_id", "role_id"], name: "index_user_roles_on_user_id_and_team_id_and_role_id", unique: true, using: :btree
 
   create_table "users", force: true do |t|
     t.string   "name",       limit: 100, default: "", null: false
@@ -109,7 +108,7 @@ ActiveRecord::Schema.define(version: 20140603194500) do
     t.string   "uid",        limit: 254, default: "", null: false
   end
 
-  add_index "users", ["email"], name: "index_users_on_email"
-  add_index "users", ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
+  add_index "users", ["email"], name: "index_users_on_email", using: :btree
+  add_index "users", ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true, using: :btree
 
 end
