@@ -13,7 +13,7 @@ describe 'Crypto' do
     @pbkdf = '46bb47131873d80ab71740876abc1e07f90c38609d570ba68d4313ef69b49460'
     @token = 'a99246bedaa6cadacaa902e190f32ec689a80a724aa4a1c198617e52460f74d1'
 
-    @redis = Redis.new
+    @redis = Redis.new Squareteam::Application::CONFIG.redis
     @redis.flushall
   end
 

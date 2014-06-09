@@ -21,9 +21,11 @@ fi
 
 # Create Database dev DB
 mysql -uroot -proot -e "CREATE DATABASE st_dev"
+mysql -uroot -proot -e "CREATE DATABASE st_test"
 
 # Create (unsafe) HelpSpot user, who can connect remotely
-mysql -uroot -proot -e "GRANT ALL PRIVILEGES ON *.* to 'st_dev'@'%' IDENTIFIED BY 'st_dev';"
+mysql -uroot -proot -e "GRANT ALL PRIVILEGES ON st_dev.* to 'st_dev'@'%' IDENTIFIED BY 'st_dev';"
+mysql -uroot -proot -e "GRANT ALL PRIVILEGES ON st_test.* to 'st_dev'@'%' IDENTIFIED BY 'st_dev';"
 
 # Shutdown MySQL
 /usr/bin/mysqladmin -uroot -proot shutdown
