@@ -2,7 +2,7 @@
 FROM swcc/docker-mysql:latest
 MAINTAINER Paul B. "paul+st@bonaud.fr"
 
-ADD ./mysql_setup.sh /etc/mysql/mysql_setup.sh
+ADD ./setup.sh /etc/mysql/mysql_setup.sh
 RUN chmod +x   /etc/mysql/mysql_setup.sh
 
 CMD /etc/mysql/mysql_setup.sh
