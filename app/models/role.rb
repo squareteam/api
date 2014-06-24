@@ -29,9 +29,15 @@ class Role::Permissions
   ADD_MISSION           = 0x20
   MANAGE_ORGANIZATION   = 0x40
   MANAGE_MISSION        = 0x80
-  # XXXX = 0x100
+
+  # XXXX    = 0x100
   # XXXX    = 0x200
   # XXXX    = 0x400
   # XXXX    = 0x800
   # XXXX    = 0x1000
+
+
+  def self.all
+    MANAGE_TEAM & ADD_PROJECT & MANAGE_PROJECTS & ADD_TASK & MANAGE_TASKS & ADD_MISSION & MANAGE_ORGANIZATION & MANAGE_MISSION
+  end
 end
