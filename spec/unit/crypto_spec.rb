@@ -57,6 +57,7 @@ describe 'Crypto' do
           'REQUEST_METHOD' => 'GET',
           'PATH_INFO' => '/users/me',
           'QUERY_STRING' => '',
+          'rack.input' => '',
           'HTTP_ST_TIMESTAMP' => '1393369116',
           'HTTP_ST_IDENTIFIER' => @identifier,
           'HTTP_ST_HASH' => '286d86d5ca50ca07d4a2e70a9831e913df82a9c550b30fd1a33a1d061e80828f',
@@ -65,7 +66,7 @@ describe 'Crypto' do
         @request = Auth::Request.new env
       end
       it 'should be a valid request' do
-        @request.valid?.should be_true
+        @request.valid?.should be_truthy
       end
     end
   end

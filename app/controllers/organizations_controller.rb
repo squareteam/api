@@ -2,9 +2,9 @@ require 'yodatra/models_controller'
 
 # API controller to serve organizations
 class OrganizationsController < Yodatra::ModelsController
-  # def read_scope
-  #   self.class.read_scope
-  # end
+  def read_scope
+    self.class.read_scope
+  end
 
   # def createWithMembers
 
