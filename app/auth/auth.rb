@@ -126,7 +126,7 @@ class Auth < Rack::Auth::AbstractHandler
     def valid?
       require 'openssl'
 
-      blob = request.form_data? ? generate_blob(request.params) : ''
+      blob = request.params.nil? ? '' : generate_blob(request.params)
 
       hmac = OpenSSL::HMAC.new(token, 'sha256')
       hmac << "#{request.request_method}:"
