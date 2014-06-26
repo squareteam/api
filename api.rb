@@ -3,6 +3,7 @@ require 'yodatra/base'
 require 'yodatra/logger'
 require 'yodatra/api_formatter'
 require 'yodatra/throttling'
+require 'rack/parser'
 
 # ############## #
 # Squareteam API #
@@ -12,7 +13,8 @@ class Api < Yodatra::Base
   config = Squareteam::Application::CONFIG
   use Yodatra::Logger
   use Yodatra::Throttle, redis_conf: config.redis
-
+  use Rack::Parser, :parsers => { 'application/json' => proc { |data| JSON.parse data } }
+  
   # Omniauth
   use Rack::Session::Redis, redis_server: config.redis, :expire_after => 30
   use ::OmniAuth::Builder do
