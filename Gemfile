@@ -6,6 +6,7 @@ gem 'sinatra'
 gem 'yodatra', '>= 0.3.0'
 
 gem 'rack-rewrite'
+gem 'rack-parser', :require => 'rack/parser'
 gem 'rack-uploads', '0.2.1'
 
 # DB adapter
