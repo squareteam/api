@@ -6,7 +6,7 @@ class OrganizationsController < Yodatra::ModelsController
     self.class.read_scope
   end
 
-  # def createWithMembers
+  # def create_with_members
 
   #   if params[:users].nil?
   #     status 400
