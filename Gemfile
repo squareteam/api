@@ -21,6 +21,9 @@ gem 'redis-rack'
 # Omniauth
 gem 'omniauth-github', '1.1.2'
 
+# Mails
+gem 'actionmailer', '4.0.2'
+
 gem 'rspec'
 group :development do
   # Debug

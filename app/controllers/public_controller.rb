@@ -1,6 +1,7 @@
 require File.expand_path 'app/auth/auth.rb'
 require File.expand_path 'app/auth/cache.rb' # for forgotPassword tokens
 require File.expand_path 'app/api/errors.rb'
+require File.expand_path 'app/mailers/user_mailer.rb' # forgotPassword mail
 require 'yodatra/crypto'
 require 'digest/sha1'
 
@@ -63,7 +64,13 @@ class PublicController < Yodatra::Base
 
     cache.set("forgotPassword:#{token}", 300, user.id)
 
-    token.to_json
+    if UserMailer.forgot_password(user, token).deliver
+      'forgotPassword.emailSent'.to_json
+    else
+      # TODO
+      status 500
+      'api.unavailable'.to_json
+    end
 
   end
 
