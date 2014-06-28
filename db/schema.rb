@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140603194500) do
+ActiveRecord::Schema.define(version: 20140628180700) do
 
   create_table "knowledges", force: true do |t|
     t.string   "title",      limit: 100
@@ -28,9 +28,10 @@ ActiveRecord::Schema.define(version: 20140603194500) do
   end
 
   create_table "organizations", force: true do |t|
-    t.string   "name",       limit: 125, null: false
+    t.string   "name",          limit: 125,             null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "admin_team_id",             default: 0
   end
 
   add_index "organizations", ["name"], name: "index_organizations_on_name", unique: true, using: :btree
