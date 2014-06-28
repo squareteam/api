@@ -20,9 +20,8 @@ class Organization < ActiveRecord::Base
       permissions: Role::Permissions::all,
     )
 
-    # Create member team
-    members_team = Team.create(name: "Members", organization: self)
-    Role.create(name: "Members", permissions: Role::Permissions::ADD_TASK)
+    self.admin_team_id = admins_team.id
+    self.save
   end
 
 
