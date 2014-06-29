@@ -99,4 +99,115 @@ describe 'Public controller' do
     end
   end
 
+  describe 'forgot password process' do
+    before do
+      @r = Redis.new Squareteam::Application::CONFIG.redis
+    end
+
+    describe 'when requesting a token' do
+      before do
+        Squareteam::Application::CONFIG.app_url = '' # for UserMailer
+      end
+
+      context 'without email param' do
+        it 'should respond "400 Bad Request"' do
+
+          post "/forgotPassword"
+
+          expect last_response.should_not be_ok
+          expect(last_response.body).to match("api.unauthorized".to_json)
+        end
+      end
+
+      context 'with invalid email' do
+        it 'should respond "400 Bad Request"' do
+
+          post "/forgotPassword", {:email => "notexistent@user.com"}
+
+          expect last_response.should_not be_ok
+          expect(last_response.body).to match("api.not_found".to_json)
+        end
+      end
+
+      context 'with a valid email' do
+        it 'should create a token and sent it to the given email' do
+          User.create(email:"test@forgot.com", pbkdf:"test", salt:"test")
+          SecureRandom.stub(:hex).and_return("abcd")
+
+          post "/forgotPassword", { :email => "test@forgot.com"}
+
+          allow_any_instance_of(UserMailer).to receive(:forgot_password?).with(an_instance_of(User), "forgotPassword:abcd")
+          expect last_response.should be_ok
+          expect(@r.get('forgotPassword:abcd').nil?).to equal(false)
+        end
+      end
+
+      after do
+        User.destroy_all
+      end
+
+    end
+
+    describe 'when changing password' do
+
+      context 'with a no token param' do
+        it 'should respond "400 Bad Request"' do
+          post "/forgotPassword/change", {:password => "test"}
+
+          expect last_response.should_not be_ok
+          expect(last_response.body).to match("api.unauthorized".to_json)
+        end
+      end
+
+      context 'with a no password param' do
+        it 'should respond "400 Bad Request"' do
+          post "/forgotPassword/change", {:token => "abcd"}
+
+          expect last_response.should_not be_ok
+          expect(last_response.body).to match("api.unauthorized".to_json)
+        end
+      end
+
+      context 'with a invalid token' do
+        it 'should respond "404 Not Found"' do
+          post "/forgotPassword/change", {:token => "abcd", :password => "mynewpassword"}
+
+          expect last_response.should_not be_ok
+          expect(last_response.body).to match("api.not_found".to_json)
+        end
+      end
+
+      context 'with a token referencing a not existent user' do
+        it 'should respond "404 Not Found"' do
+          @r.set('forgotPassword:abcd', 13)
+
+          post "/forgotPassword/change", {:token => "abcd", :password => "mynewpassword"}
+
+          expect last_response.should_not be_ok
+          expect(last_response.body).to match("api.not_found".to_json)
+        end
+      end
+
+      # context 'with a valid token' do
+
+      #   user = User.create(
+      #     :uid => "fdsfdsfdsfds",
+      #     :provider => 'squareteam',
+      #     :email => "test@changepassword.com",
+      #     :pbkdf => "pbkdf",
+      #     :salt => "salt",
+      #     :name => "Mr. change password"
+      #   )
+      #   @r.set('forgotPassword:abcd', user.id)
+
+      #   post "/forgotPassword/change", { :email => "test@changepassword.com", token => "forgotPassword:abcd"}
+
+      #   expect last_response.should be_ok
+      #   # TODO: check that password has been changed
+      # end
+
+    end
+
+  end
+
 end
