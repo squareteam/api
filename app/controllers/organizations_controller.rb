@@ -8,33 +8,32 @@ class OrganizationsController < Yodatra::ModelsController
 
 
   post '/organizations/with_admins' do
-    if params[:admins].nil?
+    if !params[:admins].nil?
       status 400
-      content_type 'application/json'
       [Errors::NO_ROUTE].to_json
-    end
-
-    organization = Organization.new(organization_params)
-
-    if organization.save
-
-      team  = Team.find_by_id(organization.admin_team_id)
-
-      admin_role = Role.create(
-        name: "Admin",
-        permissions: Role::Permissions::all,
-      )
-
-      params[:admins].each do |user_id|
-        UserRole.create(user_id: user_id, role: admin_role, :team => team)
-      end
-
-      status 200
-      'organization.created'.to_json
-
     else
-      status 400
-      organization.errors.full_messages.to_json
+      organization = Organization.new(organization_params)
+
+      if organization.save
+
+        team  = Team.find_by_id(organization.admin_team_id)
+
+        admin_role = Role.create(
+          name: "Admin",
+          permissions: Role::Permissions::all,
+        )
+
+        params[:admins].each do |user_id|
+          UserRole.create(user_id: user_id, role: admin_role, :team => team)
+        end
+
+        status 200
+        'organization.created'.to_json
+
+      else
+        status 400
+        organization.errors.full_messages.to_json
+      end
     end
   end
 
