@@ -90,7 +90,7 @@ class PublicController < Yodatra::Base
       halt [Errors::NOT_FOUND].to_json
     end
 
-    user = User.find(user_id)
+    user = User.find_by_id(user_id)
 
     if user.nil?
       status 404
