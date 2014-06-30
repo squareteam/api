@@ -5,4 +5,5 @@ class Errors
   NO_ROUTE = 'api.no_route'
   NOT_FOUND = 'api.not_found'
   UNAUTHORIZED = 'api.unauthorized'
+  BAD_REQUEST = 'api.bad_request'
 end
