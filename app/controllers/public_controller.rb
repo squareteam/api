@@ -1,7 +1,7 @@
 require File.expand_path 'app/auth/auth.rb'
-require File.expand_path 'app/auth/cache.rb' # for forgotPassword tokens
-require File.expand_path 'app/api/errors.rb'
-require File.expand_path 'app/mailers/user_mailer.rb' # forgotPassword mail
+require File.expand_path 'app/auth/cache.rb'
+require File.expand_path 'app/api/errors.rb' # Load auto with Yodatra?
+require File.expand_path 'app/mailers/user_mailer.rb' # Load auto with Yodatra?
 require 'yodatra/crypto'
 require 'digest/sha1'
 
@@ -9,6 +9,7 @@ class PublicController < Yodatra::Base
 
   before do
     content_type 'application/json'
+    @cache = Cache.new
   end
 
   get '/' do
@@ -44,12 +45,12 @@ class PublicController < Yodatra::Base
       @one.errors.full_messages.to_json
     end
   end
-  
-  post '/forgotPassword' do
 
-    if params[:email].nil?
+  post '/forgot_password' do
+
+    if params[:email].blank?
       status 400
-      halt [Errors::UNAUTHORIZED].to_json # TODO : change
+      halt [Errors::BAD_REQUEST].to_json
     end
 
     user = User.find_by_email(params[:email])
@@ -59,13 +60,12 @@ class PublicController < Yodatra::Base
       halt [Errors::NOT_FOUND].to_json
     end
 
-    cache = Cache.new
     token = SecureRandom.hex
 
-    cache.set("forgotPassword:#{token}", 300, user.id)
+    @cache.set "#{token}:FORGOT_TOKEN", 300, user.id
 
     if UserMailer.forgot_password(user, token).deliver
-      'forgotPassword.emailSent'.to_json
+      'ok'.to_json
     else
       # TODO
       status 500
@@ -74,18 +74,17 @@ class PublicController < Yodatra::Base
 
   end
 
-  post '/forgotPassword/change' do
+  post '/forgot_password/change' do
 
     if params[:token].nil? || params[:password].nil?
       status 400
-      halt [Errors::UNAUTHORIZED].to_json # TODO : change
+      halt [Errors::BAD_REQUEST].to_json
     end
 
-    cache = Cache.new
-
-    user_id = cache.get("forgotPassword:#{params[:token]}")
+    user_id = @cache.get "#{params[:token]}:FORGOT_TOKEN"
 
     if user_id.nil?
+      # To follow eventually (attack?)
       status 404
       halt [Errors::NOT_FOUND].to_json
     end
@@ -98,20 +97,20 @@ class PublicController < Yodatra::Base
     end
 
     salt, pbkdf = Yodatra::Crypto.generate_pbkdf(params[:password])
-    
+
     user.pbkdf  = pbkdf
     user.salt   = salt
 
     if user.save
-      cache.rm_cache("forgotPassword:#{params[:token]}")
-      cache.rm_cache "#{user.email}:SALT2"
-      cache.rm_cache "#{user.email}:TOKEN"
+      @cache.rm_cache "#{params[:token]}:FORGOT_TOKEN"
+      @cache.rm_cache "#{user.email}:SALT2"
+      @cache.rm_cache "#{user.email}:TOKEN"
 
-      'forgotPassword.changed'.to_json
+      'ok'.to_json
     else
       # TODO
       status 500
-      'api.unavailable'.to_json
+      ['api.unavailable'].to_json
     end
 
   end
