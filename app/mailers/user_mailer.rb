@@ -12,7 +12,7 @@ class UserMailer < ActionMailer::Base
 
    def forgot_password(user, token)
       @user = user
-      @change_password_link = "#{Squareteam::Application::CONFIG.app_url}/#/forgotPassword/change/#{token}"
+      @change_password_link = "#{Squareteam::Application::CONFIG.app_url}/#/forgot_password/change/#{token}"
 
       mail(:to => user.email, :from => "noreply@squareteam.io", :subject => "Squareteam - Change password request") do |format|
         format.html
