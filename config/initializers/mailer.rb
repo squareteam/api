@@ -21,7 +21,8 @@ Squareteam::Application.configure do |config|
   # TODO: separate by RACK_ENV
   mailer = YAML.load(ERB.new(File.read(File.dirname(__FILE__) + "/../mailer.yml")).result).symbolize_keys
   mailer.each do |key, value|
-    base.send("#{key}=", value)
+    is_hash = value.respond_to? :symbolize_keys
+    base.send("#{key}=", is_hash ? value.symbolize_keys : value)
   end
 end
 
