@@ -1,0 +1,67 @@
+.global_wrapper {
+  background: transparent url("http://squareteam-integration.s3-website-eu-west-1.amazonaws.com/mails/images/bg.jpg");
+  width: 100%;
+  height: 100%;
+}
+.global_wrapper .header, .global_wrapper .footer, .global_wrapper .main {
+  width: 470px;
+  margin: 0 auto;
+}
+.global_wrapper .header {
+  margin-bottom: 45px;
+}
+.global_wrapper .header div#logo {
+  margin-top: 42px;
+}
+.global_wrapper .header div#logo img {
+  display: block;
+  margin: 0 auto;
+  max-width: 250px;
+}
+.global_wrapper .main {
+  box-shadow: 0 0 15px #ddd;
+}
+.global_wrapper .main .main_header h1 {
+  background: #3e5c6d;
+  height: 75px;
+  text-align: center;
+  margin: 0;
+  font-size: 18px;
+  line-height: 75px;
+  color: white;
+  font-weight: normal;
+  font-family: Avenir;
+  -webkit-border-radius: 4px 4px 0 0;
+  -moz-border-radius: 4px 4px 0 0;
+  -khtml-border-radius: 4px 4px 0 0;
+  border-radius: 4px 4px 0 0;
+}
+.global_wrapper .main .main_content td {
+  background: #fff;
+  -webkit-border-radius: 0 0 4px 4px;
+  -moz-border-radius: 0 0 4px 4px;
+  -khtml-border-radius: 0 0 4px 4px;
+  border-radius: 0 0 4px 4px;
+  padding: 20px 20px;
+}
+.global_wrapper .main .main_content td p {
+  font-size: 16px;
+  line-height: 21px;
+  color: #96b2ba;
+  font-weight: normal;
+  font-family: Avenir;
+  padding: 0 10px;
+  text-align: left;
+}
+.global_wrapper .footer {
+  font-size: 10px;
+  line-height: 21px;
+  color: #96b2ba;
+  font-weight: normal;
+  font-family: Avenir;
+  padding: 10px 0;
+  text-align: center;
+}
+.global_wrapper .clear {
+  clear: both;
+}
