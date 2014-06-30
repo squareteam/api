@@ -1,4 +1,5 @@
 require 'action_mailer'
+require 'inline-style'
 
 # TODO : add mailer logger
 Squareteam::Application.configure do |config|
@@ -23,3 +24,6 @@ Squareteam::Application.configure do |config|
     base.send("#{key}=", value)
   end
 end
+
+ActionMailer::Base.register_interceptor \
+  InlineStyle::Mail::Interceptor.new(:stylesheets_path => File.expand_path('../../../public/stylesheets', __FILE__))
