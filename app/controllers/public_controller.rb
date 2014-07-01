@@ -39,6 +39,7 @@ class PublicController < Yodatra::Base
     )
 
     if @one.save
+      UserMailer.account_creation(@one).deliver
       login @one.email
     else
       status 400
