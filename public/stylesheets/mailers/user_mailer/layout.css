@@ -15,7 +15,7 @@
 }
 .global_wrapper .header div#logo img {
   display: block;
-  margin: 0 auto;
+  margin: 10px auto;
   max-width: 250px;
 }
 .global_wrapper .main {
