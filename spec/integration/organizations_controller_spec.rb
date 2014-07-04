@@ -61,6 +61,34 @@ describe 'Organizations controller' do
       end
     end
 
+    describe 'POST /organizations/with_admins' do
+      context 'without admins params' do
+        before do
+          Organization.destroy_all
+        end
+        it 'responds "400 Bad Request" if no admins given' do
+          expect {
+            post '/organizations/with_admins', {:name => 'swcc'}
+            last_response.should_not be_ok
+          }.not_to change(Organization, :count)
+        end
+      end
+      context 'create organization and add given users to "Admins" team' do
+        before do
+          Organization.destroy_all
+          UserRole.destroy_all
+        end
+        it 'create organization and add given users to "Admins" team' do
+          expect {
+            post '/organizations/with_admins', {:name => 'swcc', :admins => [1]}
+            last_response.should be_ok
+          }.to change(Team, :count).by(1)
+          expect(Organization.count).to equal(1)
+          expect(UserRole.count).to equal(1)
+        end
+      end
+    end
+
 
     # DEPRECATED since user - organization use 3 tables, will throw a 
     # "Cannot modify association 'User#organizations' because it goes through more than one other association."
