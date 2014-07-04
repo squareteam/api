@@ -8,7 +8,7 @@ class OrganizationsController < Yodatra::ModelsController
 
 
   post '/organizations/with_admins' do
-    if !params[:admins].nil?
+    if params[:admins].nil?
       status 400
       [Errors::NO_ROUTE].to_json
     else
