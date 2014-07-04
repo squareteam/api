@@ -6,21 +6,38 @@ class OrganizationsController < Yodatra::ModelsController
     self.class.read_scope
   end
 
-  # def create_with_members
 
-  #   if params[:users].nil?
-  #     status 400
-  #     content_type 'application/json'
-  #     [Errors::NO_ROUTE].to_json
-  #   end
+  post '/organizations/with_admins' do
+    if params[:admins].blank?
+      status 400
+      [Errors::NO_ROUTE].to_json
+    else
+      organization = Organization.new(organization_params)
 
-  #   admin_role = 
+      if organization.save
+        team  = Team.find_by_id(organization.admin_team_id)
 
-  #   params[:users].each do |user|
-  #     UserRole.create(user_id: user[:id], role: user[:admin] ? admin_role : member_role)
-  #   end
-    
-  # end
+        admin_role = Role.create(
+          name: 'Admin',
+          permissions: Role::Permissions::all
+        )
+
+        params[:admins].each do |user_id|
+          UserRole.create(
+            user_id: user_id,
+            role: admin_role,
+            team: team
+          )
+        end
+
+        organization.as_json(read_scope).to_json
+      else
+        status 400
+        organization.errors.full_messages.to_json
+      end
+    end
+  end
+
 
   def organization_params
     params.select { |k, v| ["teams_attributes", "users_attributes", "name"].include?(k) }
