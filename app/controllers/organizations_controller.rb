@@ -17,16 +17,11 @@ class OrganizationsController < Yodatra::ModelsController
       if organization.save
         team  = Team.find_by_id(organization.admin_team_id)
 
-        admin_role = Role.create(
-          name: 'Admin',
-          permissions: Role::Permissions::all
-        )
-
         params[:admins].each do |user_id|
           UserRole.create(
             user_id: user_id,
-            role: admin_role,
-            team: team
+            team: team,
+            permissions: UserRole::Permissions::all
           )
         end
 
@@ -46,7 +41,7 @@ class OrganizationsController < Yodatra::ModelsController
   class << self
     def read_scope
       {
-        only: [:id, :name],
+        only: [:id, :name, :admin_team_id],
         include: {
           users: UsersController.read_scope#,
           # admins: UsersController.read_scope

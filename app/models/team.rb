@@ -7,4 +7,14 @@ class Team < ActiveRecord::Base
   belongs_to :organization
 
   accepts_nested_attributes_for :users, :user_roles
+
+  before_destroy :admin_team_cannot_be_destroyed
+
+  def admin_team_cannot_be_destroyed
+    if self.organization.admin_team_id == self.id
+      errors[:base] << "admin team cannot be deleted"
+      return false
+    end
+    return true
+  end
 end

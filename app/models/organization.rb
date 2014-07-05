@@ -15,11 +15,6 @@ class Organization < ActiveRecord::Base
   def create_admins_team
     # Create Admin team with all rights
     admins_team  = Team.create(name: "Admin", organization: self)
-    admin_role   = Role.create(
-      name: "Admin",
-      permissions: Role::Permissions::all,
-    )
-
     self.admin_team_id = admins_team.id
     self.save
   end
