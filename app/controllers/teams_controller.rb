@@ -7,7 +7,8 @@ class TeamsController < Yodatra::ModelsController
 
   # Receive data as shown below :
   #   {
-  #     'permissions' : 128
+  #     'permissions' : 128,
+  #     'user_id'     : 1
   #   }
   post '/teams/:id/users' do
     team = Team.find_by_id(params[:id])
