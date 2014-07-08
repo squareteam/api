@@ -8,7 +8,7 @@ describe 'Organizations controller' do
     before do
       Organization.destroy_all
       Team.destroy_all
-      Role.destroy_all
+      UserRole.destroy_all
 
       @user = User.last || User.create(:email => 'test@test.fr', :pbkdf => 'fff', :salt => 'fff')
 
