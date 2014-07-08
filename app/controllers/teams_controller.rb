@@ -5,27 +5,53 @@ require 'yodatra/models_controller'
 class TeamsController < Yodatra::ModelsController
   disable :read_all
 
-  # Return team data + linked user_roles data
-  get '/teams/:id/extended' do
-    @one = Team.find_by_id(params[:id])
-    if @one.nil?
+  # Receive data as shown below :
+  #   {
+  #     'permissions' : 128
+  #   }
+  post '/teams/:id/users' do
+    team = Team.find_by_id(params[:id])
+    user = User.find_by_id(params[:user_id])
+
+    if team.nil? || user.nil? || params[:permissions].nil?
       status 400
-      [Errors::NOT_FOUND].to_json
+      [Errors::BAD_REQUEST].to_json
     else
-      @one.as_json(extended_read_scope).to_json
+      role = UserRole.new(
+        :user_id => user.id,
+        :team_id => team.id,
+        :permissions => params[:permissions].to_i
+      )
+      if role.save
+        status 201
+        'ok'.to_json
+      else
+        status 400
+        role.errors.to_json
+      end
     end
   end
 
-  post '/teams/:id/users' do
-    
-  end
+  # Receive data as shown below :
+  #   {
+  #     'permissions' : 128
+  #   }
+  put '/teams/:id/user_role/:user_id' do
+    team = Team.find_by_id(params[:id])
+    if team.nil?
+      status 400
+      [Errors::BAD_REQUEST].to_json
+    else
 
-  put '/teams/:id/users/:user_id' do
-    
+    end
   end
 
   delete '/teams/:id/users/:user_id' do
-    
+    # TODO
+  end
+
+  get '/teams/:id/users/:user_id' do
+    # TODO
   end
 
   def read_scope
@@ -38,19 +64,13 @@ class TeamsController < Yodatra::ModelsController
 
   class << self
     def read_scope
-      { only: [:id, :name] }
+      {
+        only: [:id, :name],
+        include: {
+          users: UsersController.read_scope
+        }
+      }
     end
   end
 
-  private
-
-  def extended_read_scope
-    {
-      only: [:id, :name],
-      include: {
-        users: UsersController.read_scope#,
-        #user_roles: [:id, :user_id, :team_id, :permissions]
-      }
-    }
-  end
 end
