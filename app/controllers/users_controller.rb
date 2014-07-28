@@ -14,11 +14,6 @@ class UsersController < Yodatra::ModelsController
     end
   end
 
-  get '/user/search' do
-    # TODO(charly): make more secure ...
-    User.where("name LIKE '%#{params[:query]}%'").as_json(read_scope).to_json
-  end
-
   def read_scope
     self.class.read_scope
   end
