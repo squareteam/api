@@ -31,7 +31,6 @@ ActiveRecord::Schema.define(version: 20140705153400) do
     t.string   "name",          limit: 125,             null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "admin_team_id",             default: 0
   end
 
   add_index "organizations", ["name"], name: "index_organizations_on_name", unique: true, using: :btree
