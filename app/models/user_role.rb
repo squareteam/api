@@ -1,5 +1,5 @@
 class UserRole < ActiveRecord::Base
-  validates_presence_of :user, :permissions
+  validates_presence_of :user, :team, :permissions
   validates_uniqueness_of :user, scope: [:team]
 
   belongs_to :user
