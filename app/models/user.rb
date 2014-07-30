@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
 
   has_many :user_roles
   has_many :teams, :through => :user_roles
-  has_many :organizations, :through => :teams
+  has_many :organizations, -> { uniq }, :through => :teams
 
   accepts_nested_attributes_for :user_roles, :teams
 
