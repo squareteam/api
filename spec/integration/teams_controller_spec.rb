@@ -50,46 +50,6 @@ describe 'Teams controller' do
 
     end
 
-    describe 'user_role endpoints' do
-
-      before do
-        @team = Team.create(organization: @organization, name:'developers')
-        @user_role = UserRole.create(user_id: @user.id, team: @team, permissions: 0)
-      end
-
-      context 'POST a user in a team' do
-        it 'create the user_role record' do
-
-          expect {
-            post "teams/#{@team.id}/users", {:permissions => 0, :user_id => @user.id}
-            last_response.should be_ok
-          }.to change(UserRole, :count)
-
-        end
-      end
-
-      context 'PUT a user in a team' do
-        it 'update the user_role record' do
-
-          put "teams/#{@team.id}/users/#{@user_role.id}", { :permissions => 2 }
-          last_response.should be_ok
-          expect(@user_role.permissions).to equal(2)
-
-        end
-      end
-
-      context 'DELETE a user in a team' do
-        it 'remove the user_role record' do
-
-          expect {
-            delete "teams/#{@team.id}/users/#{@user_role.id}"
-            last_response.should be_ok
-          }.to change(UserRole, :count)
-
-        end
-      end
-
-    end
   end
 
 end
