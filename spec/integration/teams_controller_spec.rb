@@ -10,7 +10,7 @@ describe 'Teams controller' do
       Team.destroy_all
       UserRole.destroy_all
 
-      @user = User.last || User.create(:email => 'test@test.fr', :pbkdf => 'fff', :salt => 'fff')
+      @user = User.easy_create(name: 'test', email: 'test@test.fr', password: 'fff')
 
       @organization = Organization.create(:name => 'test')
 
@@ -54,7 +54,7 @@ describe 'Teams controller' do
 
       before do
         @team = Team.create(organization: @organization, name:'developers')
-        @user_role = UserRole.last || UserRole.create(user: @user, team: @team, permissions: 0)
+        @user_role = UserRole.create(user_id: @user.id, team: @team, permissions: 0)
       end
 
       context 'POST a user in a team' do

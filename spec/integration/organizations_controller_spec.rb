@@ -62,7 +62,7 @@ describe 'Organizations controller' do
     end
 
     describe 'POST /organizations/with_admins' do
-      context 'without admins params' do
+      context 'without admins_ids params' do
         before do
           Organization.destroy_all
         end
@@ -79,8 +79,10 @@ describe 'Organizations controller' do
           UserRole.destroy_all
         end
         it 'create organization and add given users to "Admins" team' do
+          u = User.easy_new(name: 'test', email: 'test@example.com', password: 'yo')
+          u.save
           expect {
-            post '/organizations/with_admins', {:name => 'swcc', :admins => [1]}
+            post '/organizations/with_admins', {:name => 'swcc', :admins_ids => [u.id]}
             last_response.should be_ok
           }.to change(Team, :count).by(1)
           expect(Organization.count).to equal(1)
