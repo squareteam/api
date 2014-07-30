@@ -8,21 +8,20 @@ class OrganizationsController < Yodatra::ModelsController
 
 
   post '/organizations/with_admins' do
-    if params[:admins].blank?
+    if params[:admins_ids].blank?
       status 400
       [Errors::NO_ROUTE].to_json
     else
       organization = Organization.new(organization_params)
 
       if organization.save
-        team  = Team.find_by_id(organization.admin_team_id)
+        params[:admins_ids].each do |user_id|
+          unless User.exists? user_id
+            status 400
+            return ["Is user #{user_id} real?"].to_json
+          end
 
-        params[:admins].each do |user_id|
-          UserRole.create(
-            user_id: user_id,
-            team: team,
-            permissions: UserRole::Permissions::all
-          )
+          organization.add_admin user_id
         end
 
         organization.as_json(read_scope).to_json

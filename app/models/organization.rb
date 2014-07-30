@@ -15,5 +15,14 @@ class Organization < ActiveRecord::Base
     Team.create(name: "Admin", organization: self)
   end
 
+  def add_admin user_or_user_id
+    user_id = user_or_user_id.is_a?(User) ? user_or_user_id.id : user_or_user_id
+    UserRole.create(
+      user_id: user_id,
+      team: admins_team,
+      permissions: UserRole::Permissions::all
+    )
+  end
+
   accepts_nested_attributes_for :users, :teams
 end
