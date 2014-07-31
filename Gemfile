@@ -36,4 +36,5 @@ group :test do
   # Testing
   gem 'simplecov'
   gem 'rack-test', require: 'rack/test'
+  gem 'ci_reporter_rspec'
 end

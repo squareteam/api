@@ -5,6 +5,7 @@ require File.expand_path '../api', __FILE__
 
 require 'sinatra/activerecord/rake'
 require 'rspec/core/rake_task'
+require 'ci/reporter/rake/rspec'
 
 RSpec::Core::RakeTask.new do |task|
   task.rspec_opts = ["-c", "-f progress", "-r ./spec/spec_helper.rb"]
@@ -28,4 +29,5 @@ task :console do
   IRB.start
 end
 
+task :spec => 'ci:setup:rspec'
 task :default => :spec
