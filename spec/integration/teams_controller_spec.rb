@@ -27,7 +27,7 @@ describe 'Teams controller' do
         expect {
           post "/organizations/#{@organization.id}/teams", {:name => 'developers'}
           last_response.should be_ok
-        }.to change(Team, :count)
+        }.to change(Team, :count).by(1)
         expect(last_response.body).to include(Team.last.to_json(TeamsController.read_scope))
 
       end
