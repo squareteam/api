@@ -26,17 +26,7 @@ class PublicController < Yodatra::Base
       halt [Errors::NO_PASSWORD_PROVIDED].to_json
     end
 
-    salt, pbkdf = Yodatra::Crypto.generate_pbkdf(params[:password])
-    email = params[:identifier]||params[:email]
-    uid = email.nil? ? nil : Digest::SHA1.hexdigest(email)
-    @one = User.new(
-      :uid => uid,
-      :provider => 'squareteam',
-      :email => email,
-      :pbkdf => pbkdf,
-      :salt => salt,
-      :name => params[:name]
-    )
+    @one = User.easy_new params
 
     if @one.save
       UserMailer.account_creation(@one).deliver

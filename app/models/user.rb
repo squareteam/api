@@ -8,9 +8,29 @@ class User < ActiveRecord::Base
 
   has_many :user_roles
   has_many :teams, :through => :user_roles
-  has_many :organizations, :through => :teams
+  has_many :organizations, -> { uniq }, :through => :teams
 
   accepts_nested_attributes_for :user_roles, :teams
+
+  def self.easy_new params
+    salt, pbkdf = Yodatra::Crypto.generate_pbkdf(params[:password])
+    email = params[:identifier]||params[:email]
+    uid = email.nil? ? nil : Digest::SHA1.hexdigest(email)
+    User.new(
+      :uid => uid,
+      :provider => 'squareteam',
+      :email => email,
+      :pbkdf => pbkdf,
+      :salt => salt,
+      :name => params[:name]
+    )
+  end
+
+  def self.easy_create params
+    a_user = easy_new params
+    a_user.save
+    a_user
+  end
 
   # @ensure !token.blank?
   def oauth_login(token)
