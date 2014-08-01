@@ -73,7 +73,6 @@ describe 'Squareteam authentication' do
       before do
         Organization.destroy_all
         Team.destroy_all
-        Role.destroy_all
       end
       it 'should succeed' do
         @r.set "#{@identifier}:TOKEN", [@token].pack('H*')

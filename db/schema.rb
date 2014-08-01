@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140628180700) do
+ActiveRecord::Schema.define(version: 20140705153400) do
 
   create_table "knowledges", force: true do |t|
     t.string   "title",      limit: 100
@@ -31,7 +31,6 @@ ActiveRecord::Schema.define(version: 20140628180700) do
     t.string   "name",          limit: 125,             null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "admin_team_id",             default: 0
   end
 
   add_index "organizations", ["name"], name: "index_organizations_on_name", unique: true, using: :btree
@@ -48,13 +47,6 @@ ActiveRecord::Schema.define(version: 20140628180700) do
     t.string   "title",       limit: 125,  null: false
     t.string   "description", limit: 5000, null: false
     t.datetime "deadline"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "roles", force: true do |t|
-    t.string   "name",        limit: 125,             null: false
-    t.integer  "permissions", limit: 8,   default: 0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -86,17 +78,16 @@ ActiveRecord::Schema.define(version: 20140628180700) do
   end
 
   add_index "teams", ["name", "organization_id"], name: "index_teams_on_name_and_organization_id", unique: true, using: :btree
-  add_index "teams", ["name"], name: "index_teams_on_name", unique: true, using: :btree
 
   create_table "user_roles", force: true do |t|
-    t.integer  "user_id",    null: false
-    t.integer  "role_id",    null: false
-    t.integer  "team_id",    null: false
+    t.integer  "user_id",                           null: false
+    t.integer  "team_id",                           null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "permissions", limit: 8, default: 0, null: false
   end
 
-  add_index "user_roles", ["user_id", "team_id", "role_id"], name: "index_user_roles_on_user_id_and_team_id_and_role_id", unique: true, using: :btree
+  add_index "user_roles", ["user_id", "team_id"], name: "index_user_roles_on_user_id_and_team_id_and_role_id", unique: true, using: :btree
 
   create_table "users", force: true do |t|
     t.string   "name",       limit: 100, default: "", null: false
