@@ -49,13 +49,13 @@ class User < ActiveRecord::Base
       u.email = auth.info.email
       u.name = auth.info.name
     end
-    user.pbkdf = SecureRandom.random_bytes(8) # Invalid as we will recalculate at login time
-    user.salt = SecureRandom.random_bytes(8) # Invalid as we will recalculate at login time
 
-    if user.save
-      user
-    else
-      nil
+    if user.new_record?
+      user.pbkdf = SecureRandom.random_bytes(8) # Invalid as we will recalculate at login time
+      user.salt = SecureRandom.random_bytes(8) # Invalid as we will recalculate at login time
     end
+
+    user.save
+    user
   end
 end
