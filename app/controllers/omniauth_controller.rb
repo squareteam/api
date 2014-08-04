@@ -12,17 +12,27 @@ class OmniauthController < Sinatra::Base
     one = User.send "find_or_create_from_#{params[:provider]}", auth_hash
     url = Squareteam::Application::CONFIG.app_url
     if one.nil?
-      path = '/#/register?'
+      path = '/#/register'
     else
-      identifier = one.email
-      oauth_token = auth_hash.credentials.token
-      # Validity of the oauth_token is OAUTH_TIMEOUT
-      Auth.cache.set "#{identifier}:OAUTH", OAUTH_TIMEOUT, oauth_token
-      response.set_cookie 'st.oauth', value: oauth_token, expires: Time.now + OAUTH_TIMEOUT, path: '/'
-      path = "/#/login?email=#{identifier}&"
+      if one.valid?
+        oauth_token = auth_hash.credentials.token
+        # Validity of the oauth_token is OAUTH_TIMEOUT
+        Auth.cache.set "#{identifier}:OAUTH", OAUTH_TIMEOUT, oauth_token
+        response.set_cookie 'st.oauth', value: oauth_token, expires: Time.now + OAUTH_TIMEOUT, path: '/'
+      else
+        one = User.find_by_email(one.email)
+      end
+
+      if one.nil?
+        path = "/#/error?msg=#{one.errors}"
+      else
+        identifier = one.email
+        provider = one.provider
+        path = "/#/login?email=#{identifier}&provider=#{provider}"
+      end
     end
 
-    redirect "#{url}#{path}provider=#{params[:provider]} "
+    redirect "#{url}#{path}"
   end
 
   private
