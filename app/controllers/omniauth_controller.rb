@@ -15,6 +15,7 @@ class OmniauthController < Sinatra::Base
       path = '/#/register'
     else
       if one.valid?
+        identifier = one.email
         oauth_token = auth_hash.credentials.token
         # Validity of the oauth_token is OAUTH_TIMEOUT
         Auth.cache.set "#{identifier}:OAUTH", OAUTH_TIMEOUT, oauth_token
