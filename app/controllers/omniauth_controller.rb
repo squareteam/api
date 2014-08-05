@@ -20,15 +20,15 @@ class OmniauthController < Sinatra::Base
         Auth.cache.set "#{identifier}:OAUTH", OAUTH_TIMEOUT, oauth_token
         response.set_cookie 'st.oauth', value: oauth_token, expires: Time.now + OAUTH_TIMEOUT, path: '/'
       else
-        one = User.find_by_email(one.email)
+        one = User.find_by_email(one.email) if one.email
       end
 
-      if one.nil?
-        path = "/#/error?msg=#{one.errors}"
-      else
+      if one && one.valid?
         identifier = one.email
         provider = one.provider
         path = "/#/login?email=#{identifier}&provider=#{provider}"
+      else
+        path = "/#/error?messages=#{one.errors.messages}"
       end
     end
 
