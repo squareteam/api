@@ -14,7 +14,7 @@ class Api < Yodatra::Base
   use Yodatra::Logger
   use Yodatra::Throttle, redis_conf: config.redis
   use Rack::Parser, :parsers => { 'application/json' => proc { |data| JSON.parse data } }
-  
+
   # Omniauth
   use Rack::Session::Redis, redis_server: config.redis, :expire_after => 30
   use ::OmniAuth::Builder do
@@ -46,6 +46,7 @@ class Api < Yodatra::Base
   use OrganizationsController
   use TeamsController
   use PrivateController
+  use SearchController
 
   NO_ROUTE_PROC = lambda do
     status 400

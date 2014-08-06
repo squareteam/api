@@ -8,6 +8,8 @@ class Organization < ActiveRecord::Base
   has_many :users, through: :user_roles
   has_one :admins_team, -> { where(name: 'Admin') }, class_name: 'Team'
 
+  accepts_nested_attributes_for :users, :teams
+
   after_create :create_admins_team
 
   # When creating an organization, attach a default team: Admins
@@ -24,5 +26,23 @@ class Organization < ActiveRecord::Base
     )
   end
 
-  accepts_nested_attributes_for :users, :teams
+  # Search for an Organization
+  # @param params can be a Hash of attributes to search on Organization
+  # or a String
+  # @param one whether to return one record or a list of possible match
+  # @param limit number whether to limit the results or not
+  def search(params, one, limit)
+    results = []
+    if params.is_a? Hash
+      matches = []
+      params.each do |k,v|
+        matches << arel_table[k].matches("%#{v}%")
+      end
+      results = where(matches.reduce(:or)).limit(limit || one && 1)
+    elsif params.is_a? String
+      results = where(arel_table[:name].matches("%#{params}%")).limit(limit || one && 1)
+    end
+
+    one.nil? ? results : results.first
+  end
 end
