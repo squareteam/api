@@ -28,7 +28,7 @@ ActiveRecord::Schema.define(version: 20140705153400) do
   end
 
   create_table "organizations", force: true do |t|
-    t.string   "name",          limit: 125,             null: false
+    t.string   "name",       limit: 125, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
