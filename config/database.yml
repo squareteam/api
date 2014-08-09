@@ -6,7 +6,7 @@ development:
   database: st_dev
   username: st_dev
   password: st_dev
-  host: mysql
+  host: mysql_1
   port: 3306
 
 test:
@@ -17,7 +17,7 @@ test:
   database: st_test
   username: st_dev
   password: st_dev
-  host: mysql
+  host: mysql_1
   port: 3306
 
 preprod:

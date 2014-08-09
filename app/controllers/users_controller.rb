@@ -4,6 +4,8 @@ require 'yodatra/models_controller'
 class UsersController < Yodatra::ModelsController
   disable :read_all, :create, :delete
 
+  enable_search_on :name, :email
+
   get '/user/me' do
     @one = User.find_by_email(request.env['REMOTE_USER'])
     if @one.nil?

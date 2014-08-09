@@ -1,0 +1,16 @@
+nginx:
+  build: .
+  ports:
+    - "80:80"
+    - "2222:22"
+  volumes:
+    - .:/home/app
+  links:
+    - mysql
+    - redis
+redis:
+  image: swcc/docker-redis
+mysql:
+  build: ./mysql
+  volumes:
+    - /tmp/mysql_st:/var/lib/mysql

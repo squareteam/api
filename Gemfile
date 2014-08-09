@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem 'rake'
 
 gem 'sinatra'
-gem 'yodatra', '>= 0.3.0'
+gem 'yodatra', '0.3.1'
 
 gem 'rack-rewrite'
 gem 'rack-parser', :require => 'rack/parser'
@@ -30,6 +30,7 @@ group :development do
   # Debug
   gem 'pry'
   #gem 'pry-debugger'
+  gem 'rubocop'
 end
 
 group :test do
