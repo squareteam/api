@@ -2,18 +2,16 @@
 
 #  MySQL DB setup if doesn't exist
 if [ ! -f /var/lib/mysql/ibdata1 ]; then
-  
     /usr/bin/mysql_install_db
 
     /usr/bin/mysqld_safe > /dev/null 2>&1 &
     /bin/sleep 3s
-    
+
     /usr/bin/mysqladmin -u root password root
     /usr/bin/mysqladmin -u root -h localhost password root
-    
+
     /usr/bin/killall mysqld
     /bin/sleep 3s
-
 fi
 
 /usr/bin/mysqld_safe > /dev/null 2>&1 &
@@ -31,6 +29,6 @@ mysql -uroot -proot -e "GRANT ALL PRIVILEGES ON st_test.* to 'st_dev'@'%' IDENTI
 /usr/bin/mysqladmin -uroot -proot shutdown
 
 # DEBUG only
-/sbin/my_init --enable-insecure-key
+#/sbin/my_init --enable-insecure-key
 
-#/sbin/my_init
+/sbin/my_init
