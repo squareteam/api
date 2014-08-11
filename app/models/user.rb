@@ -44,18 +44,15 @@ class User < ActiveRecord::Base
   #   By regenerate salt1 and pbkdf and
   #   flushing associated keys in Redis
   def change_password(new_password)
-    salt, pbkdf = Yodatra::Crypto.generate_pbkdf(new_password)
-
-    self.pbkdf  = pbkdf
-    self.salt   = salt
-
-    if self.save
+    if oauth_login(new_password)
       cache = Cache.new
       cache.rm_cache "#{self.email}:SALT2"
       cache.rm_cache "#{self.email}:TOKEN"
-    end
 
-    self.errors.size
+      true
+    else
+      false # FIXME ?
+    end
   end
 
   # Github oauth information
