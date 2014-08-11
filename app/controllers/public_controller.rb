@@ -87,16 +87,8 @@ class PublicController < Yodatra::Base
       halt [Errors::NOT_FOUND].to_json
     end
 
-    salt, pbkdf = Yodatra::Crypto.generate_pbkdf(params[:password])
-
-    user.pbkdf  = pbkdf
-    user.salt   = salt
-
-    if user.save
+    if user.change_password(params[:password])
       @cache.rm_cache "#{params[:token]}:FORGOT_TOKEN"
-      @cache.rm_cache "#{user.email}:SALT2"
-      @cache.rm_cache "#{user.email}:TOKEN"
-
       'ok'.to_json
     else
       # TODO
