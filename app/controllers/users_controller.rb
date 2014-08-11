@@ -16,6 +16,25 @@ class UsersController < Yodatra::ModelsController
     end
   end
 
+  put '/user/change_password' do
+    @one = User.find_by_email(request.env['REMOTE_USER'])
+    if @one.nil?
+      status 400
+      [Errors::ID_NOT_FOUND].to_json
+    elsif params[:password].nil?
+      status 400
+      [Errors::BAD_REQUEST].to_json
+    else
+      if @one.change_password(params[:password])
+        status 200
+        'ok'.to_json
+      else
+        status 400
+        'error'.to_json
+      end
+    end
+  end
+
   # Add a user to a team
   # Receive mandatory data as shown below :
   #   {
