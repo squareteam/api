@@ -32,8 +32,15 @@ class User < ActiveRecord::Base
     a_user
   end
 
+  # Fully change a password
+  #   By regenerate salt1 and pbkdf and
+  #   flushing associated keys in Redis
   # @ensure !token.blank?
-  def oauth_login(token)
+  def change_password(token)
+    cache = Cache.new
+    cache.rm_cache "#{self.email}:SALT2"
+    cache.rm_cache "#{self.email}:TOKEN"
+
     salt, pbkdf = Yodatra::Crypto.generate_pbkdf(token)
     self.pbkdf = pbkdf
     self.salt = salt
