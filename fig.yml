@@ -5,6 +5,7 @@ nginx:
     - "2222:22"
   volumes:
     - .:/home/app
+    - ../front:/home/front
   links:
     - mysql
     - redis
