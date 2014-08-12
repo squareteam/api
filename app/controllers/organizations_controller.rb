@@ -2,10 +2,28 @@ require 'yodatra/models_controller'
 
 # API controller to serve organizations
 class OrganizationsController < Yodatra::ModelsController
+
+  disable :delete
+
   def read_scope
     self.class.read_scope
   end
 
+  delete '/organizations/:id/user/:user_id' do
+    organization = Organization.find params[:id]
+    user = User.find params[:user_id]
+
+    if organization.nil? || user.nil?
+      status 400
+      [Errors::BAD_REQUEST].to_json
+    else
+      teams = Team.where(organization: organization)
+
+      UserRole.destroy_all(:team => teams, user: user)
+      status 200
+      'ok'.to_json
+    end
+  end
 
   post '/organizations/with_admins' do
     if params[:admins_ids].blank?
