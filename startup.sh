@@ -11,5 +11,5 @@ popd
 
 # Configure NGINX
 mkdir -p /etc/nginx/sites-enabled
-cp /home/app/dev.clicrdv.io.conf /etc/nginx/sites-enabled
+cp /home/app/dev.squareteam.io.conf /etc/nginx/sites-enabled
 
