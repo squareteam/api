@@ -38,8 +38,10 @@ apt-get update -q
 # Install docker.  'apt-get install' is idempotent.
 apt-get install -q -y lxc-docker
 
-# Install gaudi
-apt-get install -q -y gaudi
+# Install Fig
+curl -L https://github.com/docker/fig/releases/download/0.5.2/linux > /tmp/fig
+mv /tmp/fig /usr/local/bin/
+chmod +x /usr/local/bin/fig
 
 usermod -a -G docker "$user"
 
