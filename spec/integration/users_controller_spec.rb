@@ -33,6 +33,23 @@ describe 'Users controller' do
       end
     end
 
+    describe 'Changing my password' do
+      context 'when no parameters given' do
+        it 'responds with an error message' do
+          put '/user/me/change_password', {}, ST_ID_HEADER => @existing_user.email
+
+          expect(last_response).to_not be_ok
+        end
+      end
+      context 'when a new password is given in params' do
+        it 'succeeds and responds ok' do
+          put '/user/me/change_password', {password: 'new'}, ST_ID_HEADER => @existing_user.email
+
+          expect(last_response).to be_ok
+        end
+      end
+    end
+
     describe 'user_role endpoints' do
 
       before do

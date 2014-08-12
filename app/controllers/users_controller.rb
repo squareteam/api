@@ -7,25 +7,15 @@ class UsersController < Yodatra::ModelsController
   enable_search_on :name, :email
 
   get '/user/me' do
-    @one = User.find_by_email(request.env['REMOTE_USER'])
-    if @one.nil?
-      status 400
-      [Errors::ID_NOT_FOUND].to_json
-    else
-      @one.as_json(read_scope).to_json
-    end
+    current_user.as_json(read_scope).to_json
   end
 
-  put '/user/change_password' do
-    @one = User.find_by_email(request.env['REMOTE_USER'])
-    if @one.nil?
-      status 400
-      [Errors::ID_NOT_FOUND].to_json
-    elsif params[:password].nil?
+  put '/user/me/change_password' do
+    if params[:password].nil?
       status 400
       [Errors::BAD_REQUEST].to_json
     else
-      if @one.change_password(params[:password])
+      if current_user.change_password(params[:password])
         status 200
         'ok'.to_json
       else

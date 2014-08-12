@@ -8,7 +8,7 @@ class PrivateController < Yodatra::Base
   end
 
   get '/logout' do
-    identifier = request.env['REMOTE_USER']
+    identifier = current_user_identifier
     @cache.rm_cache "#{identifier}:SALT2"
     @cache.rm_cache "#{identifier}:TOKEN"
     'OK'.to_json
