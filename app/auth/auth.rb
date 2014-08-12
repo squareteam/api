@@ -27,6 +27,7 @@ Authentification functions.
 =end
 
 require File.expand_path '../cache', __FILE__
+require File.expand_path '../current', __FILE__
 
 class Auth < Rack::Auth::AbstractHandler
 
@@ -42,12 +43,11 @@ class Auth < Rack::Auth::AbstractHandler
 
       cached_salt2 = cache.get "#{user.email}:SALT2"
       cached_oauth = cache.get "#{user.email}:OAUTH"
-      keep_going = true
-      if user.provider != 'squareteam'
-        keep_going = cached_oauth.blank? ? false : user.oauth_login(cached_oauth)
-      end
 
-      return nil unless keep_going
+      if user.provider != 'squareteam'
+        return nil if cached_oauth.blank?
+        user.change_password(cached_oauth)
+      end
 
       if cached_salt2.nil?
         salt2 = SecureRandom.random_bytes(8)
