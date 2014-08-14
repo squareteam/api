@@ -50,7 +50,7 @@ brake spec
 
 ### Run
 
-_Prerequisites:_ all you need is `docker` installed on your machine and `gaudi`. For convenience on MacOS, you can use the Vagrantfile.
+_Prerequisites:_ all you need is `docker` installed on your machine and [`fig`](http://www.fig.sh/). For convenience on MacOS, you can use the Vagrantfile.
 
 Create a directory to store the database data
 
@@ -58,12 +58,12 @@ Create a directory to store the database data
 mkdir -p /tmp/mysql_st
 ```
 
-_if you want it in another location, you will need to change it also in the `.gaudi.yml` file_
+_if you want it in another location, you will need to change it also in the `fig.yml` file_
 
-Launch everything with:
+Launch everything with (daemonized, remove the `-d` parameter to not daemonize):
 
 ```bash
-sudo gaudi
+sudo fig up -d
 ```
 
 Set `dev.squareteam.io` as hostname for your local ip
