@@ -1,8 +1,9 @@
 class Project < ActiveRecord::Base
 
-   has_many :missions
+  has_many :missions
 
-   has_and_belongs_to_many :projects, -> { where( project_accesses: { model_type: 'Organization' } ) }, join_table: 'project_accesses', association_foreign_key: 'model_id'
-   has_and_belongs_to_many :projects, -> { where( project_accesses: { model_type: 'User' } ) }, join_table: 'project_accesses', association_foreign_key: 'model_id'
+  has_many :project_accesses, foreign_key: 'project_id'
+  has_many :users, -> { where( project_accesses: { object_type: 'User' } ) }, through: :project_accesses
+  has_many :organizations, -> { where( project_accesses: { object_type: 'Organization' } ) }, through: :project_accesses
 
 end
