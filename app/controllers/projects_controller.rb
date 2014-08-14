@@ -13,7 +13,7 @@ class ProjectsController < Yodatra::ModelsController
   class << self
     def read_scope
       {
-        only: [:title, :description, :deadline],
+        only: [:id, :title, :description, :deadline, :created_at],
         # TODO include :
         #   - missions  number
         #   - members   number

@@ -8,6 +8,8 @@ class Organization < ActiveRecord::Base
   has_many :users, through: :user_roles
   has_one :admins_team, -> { where(name: 'Admin') }, class_name: 'Team'
 
+  has_and_belongs_to_many :projects, -> { where( project_accesses: { model_type: 'Organization' } ) }, join_table: 'project_accesses', foreign_key: 'model_id'
+
   accepts_nested_attributes_for :users, :teams
 
   after_create :create_admins_team

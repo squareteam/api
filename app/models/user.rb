@@ -10,6 +10,9 @@ class User < ActiveRecord::Base
   has_many :teams, :through => :user_roles
   has_many :organizations, -> { uniq }, :through => :teams
 
+  has_and_belongs_to_many :projects, -> { where( project_accesses: { model_type: 'User' } ) }, join_table: 'project_accesses', foreign_key: 'model_id'
+
+
   accepts_nested_attributes_for :user_roles, :teams
 
   def self.easy_new params
