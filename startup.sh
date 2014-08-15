@@ -1,6 +1,11 @@
 #!/bin/bash
 
 pushd /home/app
+# Install Nokogiri with system libraries (it will fail otherwise)
+test -d /usr/include/libxml2 || apt-get update && apt-get install -y libxml2-dev && apt-get clean
+bundle config --local build.nokogiri --use-system-libraries --with-xml2-include=/usr/include/libxml2
+apt-get clean
+# END Install Nokogiri
 bundle install --deployment
 bundle exec rake db:setup
 bundle exec rake db:migrate

@@ -11,8 +11,8 @@ gem 'rack-uploads', '0.2.1'
 
 # DB adapter
 gem 'mysql2'
-gem 'activerecord', '4.0.2'
-gem 'sinatra-activerecord', '1.4.0'
+gem 'activerecord', '4.0.6'
+gem 'sinatra-activerecord', '2.0.2'
 
 # Cache
 gem 'redis'
@@ -22,7 +22,7 @@ gem 'redis-rack'
 gem 'omniauth-github', '1.1.2'
 
 # Mails
-gem 'actionmailer', '4.0.2'
+gem 'actionmailer', '4.0.6'
 gem 'inline-style', '0.5.1'
 
 gem 'rspec'
