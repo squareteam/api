@@ -7,3 +7,6 @@ db/*.sqlite3
 coverage/
 vendor/
 ruby_wrapper
+doc/
+.vagrant/
+spec/reports/
