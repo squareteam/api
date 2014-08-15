@@ -29,7 +29,6 @@ class PublicController < Yodatra::Base
     @one = User.easy_new params
 
     if @one.save
-      UserMailer.account_creation(@one).deliver
       login @one.email
     else
       status 400
@@ -38,7 +37,6 @@ class PublicController < Yodatra::Base
   end
 
   post '/forgot_password' do
-
     if params[:email].blank?
       status 400
       halt [Errors::BAD_REQUEST].to_json
@@ -49,6 +47,11 @@ class PublicController < Yodatra::Base
     if user.nil?
       status 404
       halt [Errors::NOT_FOUND].to_json
+    end
+
+    unless user.provider == 'squareteam'
+      status 400
+      halt [Errors::OAUTH_ACCOUNT,{provider: user.provider}].to_json
     end
 
     token = SecureRandom.hex
