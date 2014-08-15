@@ -11,9 +11,9 @@ class Team < ActiveRecord::Base
   before_destroy :admins_team_cannot_be_destroyed
 
   def admins_team_cannot_be_destroyed
-    return true if organization.nil?
+    return true if organization.nil? || !is_admin
 
-    if organization.admins_team.id == id
+   if organization.admins_team.id == id
       errors[:base] << 'admin team cannot be deleted'
       return false
     end
