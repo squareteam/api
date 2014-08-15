@@ -4,6 +4,7 @@ require 'yodatra/logger'
 require 'yodatra/api_formatter'
 require 'yodatra/throttling'
 require 'rack/parser'
+require 'newrelic_rpm'
 
 # ############## #
 # Squareteam API #
