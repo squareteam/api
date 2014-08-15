@@ -25,6 +25,9 @@ gem 'omniauth-github', '1.1.2'
 gem 'actionmailer', '4.0.2'
 gem 'inline-style', '0.5.1'
 
+# Monitoring
+gem 'newrelic_rpm'
+
 gem 'rspec'
 group :development do
   # Debug
