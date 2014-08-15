@@ -1,8 +1,0 @@
-#!/bin/bash
-export ST_DB_NAME=st
-export ST_DB_USERNAME=root
-export ST_DB_PASSWORD=root
-export ST_DB_HOST=localhost
-export ST_DB_PORT=3306
-exec "/usr/local/rvm/gems/ruby-2.0.0-p353@global/wrappers/ruby" "$@"
-

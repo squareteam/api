@@ -99,4 +99,133 @@ describe 'Public controller' do
     end
   end
 
+  describe 'forgot password process' do
+    before do
+      @r = Redis.new Squareteam::Application::CONFIG.redis
+    end
+
+    describe 'when requesting a token' do
+      before do
+        Squareteam::Application::CONFIG.app_url = '' # for UserMailer
+      end
+
+      context 'without email param' do
+        it 'should respond "400 Bad Request"' do
+
+          post "/forgot_password"
+
+          expect last_response.should_not be_ok
+          expect(last_response.body).to match("api.bad_request".to_json)
+        end
+      end
+
+      context 'with invalid email' do
+        it 'should respond "400 Bad Request"' do
+
+          post "/forgot_password", {:email => "notexistent@user.com"}
+
+          expect last_response.should_not be_ok
+          expect(last_response.body).to match("api.not_found".to_json)
+        end
+      end
+
+      context 'with a valid email' do
+        it 'should create a token and sent it to the given email' do
+          u = User.create(email:'test@forgot.com', pbkdf:'test', salt:'test')
+          SecureRandom.stub(:hex) { 'abcd' }
+          expect(UserMailer).to receive(:forgot_password).with(u, 'abcd').
+            and_call_original
+
+          post '/forgot_password', email: 'test@forgot.com'
+
+          expect last_response.should be_ok
+          @r.get('abcd:FORGOT_TOKEN').should_not be_nil
+        end
+      end
+
+      after do
+        User.destroy_all
+      end
+
+    end
+
+    describe 'when changing password' do
+
+      context 'with a no token param' do
+        it 'should respond "400 Bad Request"' do
+          post "/forgot_password/change", {:password => "test"}
+
+          expect last_response.should_not be_ok
+          expect(last_response.body).to match("api.bad_request".to_json)
+        end
+      end
+
+      context 'with a no password param' do
+        it 'should respond "400 Bad Request"' do
+          post "/forgot_password/change", {:token => "abcd"}
+
+          expect last_response.should_not be_ok
+          expect(last_response.body).to match("api.bad_request".to_json)
+        end
+      end
+
+      context 'with an invalid token' do
+        it 'responds with "404 Not Found"' do
+          post "/forgot_password/change", {
+            token: 'abcd',
+            password: 'mynewpassword'
+          }
+
+          expect last_response.should_not be_ok
+          expect(last_response.body).to match "api.not_found".to_json
+        end
+      end
+
+      context 'with a token referencing a not existent user' do
+        it 'should respond "404 Not Found"' do
+          @r.set('abcd:FORGOT_TOKEN', 13)
+
+          post '/forgot_password/change', {
+            token: 'abcd',
+            password: 'mynewpassword'
+          }
+
+          expect last_response.should_not be_ok
+          expect(last_response.body).to match('api.not_found'.to_json)
+        end
+      end
+
+      context 'with a valid token' do
+        before do
+          user = User.create(
+                             :uid => 'fdsfdsfdsfds',
+                             :provider => 'squareteam',
+                             :email => 'test@changepassword.com',
+                             :pbkdf => 'pbkdf',
+                             :salt => 'salt',
+                             :name => 'Mr. change password'
+                             )
+          @r.set('abcd:FORGOT_TOKEN', user.id)
+        end
+
+        it 'responds OK and changes the password for the user' do
+          post '/forgot_password/change', {
+            password: 'newpassword',
+            token: 'abcd'
+          }
+
+          expect last_response.should be_ok
+
+          user = User.find_by_email('test@changepassword.com')
+
+          _, pbkdf = Yodatra::Crypto.generate_pbkdf('newpassword', user.salt)
+
+          pbkdf.should be_eql user.pbkdf
+        end
+      end
+
+    end
+
+  end
+
 end
