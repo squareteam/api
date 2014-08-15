@@ -1,5 +1,7 @@
 require File.expand_path 'app/auth/auth.rb'
-require File.expand_path 'app/api/errors.rb'
+require File.expand_path 'app/auth/cache.rb'
+require File.expand_path 'app/api/errors.rb' # Load auto with Yodatra?
+require File.expand_path 'app/mailers/user_mailer.rb' # Load auto with Yodatra?
 require 'yodatra/crypto'
 require 'digest/sha1'
 
@@ -7,6 +9,7 @@ class PublicController < Yodatra::Base
 
   before do
     content_type 'application/json'
+    @cache = Cache.new
   end
 
   get '/' do
@@ -23,17 +26,7 @@ class PublicController < Yodatra::Base
       halt [Errors::NO_PASSWORD_PROVIDED].to_json
     end
 
-    salt, pbkdf = Yodatra::Crypto.generate_pbkdf(params[:password])
-    email = params[:identifier]||params[:email]
-    uid = email.nil? ? nil : Digest::SHA1.hexdigest(email)
-    @one = User.new(
-      :uid => uid,
-      :provider => 'squareteam',
-      :email => email,
-      :pbkdf => pbkdf,
-      :salt => salt,
-      :name => params[:name]
-    )
+    @one = User.easy_new params
 
     if @one.save
       login @one.email
@@ -42,7 +35,72 @@ class PublicController < Yodatra::Base
       @one.errors.full_messages.to_json
     end
   end
-  
+
+  post '/forgot_password' do
+    if params[:email].blank?
+      status 400
+      halt [Errors::BAD_REQUEST].to_json
+    end
+
+    user = User.find_by_email(params[:email])
+
+    if user.nil?
+      status 404
+      halt [Errors::NOT_FOUND].to_json
+    end
+
+    unless user.provider == 'squareteam'
+      status 400
+      halt [Errors::OAUTH_ACCOUNT,{provider: user.provider}].to_json
+    end
+
+    token = SecureRandom.hex
+
+    @cache.set "#{token}:FORGOT_TOKEN", 300, user.id
+
+    if UserMailer.forgot_password(user, token).deliver
+      'ok'.to_json
+    else
+      # TODO
+      status 500
+      'api.unavailable'.to_json
+    end
+
+  end
+
+  post '/forgot_password/change' do
+
+    if params[:token].nil? || params[:password].nil?
+      status 400
+      halt [Errors::BAD_REQUEST].to_json
+    end
+
+    user_id = @cache.get "#{params[:token]}:FORGOT_TOKEN"
+
+    if user_id.nil?
+      # To follow eventually (attack?)
+      status 404
+      halt [Errors::NOT_FOUND].to_json
+    end
+
+    user = User.find_by_id(user_id)
+
+    if user.nil?
+      status 404
+      halt [Errors::NOT_FOUND].to_json
+    end
+
+    if user.change_password(params[:password])
+      @cache.rm_cache "#{params[:token]}:FORGOT_TOKEN"
+      'ok'.to_json
+    else
+      # TODO
+      status 500
+      ['api.unavailable'].to_json
+    end
+
+  end
+
   private
 
   def login(identifier)

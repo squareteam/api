@@ -27,6 +27,7 @@ Authentification functions.
 =end
 
 require File.expand_path '../cache', __FILE__
+require File.expand_path '../current', __FILE__
 
 class Auth < Rack::Auth::AbstractHandler
 
@@ -42,12 +43,11 @@ class Auth < Rack::Auth::AbstractHandler
 
       cached_salt2 = cache.get "#{user.email}:SALT2"
       cached_oauth = cache.get "#{user.email}:OAUTH"
-      keep_going = true
-      if user.provider != 'squareteam'
-        keep_going = cached_oauth.blank? ? false : user.oauth_login(cached_oauth)
-      end
 
-      return nil unless keep_going
+      if user.provider != 'squareteam'
+        return nil if cached_oauth.blank?
+        user.change_password(cached_oauth)
+      end
 
       if cached_salt2.nil?
         salt2 = SecureRandom.random_bytes(8)
@@ -91,18 +91,42 @@ class Auth < Rack::Auth::AbstractHandler
 
   class Request < Rack::Auth::AbstractRequest
 
+
+    # Fast, without infinite loop checking toString helper
+    def generate_blob(data)
+      def encodeUriQuery(val)
+        Rack::Utils.escape(val).gsub(/%40/, '@').
+                    gsub(/%3A/, ':').
+                    gsub(/%24/, '$').
+                    gsub(/%2C/, ',').
+                    gsub(/%20/, '+')
+      end
+
+      def dirty_stringify(value, key=nil)
+        buffer = []
+        if value.is_a?(Hash)
+          value.sort.each do |k,v|
+            buffer << dirty_stringify(v, !key.nil? ? [key,'{', k ,'}'].join('') : k)
+          end
+          return buffer.join '&'
+        elsif value.is_a?(Array)
+          value.each do |v|
+            buffer << dirty_stringify(v, [key,'[]'].join(''))
+          end
+          buffer.join '&'
+        else
+          [key, '=', encodeUriQuery(value)].join ''
+        end
+      end
+
+      dirty_stringify data
+    end
+
+
     def valid?
       require 'openssl'
-      require 'base64'
 
-      params = request.params.sort.map do |key,value|
-        if value.is_a?(Hash) && !value[:tempfile].nil?
-          [key, Digest::MD5.hexdigest(File.read(value[:tempfile]))]
-        else
-          [key, value]
-        end
-      end if request.form_data?
-      blob = params ? Rack::Utils.build_query(params) : ''
+      blob = request.params.nil? ? '' : generate_blob(request.params)
 
       hmac = OpenSSL::HMAC.new(token, 'sha256')
       hmac << "#{request.request_method}:"

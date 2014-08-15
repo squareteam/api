@@ -1,2 +1,2 @@
-host: redis
+host: redis_1
 port: 6379
