@@ -13,7 +13,7 @@ describe 'Crypto' do
     @pbkdf = '46bb47131873d80ab71740876abc1e07f90c38609d570ba68d4313ef69b49460'
     @token = 'a99246bedaa6cadacaa902e190f32ec689a80a724aa4a1c198617e52460f74d1'
 
-    @redis = Redis.new
+    @redis = Redis.new Squareteam::Application::CONFIG.redis
     @redis.flushall
   end
 
@@ -57,6 +57,7 @@ describe 'Crypto' do
           'REQUEST_METHOD' => 'GET',
           'PATH_INFO' => '/users/me',
           'QUERY_STRING' => '',
+          'rack.input' => '',
           'HTTP_ST_TIMESTAMP' => '1393369116',
           'HTTP_ST_IDENTIFIER' => @identifier,
           'HTTP_ST_HASH' => '286d86d5ca50ca07d4a2e70a9831e913df82a9c550b30fd1a33a1d061e80828f',
@@ -65,7 +66,7 @@ describe 'Crypto' do
         @request = Auth::Request.new env
       end
       it 'should be a valid request' do
-        @request.valid?.should be_true
+        @request.valid?.should be_truthy
       end
     end
   end

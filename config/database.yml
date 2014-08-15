@@ -1,14 +1,24 @@
 development:
-  adapter: sqlite3
-  database: db/development.sqlite3
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
   pool: 5
-  timeout: 5000
+  database: st_dev
+  username: st_dev
+  password: st_dev
+  host: mysql_1
+  port: 3306
 
 test:
-  adapter: sqlite3
-  database: db/test.sqlite3
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
   pool: 5
-  timeout: 5000
+  database: st_test
+  username: st_dev
+  password: st_dev
+  host: mysql_1
+  port: 3306
 
 preprod:
   adapter: mysql2

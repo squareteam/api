@@ -6,7 +6,7 @@ require 'base64'
 describe 'Squareteam authentication' do
 
   before do
-    @r = Redis.new
+    @r = Redis.new Squareteam::Application::CONFIG.redis
   end
 
   context 'when it fails the WWW-Authenticate header should explain why in case of' do
@@ -72,6 +72,7 @@ describe 'Squareteam authentication' do
     context 'POSTing a private route' do
       before do
         Organization.destroy_all
+        Team.destroy_all
       end
       it 'should succeed' do
         @r.set "#{@identifier}:TOKEN", [@token].pack('H*')

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>
+         <%= @title %>
+      </title>
+      <!-- Latest compiled and minified CSS -->
+      <link rel="stylesheet" href="bootstrap/bootstrap.css">
+      <!-- CSS page -->
+      <link rel="stylesheet" href="mailers/user_mailer/layout.css">
+   </head>
+   <body>
+      <table class="global_wrapper">
+         <tr>
+            <td>
+               <table class="header">
+                  <tr>
+                     <td>
+                        <div id="logo">
+                           <img src="http://squareteam-integration.s3-website-eu-west-1.amazonaws.com/mails/images/logo.png" alt="SQUARETEAM"/>
+                        </div>
+                     </td>
+                  </tr>
+               </header>
+               <table class="main">
+                  <tr class="main_header">
+                     <td>
+                        <h1>
+                           <%= @title %>
+                        </h1>
+                     </td>
+                  </tr>
+                  <tr class="main_content">
+                     <td>
+                        <%= yield %>
+                     </td>
+                  </tr>
+               </table>
+               <table class="footer">
+                  <tr>
+                     <td>
+                        <p>
+                           Please do not reply.
+                        </p>
+                     </td>
+                  </tr>
+               </table>
+            </td>
+         </tr>
+      </table>
+   </body>
+</html>
