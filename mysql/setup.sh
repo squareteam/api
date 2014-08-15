@@ -18,8 +18,12 @@ fi
 /bin/sleep 3s
 
 # Create Database dev DB
-mysql -uroot -proot -e "CREATE DATABASE st_dev"
-mysql -uroot -proot -e "CREATE DATABASE st_test"
+if [ ! -f /var/lib/mysql/st_dev ]; then
+    mysql -uroot -proot -e "CREATE DATABASE st_dev"
+fi
+if [ ! -f /var/lib/mysql/st_test ]; then
+    mysql -uroot -proot -e "CREATE DATABASE st_test"
+fi
 
 # Create (unsafe) HelpSpot user, who can connect remotely
 mysql -uroot -proot -e "GRANT ALL PRIVILEGES ON st_dev.* to 'st_dev'@'%' IDENTIFIED BY 'st_dev';"

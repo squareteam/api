@@ -4,9 +4,9 @@ class Organization < ActiveRecord::Base
   validates_uniqueness_of :name
 
   has_many :teams, dependent: :destroy
-  has_many :user_roles, through: :teams, dependent: :destroy
+  has_many :user_roles, through: :teams
   has_many :users, through: :user_roles
-  has_one :admins_team, -> { where(name: 'Admin') }, class_name: 'Team'
+  has_one :admins_team, -> { where(is_admin: true) }, class_name: 'Team'
 
   accepts_nested_attributes_for :users, :teams
 
@@ -14,7 +14,7 @@ class Organization < ActiveRecord::Base
 
   # When creating an organization, attach a default team: Admins
   def create_admins_team
-    Team.create(name: "Admin", organization: self)
+    Team.create(name: "Admin", organization: self, is_admin: true)
   end
 
   def add_admin user_or_user_id
