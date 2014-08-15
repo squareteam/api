@@ -3,7 +3,9 @@ require File.expand_path '../../spec_helper.rb', __FILE__
 describe 'Public controller' do
 
   before do
-
+    @r = Redis.new Squareteam::Application::CONFIG.redis
+    @cache = Cache.new
+    @cache.purge_cache '*'
   end
 
   describe 'registration process' do
@@ -100,10 +102,6 @@ describe 'Public controller' do
   end
 
   describe 'forgot password process' do
-    before do
-      @r = Redis.new Squareteam::Application::CONFIG.redis
-    end
-
     describe 'when requesting a token' do
       before do
         Squareteam::Application::CONFIG.app_url = '' # for UserMailer
@@ -120,7 +118,7 @@ describe 'Public controller' do
       end
 
       context 'with invalid email' do
-        it 'should respond "400 Bad Request"' do
+        it 'should respond "404 Not Found"' do
 
           post "/forgot_password", {:email => "notexistent@user.com"}
 
@@ -131,15 +129,33 @@ describe 'Public controller' do
 
       context 'with a valid email' do
         it 'should create a token and sent it to the given email' do
-          u = User.create(email:'test@forgot.com', pbkdf:'test', salt:'test')
+          u = User.easy_create(email:'te@fo.com', name:'test', password:'test')
           SecureRandom.stub(:hex) { 'abcd' }
           expect(UserMailer).to receive(:forgot_password).with(u, 'abcd').
             and_call_original
 
-          post '/forgot_password', email: 'test@forgot.com'
+          post '/forgot_password', email: 'te@fo.com'
 
           expect last_response.should be_ok
           @r.get('abcd:FORGOT_TOKEN').should_not be_nil
+        end
+      end
+
+      context 'with a valid email but an oauth account' do
+        it 'doesn\'t create a token and returns a 400 with provider in error' do
+          u = User.create(
+                          email:'test@forgot.com',
+                          pbkdf:'test',
+                          salt:'test',
+                          provider: 'github'
+                          )
+          expect(SecureRandom).to_not receive(:hex)
+
+          post '/forgot_password', email: 'test@forgot.com'
+
+          expect(last_response).to_not be_ok
+          expected_response = {provider: 'github'}.to_json
+          expect(last_response.body).to match(expected_response)
         end
       end
 

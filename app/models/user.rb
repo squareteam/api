@@ -12,6 +12,8 @@ class User < ActiveRecord::Base
 
   accepts_nested_attributes_for :user_roles, :teams
 
+  after_create :say_yo
+
   def self.easy_new params
     salt, pbkdf = Yodatra::Crypto.generate_pbkdf(params[:password])
     email = params[:identifier]||params[:email]
@@ -64,5 +66,15 @@ class User < ActiveRecord::Base
 
     user.save
     user
+  end
+
+  private
+
+  # after_create callback
+  # When a User has been created, send an email to say yo
+  # Warning: always return true
+  def say_yo
+    UserMailer.account_creation(self).deliver
+    true
   end
 end
