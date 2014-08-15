@@ -68,16 +68,6 @@ class User < ActiveRecord::Base
     user
   end
 
-  private
-
-  # after_create callback
-  # When a User has been created, send an email to say yo
-  # Warning: always return true
-  def say_yo
-    UserMailer.account_creation(self).deliver
-    true
-  end
-
   # Behance oauth information
   # https://www.behance.net/dev/authentication#scopes
   def self.find_or_create_from_behance(auth)
@@ -95,5 +85,15 @@ class User < ActiveRecord::Base
     else
       nil
     end
+  end
+
+  private
+
+  # after_create callback
+  # When a User has been created, send an email to say yo
+  # Warning: always return true
+  def say_yo
+    UserMailer.account_creation(self).deliver
+    true
   end
 end
