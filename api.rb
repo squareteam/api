@@ -4,12 +4,13 @@ require 'yodatra/logger'
 require 'yodatra/api_formatter'
 require 'yodatra/throttling'
 require 'rack/parser'
+require 'newrelic_rpm'
 
 # ############## #
 # Squareteam API #
 # ############## #
 class Api < Yodatra::Base
-  VERSION = '0.1.2'
+  VERSION = '0.3.2'
   config = Squareteam::Application::CONFIG
   use Yodatra::Logger
   use Yodatra::Throttle, redis_conf: config.redis
@@ -19,6 +20,7 @@ class Api < Yodatra::Base
   use Rack::Session::Redis, redis_server: config.redis, :expire_after => 30
   use ::OmniAuth::Builder do
     provider :github, config.oauth[:github]['key'], config.oauth[:github]['secret']
+    provider :behance, config.oauth[:behance]['key'], config.oauth[:behance]['secret'], { scope: 'collection_read|wip_read|project_read' }
   end
 
   # ST api formatter
