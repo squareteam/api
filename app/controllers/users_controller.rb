@@ -2,7 +2,7 @@ require 'yodatra/models_controller'
 
 # API controller to manage Users
 class UsersController < Yodatra::ModelsController
-  disable :read_all, :create, :delete
+  disable :read_all, :create, :delete, :nested_delete
 
   enable_search_on :name, :email
 

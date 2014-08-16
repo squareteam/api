@@ -12,6 +12,8 @@ class User < ActiveRecord::Base
 
   accepts_nested_attributes_for :user_roles, :teams
 
+  after_create :say_yo
+
   def self.easy_new params
     salt, pbkdf = Yodatra::Crypto.generate_pbkdf(params[:password])
     email = params[:identifier]||params[:email]
@@ -64,5 +66,34 @@ class User < ActiveRecord::Base
 
     user.save
     user
+  end
+
+  # Behance oauth information
+  # https://www.behance.net/dev/authentication#scopes
+  def self.find_or_create_from_behance(auth)
+    user = where(auth.slice(:provider, :uid)).first_or_create do |u|
+      u.provider = auth.provider
+      u.uid = auth.uid
+      u.email = auth.info.email
+      u.name = auth.info.name
+    end
+    user.pbkdf = SecureRandom.random_bytes(8) # Invalid as we will recalculate at login time
+    user.salt = SecureRandom.random_bytes(8) # Invalid as we will recalculate at login time
+
+    if user.save
+      user
+    else
+      nil
+    end
+  end
+
+  private
+
+  # after_create callback
+  # When a User has been created, send an email to say yo
+  # Warning: always return true
+  def say_yo
+    UserMailer.account_creation(self).deliver
+    true
   end
 end
