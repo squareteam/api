@@ -4,9 +4,9 @@ class Organization < ActiveRecord::Base
   validates_uniqueness_of :name
 
   has_many :teams, dependent: :destroy
-  has_many :user_roles, through: :teams, dependent: :destroy
+  has_many :user_roles, through: :teams
   has_many :users, through: :user_roles
-  has_one :admins_team, -> { where(name: 'Admin') }, class_name: 'Team'
+  has_one :admins_team, -> { where(is_admin: true) }, class_name: 'Team'
 
   has_many :project_accesses, foreign_key: 'object_id'
   has_many :projects, -> { where( project_accesses: { object_type: 'Organization' } ) }, through: :project_accesses
@@ -17,7 +17,7 @@ class Organization < ActiveRecord::Base
 
   # When creating an organization, attach a default team: Admins
   def create_admins_team
-    Team.create(name: "Admin", organization: self)
+    Team.create(name: "Admin", organization: self, is_admin: true)
   end
 
   def add_admin user_or_user_id
@@ -29,23 +29,4 @@ class Organization < ActiveRecord::Base
     )
   end
 
-  # Search for an Organization
-  # @param params can be a Hash of attributes to search on Organization
-  # or a String
-  # @param one whether to return one record or a list of possible match
-  # @param limit number whether to limit the results or not
-  def search(params, one, limit)
-    results = []
-    if params.is_a? Hash
-      matches = []
-      params.each do |k,v|
-        matches << arel_table[k].matches("%#{v}%")
-      end
-      results = where(matches.reduce(:or)).limit(limit || one && 1)
-    elsif params.is_a? String
-      results = where(arel_table[:name].matches("%#{params}%")).limit(limit || one && 1)
-    end
-
-    one.nil? ? results : results.first
-  end
 end

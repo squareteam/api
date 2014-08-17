@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140705153400) do
+ActiveRecord::Schema.define(version: 20140815182329) do
 
   create_table "knowledges", force: true do |t|
     t.string   "title",      limit: 100
@@ -72,10 +72,11 @@ ActiveRecord::Schema.define(version: 20140705153400) do
   end
 
   create_table "teams", force: true do |t|
-    t.string   "name",            limit: 125, null: false
-    t.integer  "organization_id",             null: false
+    t.string   "name",            limit: 125,                 null: false
+    t.integer  "organization_id",                             null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "is_admin",                    default: false, null: false
   end
 
   add_index "teams", ["name", "organization_id"], name: "index_teams_on_name_and_organization_id", unique: true, using: :btree

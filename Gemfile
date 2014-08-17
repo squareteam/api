@@ -20,10 +20,14 @@ gem 'redis-rack'
 
 # Omniauth
 gem 'omniauth-github', '1.1.2'
+gem 'omniauth-behance', :github => 'popox/omniauth-behance'
 
 # Mails
 gem 'actionmailer', '4.0.6'
 gem 'inline-style', '0.5.1'
+
+# Monitoring
+gem 'newrelic_rpm'
 
 gem 'rspec'
 group :development do

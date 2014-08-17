@@ -2,7 +2,7 @@ require 'yodatra/models_controller'
 
 # API controller to manage Users
 class UsersController < Yodatra::ModelsController
-  disable :read_all, :create, :delete
+  disable :read_all, :create, :delete, :nested_delete
 
   enable_search_on :name, :email
 
@@ -31,7 +31,7 @@ class UsersController < Yodatra::ModelsController
   #     'permissions' : 128,
   #     'user_id'     : 1
   #   }
-  post '/team/:id/users' do
+  post '/teams/:id/users' do
     team = Team.find params[:id]
     user = User.find params[:user_id]
 
@@ -59,7 +59,7 @@ class UsersController < Yodatra::ModelsController
   #   {
   #     'permissions' : 128
   #   }
-  put '/team/:id/user/:user_id' do
+  put '/teams/:id/users/:user_id' do
     role = UserRole.where(user_id: params[:user_id], team_id: params[:id]).first
 
     if role.nil? || params[:permissions].blank?
@@ -78,7 +78,7 @@ class UsersController < Yodatra::ModelsController
   end
 
   # Remove user from team
-  delete '/team/:id/user/:user_id' do
+  delete '/teams/:id/users/:user_id' do
     role = UserRole.where(user_id: params[:user_id], team_id: params[:id]).first
 
     if role.nil?
