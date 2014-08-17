@@ -62,7 +62,7 @@ describe 'Users controller' do
         it 'creates the user_role record' do
 
           expect {
-            post "team/#{@team.id}/users", {:permissions => 0, :user_id => @existing_user.id}
+            post "teams/#{@team.id}/users", {:permissions => 0, :user_id => @existing_user.id}
             last_response.status.should be 201
           }.to change(UserRole, :count).by(1)
 
@@ -77,7 +77,7 @@ describe 'Users controller' do
         end
 
         it 'updates the user_role record' do
-          put "team/#{@team.id}/user/#{@existing_user.id}", { :permissions => 2 }
+          put "teams/#{@team.id}/users/#{@existing_user.id}", { :permissions => 2 }
           last_response.should be_ok
           role = UserRole.where(user_id: @existing_user.id, team_id: @team.id).first
           expect(role.permissions).to equal(2)
@@ -91,7 +91,7 @@ describe 'Users controller' do
 
         it 'deletes the user_role record' do
           expect {
-            delete "team/#{@team.id}/user/#{@existing_user.id}"
+            delete "teams/#{@team.id}/users/#{@existing_user.id}"
             last_response.should be_ok
           }.to change(UserRole, :count).by(-1)
 

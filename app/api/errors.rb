@@ -6,4 +6,5 @@ class Errors
   NOT_FOUND = 'api.not_found'
   UNAUTHORIZED = 'api.unauthorized'
   BAD_REQUEST = 'api.bad_request'
+  OAUTH_ACCOUNT = 'api.oauth_account'
 end
