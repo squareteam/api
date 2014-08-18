@@ -28,6 +28,7 @@ Authentification functions.
 
 require File.expand_path '../cache', __FILE__
 require File.expand_path '../current', __FILE__
+require 'uri' # needed for URI.escape
 
 class Auth < Rack::Auth::AbstractHandler
 
@@ -95,11 +96,12 @@ class Auth < Rack::Auth::AbstractHandler
     # Fast, without infinite loop checking toString helper
     def generate_blob(data)
       def encodeUriQuery(val)
-        Rack::Utils.escape(val).gsub(/%40/, '@').
-                    gsub(/%3A/, ':').
-                    gsub(/%24/, '$').
-                    gsub(/%2C/, ',').
-                    gsub(/%20/, '+')
+        URI.escape(val.to_s, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]")).
+            gsub(/%40/, '@').
+            gsub(/%3A/, ':').
+            gsub(/%24/, '$').
+            gsub(/%2C/, ',').
+            gsub(/%20/, '+')
       end
 
       def dirty_stringify(value, key=nil)
