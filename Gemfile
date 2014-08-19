@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem 'rake'
 
 gem 'sinatra'
-gem 'yodatra', '0.3.2'
+gem 'yodatra', '0.3.3'
 
 gem 'rack-rewrite'
 gem 'rack-parser', :require => 'rack/parser'
