@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require File.expand_path '../../spec_helper.rb', __FILE__
 require File.expand_path '../../../app/auth/auth.rb', __FILE__
 
@@ -18,18 +19,17 @@ describe 'Organizations controller' do
     end
 
     describe 'GET an organization' do
+      before do
+        @orga_ascii = Organization.create name: 'squareteam'
+        @orga_utf8 = Organization.create name: 'test //()!%?-_éàè"'
+        @orga = @orga_ascii if rand(2) == 0
+        @orga = @orga || @orga_utf8
+      end
       it 'responds with the data of the organization' do
-        post '/organization', {:name => 'squareteam'}
-        existing_organization = Organization.find_by_name('squareteam')
-        
-        # This notation (.users << ...) is no longer supported
-        # due to user - organization 3 tables based relation
-        # existing_organization.users << @user
+        get "/organization/#{@orga.id}"
 
-        get "/organization/#{existing_organization.id}", {}
-
-        last_response.should be_ok
-        expect(last_response.body).to include(existing_organization.to_json(OrganizationsController.read_scope))
+        expect(last_response).to be_ok
+        expect(last_response.body).to include(@orga.to_json(OrganizationsController.read_scope))
       end
     end
 
@@ -41,7 +41,7 @@ describe 'Organizations controller' do
         it 'responds with the data of the organization' do
           expect {
             post '/organization', {:name => 'swcc'}
-            last_response.should be_ok
+            expect(last_response).to be_ok
           }.to change(Organization, :count).by(1)
         end
       end
@@ -53,7 +53,7 @@ describe 'Organizations controller' do
         it 'responds with an error message' do
           expect {
             post '/organization', {:name => 'swcc'}
-            last_response.should_not be_ok
+            expect(last_response).to_not be_ok
             expect(last_response.body).to match /api.already_taken/
           }.not_to change(Organization, :count)
         end
@@ -68,7 +68,7 @@ describe 'Organizations controller' do
         it 'responds "400 Bad Request" if no admins given' do
           expect {
             post '/organizations/with_admins', {:name => 'swcc'}
-            last_response.should_not be_ok
+            expect(last_response).to_not be_ok
           }.not_to change(Organization, :count)
         end
       end
@@ -82,7 +82,7 @@ describe 'Organizations controller' do
           u.save
           expect {
             post '/organizations/with_admins', {:name => 'swcc', :admins_ids => [u.id]}
-            last_response.should be_ok
+            expect(last_response).to be_ok
           }.to change(Team, :count).by(1)
           expect(Organization.count).to equal(1)
           expect(UserRole.count).to equal(1)
@@ -132,7 +132,7 @@ describe 'Organizations controller' do
     #   it 'responds with the data of the organization' do
     #     expect {
     #       post "/user/#{@user.id}/organizations", {:name => 'test_orga'}
-    #       last_response.should be_ok
+    #       expect(last_response).to be_ok
     #     }.to change(Organization, :count).by(1)
     #     expect { Organization.last.users.to include @user }
     #   end
