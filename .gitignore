@@ -10,3 +10,4 @@ ruby_wrapper
 doc/
 .vagrant/
 spec/reports/
+tmp/restart.txt

@@ -11,7 +11,7 @@ describe 'Public controller' do
   describe 'registration process' do
     context 'when no password is given' do
       it 'responds with a 400 and an error message' do
-        post '/user', {:identifier => 'hello@example.com'}
+        post '/users', {:identifier => 'hello@example.com'}
 
         last_response.status.should be 400
         expect(last_response.body).to match(/api\.no_password/)
@@ -19,7 +19,7 @@ describe 'Public controller' do
     end
     context 'when no email is given' do
       it 'responds with a 400 and an error message' do
-        post '/user', {:password => 'hello@example.com'}
+        post '/users', {:password => 'hello@example.com'}
 
         last_response.status.should be 400
         expect(last_response.body).to match(/api\.violation/)
@@ -28,11 +28,11 @@ describe 'Public controller' do
     context 'when the email has already been taken' do
       before do
         @email_already_taken = 'test@test.fr'
-        post '/user', {:password => 'test', :identifier => @email_already_taken, :name => 'test'}
+        post '/users', {:password => 'test', :identifier => @email_already_taken, :name => 'test'}
       end
 
       it 'responds with a 400 and an explicit error message' do
-        post '/user', {:password => 'test', :identifier => @email_already_taken, :name => 'test'}
+        post '/users', {:password => 'test', :identifier => @email_already_taken, :name => 'test'}
 
         last_response.status.should be 400
         expect(last_response.body).to match(/api\..*already_taken/)
@@ -42,7 +42,7 @@ describe 'Public controller' do
     context 'when everything is fine' do
       it 'creates a user in the db' do
         expect {
-          post('/user', {:password => 'test', :identifier => 'test2@test.fr', :name => ''})
+          post('/users', {:password => 'test', :identifier => 'test2@test.fr', :name => ''})
         }.to change(User, :count).by(1)
 
         last_response.should be_ok
@@ -58,7 +58,7 @@ describe 'Public controller' do
     context 'with an existing squareteam user' do
       before do
         @existing_identifier = 'test@example.com'
-        post '/user', {:password => 'test', :identifier => @existing_identifier, :name => ''}
+        post '/users', {:password => 'test', :identifier => @existing_identifier, :name => ''}
       end
       it 'responds with two salts and caches the login token' do
         put '/login', {:identifier => @existing_identifier}

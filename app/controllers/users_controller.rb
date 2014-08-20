@@ -2,15 +2,22 @@ require 'yodatra/models_controller'
 
 # API controller to manage Users
 class UsersController < Yodatra::ModelsController
-  disable :read_all, :create, :delete, :nested_delete
+  disable :read_all, :create, :delete, :nested_delete, :nested_create, :nested_update
 
   enable_search_on :name, :email
 
-  get '/user/me' do
+  # Get my personal information when authenticated
+  # @returns your data
+  get '/users/me' do
     current_user.as_json(read_scope).to_json
   end
 
-  put '/user/me/change_password' do
+  # Change your password
+  # @params {
+  #   password: 'new_password'
+  # }
+  # @returns 200 | 400
+  put '/users/me/change_password' do
     if params[:password].nil?
       status 400
       [Errors::BAD_REQUEST].to_json
@@ -27,7 +34,7 @@ class UsersController < Yodatra::ModelsController
 
   # Add a user to a team
   # Receive mandatory data as shown below :
-  #   {
+  # @params {
   #     'permissions' : 128,
   #     'user_id'     : 1
   #   }
@@ -105,7 +112,7 @@ class UsersController < Yodatra::ModelsController
 
   class << self
     def read_scope
-      { only: [:id, :name, :email] }
+      { only: [:id, :name, :email, :provider] }
     end
   end
 end
