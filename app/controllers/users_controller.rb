@@ -105,7 +105,7 @@ class UsersController < Yodatra::ModelsController
 
   class << self
     def read_scope
-      { only: [:id, :name, :email] }
+      { only: [:id, :name, :email, :provider] }
     end
   end
 end
