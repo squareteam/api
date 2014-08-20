@@ -11,7 +11,7 @@ gem 'rack-uploads', '0.2.1'
 
 # DB adapter
 gem 'mysql2'
-gem 'activerecord', '4.0.6'
+gem 'activerecord', '4.1.5'
 gem 'sinatra-activerecord', '2.0.2'
 
 # Cache
@@ -23,7 +23,7 @@ gem 'omniauth-github', '1.1.2'
 gem 'omniauth-behance', :github => 'popox/omniauth-behance'
 
 # Mails
-gem 'actionmailer', '4.0.6'
+gem 'actionmailer', '4.1.5'
 gem 'inline-style', '0.5.1'
 
 # Monitoring
