@@ -28,8 +28,8 @@ describe 'Users controller' do
       it 'responds with my profile' do
         get '/users/me', {}, ST_ID_HEADER => @existing_user.email
 
-        last_response.should be_ok
-        expect(JSON.load(last_response.body)['data']).to eq(@existing_user.attributes.select{ |k,v| %w(id name email).include? k })
+        expect(last_response).to be_ok
+        expect(JSON.load(last_response.body)['data']).to eq(@existing_user.attributes.select{ |k,v| UsersController.read_scope[:only].include? k.to_sym })
       end
     end
 
@@ -78,7 +78,7 @@ describe 'Users controller' do
 
         it 'updates the user_role record' do
           put "/teams/#{@team.id}/users/#{@existing_user.id}", { :permissions => 2 }
-          last_response.should be_ok
+          expect(last_response).to be_ok
           role = UserRole.where(user_id: @existing_user.id, team_id: @team.id).first
           expect(role.permissions).to equal(2)
         end
@@ -92,7 +92,7 @@ describe 'Users controller' do
         it 'deletes the user_role record' do
           expect {
             delete "/teams/#{@team.id}/users/#{@existing_user.id}"
-            last_response.should be_ok
+            expect(last_response).to be_ok
           }.to change(UserRole, :count).by(-1)
 
           role = UserRole.where(user_id: @existing_user.id, team_id: @team.id).first
