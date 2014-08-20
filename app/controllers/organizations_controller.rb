@@ -7,7 +7,7 @@ class OrganizationsController < Yodatra::ModelsController
     self.class.read_scope
   end
 
-  delete '/organization/:id/user/:user_id' do
+  delete '/organizations/:id/users/:user_id' do
     begin
       organization = Organization.find params[:id]
       user = organization.users.find params[:user_id]
@@ -23,6 +23,11 @@ class OrganizationsController < Yodatra::ModelsController
     'ok'.to_json
   end
 
+  # Create an organization with admins
+  # {
+  #  name: 'squareteam' # attributes of organizations
+  #  admins_ids: [1,2,3] # Ids of existing users
+  # }
   post '/organizations/with_admins' do
     if params[:admins_ids].blank?
       status 400

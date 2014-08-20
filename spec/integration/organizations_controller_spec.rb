@@ -26,7 +26,7 @@ describe 'Organizations controller' do
         @orga = @orga || @orga_utf8
       end
       it 'responds with the data of the organization' do
-        get "/organization/#{@orga.id}"
+        get "/organizations/#{@orga.id}"
 
         expect(last_response).to be_ok
         expect(last_response.body).to include(@orga.to_json(OrganizationsController.read_scope))
@@ -40,7 +40,7 @@ describe 'Organizations controller' do
         end
         it 'responds with the data of the organization' do
           expect {
-            post '/organization', {:name => 'swcc'}
+            post '/organizations', {:name => 'swcc'}
             expect(last_response).to be_ok
           }.to change(Organization, :count).by(1)
         end
@@ -52,7 +52,7 @@ describe 'Organizations controller' do
         end
         it 'responds with an error message' do
           expect {
-            post '/organization', {:name => 'swcc'}
+            post '/organizations', {:name => 'swcc'}
             expect(last_response).to_not be_ok
             expect(last_response.body).to match /api.already_taken/
           }.not_to change(Organization, :count)
@@ -100,7 +100,7 @@ describe 'Organizations controller' do
         end
         it 'fails with a error message' do
           expect {
-            delete "/organization/#{@orga.id}/user/#{@user.id}"
+            delete "/organizations/#{@orga.id}/users/#{@user.id}"
           }.to change(UserRole, :count).by(0)
           expect(last_response).to_not be_ok
         end
@@ -115,7 +115,7 @@ describe 'Organizations controller' do
         end
         it 'deletes the userrole and succeeds' do
           expect {
-            delete "/organization/#{@orga.id}/user/#{@user.id}"
+            delete "/organizations/#{@orga.id}/users/#{@user.id}"
           }.to change(UserRole, :count).by(-1)
           expect(last_response).to be_ok
         end

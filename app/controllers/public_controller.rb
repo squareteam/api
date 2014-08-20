@@ -16,11 +16,22 @@ class PublicController < Yodatra::Base
     "hello world".to_json
   end
 
+  # Login to the API only with your identifier (email)
+  # @params {
+  #   identifier: 'john@squareteam.io'
+  # }
+  # @returns session salts to use for all future API calls
   put '/login' do
     login params[:identifier]
   end
 
-  post '/user' do
+  # Create a new user
+  # @params {
+  #   name: 'john',
+  #   email: 'john@example.com',
+  #   ... # Users attributes
+  # }
+  post '/users' do
     if params[:password].nil?
       status 400
       halt [Errors::NO_PASSWORD_PROVIDED].to_json
@@ -36,6 +47,12 @@ class PublicController < Yodatra::Base
     end
   end
 
+  # Ask for a forgot password token given your email
+  # Token will be sent by email
+  # @params {
+  #   email: 'john@squareteam.io'
+  # }
+  # @returns 200 | 404 | 400 Oauth account
   post '/forgot_password' do
     if params[:email].blank?
       status 400
@@ -68,6 +85,13 @@ class PublicController < Yodatra::Base
 
   end
 
+  # Changes your password given a valid temporary token
+  # @params
+  # {
+  #   password: 'new_password',
+  #   token: 'xxxyyyzzz'
+  # }
+  # @returns 200 | 404 | 400 Missing params | 500 change impossible
   post '/forgot_password/change' do
 
     if params[:token].nil? || params[:password].nil?
@@ -83,7 +107,7 @@ class PublicController < Yodatra::Base
       halt [Errors::NOT_FOUND].to_json
     end
 
-    user = User.find_by_id(user_id)
+    user = User.find_by_id user_id
 
     if user.nil?
       status 404

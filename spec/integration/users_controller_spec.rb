@@ -4,7 +4,7 @@ require File.expand_path '../../../app/auth/auth.rb', __FILE__
 describe 'Users controller' do
   context 'with no authentification' do
     it 'responds with a 401 not authorized' do
-      get '/user/me'
+      get '/users/me'
 
       last_response.status.should be 401
     end
@@ -26,7 +26,7 @@ describe 'Users controller' do
 
     describe 'GET my profile' do
       it 'responds with my profile' do
-        get '/user/me', {}, ST_ID_HEADER => @existing_user.email
+        get '/users/me', {}, ST_ID_HEADER => @existing_user.email
 
         last_response.should be_ok
         expect(JSON.load(last_response.body)['data']).to eq(@existing_user.attributes.select{ |k,v| %w(id name email).include? k })
@@ -36,14 +36,14 @@ describe 'Users controller' do
     describe 'Changing my password' do
       context 'when no parameters given' do
         it 'responds with an error message' do
-          put '/user/me/change_password', {}, ST_ID_HEADER => @existing_user.email
+          put '/users/me/change_password', {}, ST_ID_HEADER => @existing_user.email
 
           expect(last_response).to_not be_ok
         end
       end
       context 'when a new password is given in params' do
         it 'succeeds and responds ok' do
-          put '/user/me/change_password', {password: 'new'}, ST_ID_HEADER => @existing_user.email
+          put '/users/me/change_password', {password: 'new'}, ST_ID_HEADER => @existing_user.email
 
           expect(last_response).to be_ok
         end
@@ -62,7 +62,7 @@ describe 'Users controller' do
         it 'creates the user_role record' do
 
           expect {
-            post "teams/#{@team.id}/users", {:permissions => 0, :user_id => @existing_user.id}
+            post "/teams/#{@team.id}/users", {:permissions => 0, :user_id => @existing_user.id}
             last_response.status.should be 201
           }.to change(UserRole, :count).by(1)
 
@@ -77,7 +77,7 @@ describe 'Users controller' do
         end
 
         it 'updates the user_role record' do
-          put "teams/#{@team.id}/users/#{@existing_user.id}", { :permissions => 2 }
+          put "/teams/#{@team.id}/users/#{@existing_user.id}", { :permissions => 2 }
           last_response.should be_ok
           role = UserRole.where(user_id: @existing_user.id, team_id: @team.id).first
           expect(role.permissions).to equal(2)
@@ -91,7 +91,7 @@ describe 'Users controller' do
 
         it 'deletes the user_role record' do
           expect {
-            delete "teams/#{@team.id}/users/#{@existing_user.id}"
+            delete "/teams/#{@team.id}/users/#{@existing_user.id}"
             last_response.should be_ok
           }.to change(UserRole, :count).by(-1)
 
