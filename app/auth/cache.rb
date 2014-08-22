@@ -37,7 +37,7 @@ class Cache
   # Delete all item with the given key scheme.
   def purge_cache pattern
     all_keys = @redis.keys pattern
-    @redis.del all_keys
+    @redis.del *all_keys unless all_keys.empty?
   end
 
 end

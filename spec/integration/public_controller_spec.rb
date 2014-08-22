@@ -75,7 +75,7 @@ describe 'Public controller' do
     end
     context 'with an external github user (via oauth)' do
       before do
-        get '/auth/github/callback', { 'omniauth.auth' => mock_auth_hash }
+        get '/auth/github/callback', { 'omniauth.auth' => github_auth_hash }
       end
       it 'responds with two salts and caches the login token' do
         put '/login', {:identifier => 'john@external.com'}
@@ -90,6 +90,13 @@ describe 'Public controller' do
         expect(last_response.body).to match(response_expected)
         expect(Auth.cache.get("#{user.email}:TOKEN")).should_not be_nil
       end
+    end
+    context 'with an external github user (via oauth) with no public email' do
+      it 'is not possible' do
+        get '/auth/github/callback', { 'omniauth.auth' => github_auth_hash_without_email }
+        expect(last_response.status).to be 302
+        expect(last_response['Location']).to include 'error?messages={:email=>'
+     end
     end
     context 'when the user does not exist' do
       it 'fails with an error message' do

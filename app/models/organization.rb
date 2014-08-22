@@ -3,6 +3,7 @@ class Organization < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name
 
+  before_destroy :destroy_admins_team
   has_many :teams, dependent: :destroy
   has_many :user_roles, through: :teams
   has_many :users, through: :user_roles
@@ -15,11 +16,6 @@ class Organization < ActiveRecord::Base
 
   after_create :create_admins_team
 
-  # When creating an organization, attach a default team: Admins
-  def create_admins_team
-    Team.create(name: "Admin", organization: self, is_admin: true)
-  end
-
   def add_admin user_or_user_id
     user_id = user_or_user_id.is_a?(User) ? user_or_user_id.id : user_or_user_id
     UserRole.create(
@@ -27,6 +23,19 @@ class Organization < ActiveRecord::Base
       team: admins_team,
       permissions: UserRole::Permissions::all
     )
+  end
+
+  private
+
+  # When creating an organization, attach a default team: Admins
+  def create_admins_team
+    Team.create(name: "Admin", organization: self, is_admin: true)
+  end
+
+  def destroy_admins_team
+    # Force destruction of the Admins team
+    # otherwise the destruction would be blocked by the Team destroy callback
+    admins_team.delete
   end
 
 end

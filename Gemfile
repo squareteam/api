@@ -35,6 +35,7 @@ group :development do
   gem 'pry'
   #gem 'pry-debugger'
   gem 'rubocop'
+  gem 'rubycritic'
 end
 
 group :test do
