@@ -52,15 +52,9 @@ class User < ActiveRecord::Base
     self.save
   end
 
-  # Github oauth information
-  # https://developer.github.com/v3/oauth/#scopes
-  def self.find_or_create_from_github(auth)
-    user = where(auth.slice(:provider, :uid)).first_or_create do |u|
-      u.provider = auth.provider
-      u.uid = auth.uid
-      u.email = auth.info.email
-      u.name = auth.info.name
-    end
+  # Omniauth user
+  def self.find_for_oauth(auth)
+    user = find_or_create_by(uid: auth.uid, provider: auth.provider)
 
     if user.new_record?
       user.pbkdf = SecureRandom.random_bytes(8) # Invalid as we will recalculate at login time
@@ -69,25 +63,30 @@ class User < ActiveRecord::Base
 
     user.save
     user
-  end
+   end
+
+  # Github oauth information
+  # https://developer.github.com/v3/oauth/#scopes
+  def self.find_or_create_from_github(auth)
+    user = find_for_oauth(auth)
+
+    user.email = auth.info.email
+    user.name = auth.info.name
+
+    user.save
+    user
+ end
 
   # Behance oauth information
   # https://www.behance.net/dev/authentication#scopes
   def self.find_or_create_from_behance(auth)
-    user = where(auth.slice(:provider, :uid)).first_or_create do |u|
-      u.provider = auth.provider
-      u.uid = auth.uid
-      u.email = auth.info.email
-      u.name = auth.info.name
-    end
-    user.pbkdf = SecureRandom.random_bytes(8) # Invalid as we will recalculate at login time
-    user.salt = SecureRandom.random_bytes(8) # Invalid as we will recalculate at login time
+    user = find_for_oauth(auth)
 
-    if user.save
-      user
-    else
-      nil
-    end
+    user.email = auth.info.email
+    user.name = auth.info.name
+
+    user.save
+    user
   end
 
   private

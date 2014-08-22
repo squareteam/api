@@ -11,3 +11,4 @@ doc/
 .vagrant/
 spec/reports/
 tmp/restart.txt
+tmp/rubycritic/
