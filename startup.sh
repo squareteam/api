@@ -4,8 +4,10 @@
 # ##############################
 # ENV setup
 # warning: these are insecure dev app key/secret
+cat >/etc/profile.d/github.sh <<EOL
 export GITHUB_APP_SECRET=841d9089d13e7dd45a01d00b7616ecf8bc179ef4
 export GITHUB_APP_KEY=9a79820e47b0f83cbfa1
+EOL
 # ##############################
 
 
