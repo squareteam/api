@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 # Load a console in the context of the API
 require './api.rb'
 require 'pry'
