@@ -36,11 +36,11 @@ class UsersController < Yodatra::ModelsController
   # Receive mandatory data as shown below :
   # @params {
   #     'permissions' : 128,
-  #     'user_id'     : 1
+  #     'id'     : 1
   #   }
-  post '/teams/:id/users' do
-    team = Team.find params[:id]
-    user = User.find params[:user_id]
+  post '/teams/:team_id/users' do
+    team = Team.find params[:team_id]
+    user = User.find params[:id]
 
     if team.nil? || user.nil? || params[:permissions].blank?
       status 400

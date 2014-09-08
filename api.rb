@@ -4,7 +4,7 @@ require 'yodatra/logger'
 require 'yodatra/api_formatter'
 require 'yodatra/throttling'
 require 'rack/parser'
-require 'newrelic_rpm'
+require 'newrelic_rpm' if ENV['RACK_ENV'] == 'production'
 
 # ############## #
 # Squareteam API #
