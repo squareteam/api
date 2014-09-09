@@ -18,7 +18,9 @@ class TeamsController < Yodatra::ModelsController
       user_read_scope = UsersController.read_scope
       user_read_scope[:only] << :permissions
       {
-        only: [:id, :name],
+        # organization_id is needed by the front-end
+        #   - avoid unnecessary requests
+        only: [:id, :name, :organization_id],
         include: {
           users: user_read_scope
         }
