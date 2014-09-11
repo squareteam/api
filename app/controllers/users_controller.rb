@@ -40,7 +40,7 @@ class UsersController < Yodatra::ModelsController
   #   }
   post '/teams/:team_id/users' do
     team = Team.find params[:team_id]
-    user = User.find params[:id]
+    user = User.find params[:id] || params[:user_id]
 
     if team.nil? || user.nil? || params[:permissions].blank?
       status 400
