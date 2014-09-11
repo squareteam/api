@@ -1,6 +1,6 @@
 class Project < ActiveRecord::Base
 
-  enum status: [:inprogress, :finished]
+  enum status: [:inprogress, :paused, :validation, :done, :due]
 
   validates :title, :description, :created_by, presence: true
 
