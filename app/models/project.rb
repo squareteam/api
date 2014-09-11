@@ -2,7 +2,7 @@ class Project < ActiveRecord::Base
 
   enum status: [:inprogress, :paused, :validation, :done, :due]
 
-  validates :title, :description, :created_by, presence: true
+  validates :title, :created_by, presence: true
 
   belongs_to :creator, foreign_key: 'created_by', class_name: 'User'
 
