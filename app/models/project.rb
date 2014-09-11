@@ -13,4 +13,24 @@ class Project < ActiveRecord::Base
   has_many :organizations, -> { where( project_accesses: { object_type: 'Organization' } ) }, through: :project_accesses
 
   accepts_nested_attributes_for :users
+
+  attr_accessor :progress
+  attr_accessor :metadata
+
+  def progress
+    # if self.missions.count
+    #   (self.missions.map { |m| m.tasks.where(closed: false).count }.size * 100) / self.missions.count
+    # else
+      0
+    # end
+  end
+
+  def metadata
+    {
+      :documents_count => 0,
+      :tasks_count => 0,#self.missions.each { |m| m.tasks.where(closed: false).count },
+      :missions_count => self.missions.count,
+      :members_count => self.users.count
+    }
+  end
 end
