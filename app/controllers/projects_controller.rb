@@ -15,10 +15,9 @@ class ProjectsController < Yodatra::ModelsController
     def read_scope
       {
         only: [:id, :title, :description, :deadline, :created_at, :status],
-        methods: [:progress, :metadata], # attr_accessors
+        methods: [:progress, :metadata],
         include: {
-          creator: UsersController.read_scope,
-          users: UsersController.read_scope
+          creator: UsersController.read_scope
         }
       }
     end
