@@ -22,7 +22,7 @@ class Project < ActiveRecord::Base
       total_open_tasks = missions.map(&:open_tasks).map(&:size).reduce(&:+)
       100 - total_open_tasks * 100 / total_amount_of_tasks
     else
-      100
+      0
     end
   end
 
