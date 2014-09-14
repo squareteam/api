@@ -17,10 +17,10 @@ class Project < ActiveRecord::Base
   # Defines the progress of a project by calculating the
   # percentage of closed tasks on the total amount of tasks
   def progress
-    total_amount_of_tasks = missions.map(&:tasks).map(&:size).reduce(&:+) || 0
-    if total_amount_of_tasks > 0
-      total_open_tasks = missions.map(&:open_tasks).map(&:size).reduce(&:+)
-      100 - total_open_tasks * 100 / total_amount_of_tasks
+    total_tasks = missions.map(&:tasks).map(&:size).reduce(0, &:+) || 0
+    if total_tasks > 0
+      total_open_tasks = missions.map(&:open_tasks).map(&:size).reduce(0, &:+)
+      100 - total_open_tasks * 100 / total_tasks
     else
       0
     end
@@ -29,7 +29,7 @@ class Project < ActiveRecord::Base
   def metadata
     {
       documents_count: 0,
-      tasks_count: missions.map(&:open_tasks).map(&:size).reduce(&:+),
+      tasks_count: missions.map(&:open_tasks).map(&:size).reduce(0, &:+),
       missions_count: missions.size,
       members_count: users.size
     }
