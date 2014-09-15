@@ -49,6 +49,7 @@ class Api < Yodatra::Base
   use TeamsController
   use PrivateController
   use ProjectsController
+  use MissionsController
 
   NO_ROUTE_PROC = lambda do
     status 400

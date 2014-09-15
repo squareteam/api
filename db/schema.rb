@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140911202046) do
+ActiveRecord::Schema.define(version: 20140914163300) do
 
   create_table "knowledges", force: true do |t|
     t.string   "title",      limit: 100
@@ -21,12 +21,14 @@ ActiveRecord::Schema.define(version: 20140911202046) do
   end
 
   create_table "missions", force: true do |t|
-    t.string   "title",       limit: 125,  null: false
-    t.string   "description", limit: 5000, null: false
+    t.string   "title",       limit: 125,              null: false
+    t.string   "description", limit: 5000,             null: false
     t.datetime "deadline"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "project_id",               null: false
+    t.integer  "project_id",                           null: false
+    t.integer  "status",      limit: 1,    default: 0, null: false
+    t.integer  "created_by",                           null: false
   end
 
   create_table "organizations", force: true do |t|
