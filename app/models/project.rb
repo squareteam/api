@@ -21,6 +21,8 @@ class Project < ActiveRecord::Base
     ProjectAccess.create project_id: id, object_type: 'User', object_id: created_by
   end
 
+  public
+
   # Defines the progress of a project by calculating the
   # percentage of closed tasks on the total amount of tasks
   def progress
