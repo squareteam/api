@@ -12,7 +12,14 @@ class Project < ActiveRecord::Base
   has_many :users, -> { where( project_accesses: { object_type: 'User' } ) }, through: :project_accesses
   has_many :organizations, -> { where( project_accesses: { object_type: 'Organization' } ) }, through: :project_accesses
 
+  after_create :create_owner_access
   accepts_nested_attributes_for :users
+
+  private
+
+  def create_owner_access
+    ProjectAccess.create project_id: id, object_type: 'User', object_id: created_by
+  end
 
   # Defines the progress of a project by calculating the
   # percentage of closed tasks on the total amount of tasks
