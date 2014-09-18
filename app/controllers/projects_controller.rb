@@ -7,8 +7,8 @@ class ProjectsController < Yodatra::ModelsController
   end
 
   def project_params
-    params[:created_by] = current_user.id if request.post?
-    params.select { |k, _| %w(title description deadline status created_by).include?(k.to_s) }
+    params[:owner] = current_user if request.post?
+    params.select { |k, _| %w(title description deadline status owner).include?(k.to_s) }
   end
 
   def prepare_read(projects)
@@ -27,7 +27,7 @@ class ProjectsController < Yodatra::ModelsController
         only: [:id, :title, :description, :deadline, :created_at, :status],
         methods: [:progress, :metadata],
         include: {
-          creator: UsersController.read_scope
+          owner: UsersController.read_scope
         }
       }
     end

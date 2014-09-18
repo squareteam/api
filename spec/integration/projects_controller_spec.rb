@@ -21,7 +21,7 @@ describe ProjectsController do
         }.to change(Project, :count).by(1)
 
         expect(last_response).to be_ok
-        expect(Project.last.creator).to eq @user
+        expect(Project.last.owner).to eq @user
         expect(ProjectAccess.last.object_id).to eq @user.id
       end
     end
@@ -31,7 +31,7 @@ describe ProjectsController do
         before do
           Project.destroy_all
           u = User.easy_create name: 'yo', email: 'yo@yo.fr', password: 'yo'
-          u.projects.create title: 'Test project', creator: u
+          u.projects.create title: 'Test project', owner: u
         end
         it 'does not list anything' do
           get '/projects', {}, { 'HTTP_ST_IDENTIFIER' => @user.email }
@@ -43,7 +43,7 @@ describe ProjectsController do
       context 'with accessible projects' do
         before do
           Project.destroy_all
-          @user.projects.create title: 'Test project', creator: @user
+          @user.projects.create title: 'Test project', owner: @user
         end
         it 'does not list anything' do
           get '/projects', {}, { 'HTTP_ST_IDENTIFIER' => @user.email }
@@ -58,7 +58,7 @@ describe ProjectsController do
     describe 'Retrieving a project' do
       before do
         @u = User.easy_create(name: 'john', email: 'john@projects.com', password: 'joh')
-        @p = Project.create(title: title, description: description, created_by: @u.id)
+        @p = Project.create(title: title, description: description, owner: @u)
       end
 
       it 'returns all projects information' do
@@ -74,7 +74,7 @@ describe ProjectsController do
         before do
           @u = User.easy_create(name: 'john', email: 'john@projects.com', password: 'joh')
           @ou = User.easy_create(name: 'marie', email: 'marie@projects.com', password: 'joh')
-          @p = Project.create(title: title, description: description, created_by: @ou.id)
+          @p = Project.create(title: title, description: description, owner: @ou)
         end
 
         it 'fails with no record found error' do
@@ -89,7 +89,7 @@ describe ProjectsController do
         before do
           @u = User.easy_create(name: 'john', email: 'john@projects.com', password: 'joh')
           @ou = User.easy_create(name: 'marie', email: 'marie@projects.com', password: 'joh')
-          @p = Project.create(title: title, description: description, created_by: @u.id)
+          @p = Project.create(title: title, description: description, owner: @u)
         end
 
         it 'fails with no record found error' do
