@@ -13,7 +13,7 @@ class User < ActiveRecord::Base
   has_many :project_accesses, as: :object
   has_many :accessible_projects, through: :project_accesses, source: :project
   # Own projects
-  has_many :projects, as: :entity
+  has_many :projects, as: :owner
 
   accepts_nested_attributes_for :user_roles, :teams
 
