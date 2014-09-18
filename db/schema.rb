@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140916192600) do
+ActiveRecord::Schema.define(version: 20140917211504) do
 
   create_table "knowledges", force: true do |t|
     t.string   "title",      limit: 100
@@ -54,7 +54,8 @@ ActiveRecord::Schema.define(version: 20140916192600) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "status",      limit: 1,   default: 0, null: false
-    t.integer  "created_by",                          null: false
+    t.integer  "owner_id",                            null: false
+    t.string   "owner_type",                          null: false
   end
 
   create_table "task_comments", force: true do |t|

@@ -2,15 +2,14 @@ class Project < ActiveRecord::Base
 
   enum status: [:inprogress, :paused, :validation, :done, :due]
 
-  validates :title, :created_by, presence: true
-
-  belongs_to :creator, foreign_key: 'created_by', class_name: 'User'
+  validates :title, :owner, presence: true
 
   has_many :missions
 
+  belongs_to :owner, polymorphic: true
   has_many :project_accesses, foreign_key: 'project_id'
-  has_many :users, -> { where( project_accesses: { object_type: 'User' } ) }, through: :project_accesses
-  has_many :organizations, -> { where( project_accesses: { object_type: 'Organization' } ) }, through: :project_accesses
+  has_many :users, :through => :project_accesses, :source => :object, :source_type => 'User'
+  has_many :organizations, :through => :project_accesses, :source => :object, :source_type => 'Organization'
 
   after_create :create_owner_access
   accepts_nested_attributes_for :users
@@ -18,7 +17,7 @@ class Project < ActiveRecord::Base
   private
 
   def create_owner_access
-    ProjectAccess.create project_id: id, object_type: 'User', object_id: created_by
+    ProjectAccess.create project_id: id, object: owner
   end
 
   public
@@ -40,7 +39,7 @@ class Project < ActiveRecord::Base
       documents_count: 0,
       tasks_count: missions.map(&:open_tasks).map(&:size).reduce(0, &:+),
       missions_count: missions.size,
-      members_count: users.size
+      members_count: users.size + organizations.map(&:users).map(&:size).reduce(0, &:+)
     }
   end
 end

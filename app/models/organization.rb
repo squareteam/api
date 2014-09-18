@@ -9,8 +9,10 @@ class Organization < ActiveRecord::Base
   has_many :users, through: :user_roles
   has_one :admins_team, -> { where(is_admin: true) }, class_name: 'Team'
 
-  has_many :project_accesses, foreign_key: 'object_id'
-  has_many :projects, -> { where( project_accesses: { object_type: 'Organization' } ) }, through: :project_accesses
+  has_many :project_accesses, as: :object
+  has_many :accessible_projects, through: :project_accesses, source: :project
+  # Own projects
+  has_many :projects, as: :owner
 
   accepts_nested_attributes_for :users, :teams
 

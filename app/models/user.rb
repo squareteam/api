@@ -10,8 +10,10 @@ class User < ActiveRecord::Base
   has_many :teams, :through => :user_roles
   has_many :organizations, -> { uniq }, :through => :teams
 
-  has_many :project_accesses, foreign_key: 'object_id'
-  has_many :projects, -> { where( project_accesses: { object_type: 'User' } ) }, through: :project_accesses
+  has_many :project_accesses, as: :object
+  has_many :accessible_projects, through: :project_accesses, source: :project
+  # Own projects
+  has_many :projects, as: :entity
 
   accepts_nested_attributes_for :user_roles, :teams
 
