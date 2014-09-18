@@ -8,9 +8,12 @@ class ProjectsController < Yodatra::ModelsController
 
   def project_params
     params[:owner] = current_user if request.post?
-    params.select { |k, _| %w(title description deadline status owner).include?(k.to_s) }
+    only = %w(title description deadline status owner)
+    only.delete('owner') if request.put?
+    params.select { |k, _| only.include?(k.to_s) }
   end
 
+  # Limit access depending on the current_user
   def prepare_read(projects)
     user_access = ProjectAccess.where(object_type: 'User', object_id: current_user.id)
     orga_access = ProjectAccess.where(object_type: 'Organization', object_id: current_user.organizations.pluck(:id))

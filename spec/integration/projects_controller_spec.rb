@@ -14,8 +14,8 @@ describe ProjectsController do
       @user = User.easy_create(:email => 'projects@test.fr', :password => 'test', :name => 'test')
     end
 
-    describe 'creating a project' do
-      it 'creates a project by the current logged in user' do
+    describe 'creating a project and updating it' do
+      it 'creates a project by the current logged in user and updates it successfully' do
         expect {
           post '/projects', {title: title, description: description}, {'HTTP_ST_IDENTIFIER' => @user.email}
         }.to change(Project, :count).by(1)
@@ -23,6 +23,16 @@ describe ProjectsController do
         expect(last_response).to be_ok
         expect(Project.last.owner).to eq @user
         expect(ProjectAccess.last.object_id).to eq @user.id
+
+        project_id = Project.last.id
+        project_params = Project.last.as_json(ProjectsController.read_scope)
+        project_params['description'] = 'new awesome description'
+        expect {
+          put "/projects/#{project_id}", project_params, {'HTTP_ST_IDENTIFIER' => @user.email}
+        }.to change(Project, :count).by(0)
+
+        expect(last_response).to be_ok
+        expect(last_response.body).to include 'new awesome description'
       end
     end
 
