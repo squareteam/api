@@ -2,16 +2,6 @@
 
 
 # ##############################
-# ENV setup
-# warning: these are insecure dev app key/secret
-cat >/etc/profile.d/github.sh <<EOL
-export GITHUB_APP_SECRET=841d9089d13e7dd45a01d00b7616ecf8bc179ef4
-export GITHUB_APP_KEY=9a79820e47b0f83cbfa1
-EOL
-# ##############################
-
-
-# ##############################
 # Application bundling/configure
 pushd /home/app
 # Install Nokogiri with system libraries (it will fail otherwise)
@@ -31,6 +21,9 @@ popd
 
 # ##############################
 # Configure NGINX
+mkdir -p /etc/nginx/ssl
 mkdir -p /etc/nginx/sites-enabled
+cp /home/app/ssl/dev.squareteam.io.key /etc/nginx/ssl
+cp /home/app/ssl/dev.squareteam.io.crt /etc/nginx/ssl
 cp /home/app/dev.squareteam.io.conf /etc/nginx/sites-enabled
 # ##############################
