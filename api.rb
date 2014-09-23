@@ -4,6 +4,7 @@ require 'yodatra/logger'
 require 'yodatra/api_formatter'
 require 'yodatra/throttling'
 require 'rack/parser'
+require 'rack/ssl'
 require 'newrelic_rpm' if ENV['RACK_ENV'] == 'production'
 
 # ############## #
@@ -15,6 +16,7 @@ class Api < Yodatra::Base
   use Yodatra::Logger
   use Yodatra::Throttle, redis_conf: config.redis
   use Rack::Parser, :parsers => { 'application/json' => proc { |data| JSON.parse data } }
+  use Rack::SSL
 
   # Omniauth
   use Rack::Session::Redis, redis_server: config.redis, :expire_after => 30

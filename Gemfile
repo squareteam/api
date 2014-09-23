@@ -8,6 +8,7 @@ gem 'yodatra', '0.3.7'
 gem 'rack-rewrite'
 gem 'rack-parser', :require => 'rack/parser'
 gem 'rack-uploads', '0.2.1'
+gem 'rack-ssl', '1.4.1'
 
 # DB adapter
 gem 'mysql2'

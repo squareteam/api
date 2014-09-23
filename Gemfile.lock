@@ -126,6 +126,8 @@ GEM
     rack-protection (1.5.3)
       rack
     rack-rewrite (1.5.0)
+    rack-ssl (1.4.1)
+      rack
     rack-test (0.6.2)
       rack (>= 1.0)
     rack-uploads (0.2.1)
@@ -230,6 +232,7 @@ DEPENDENCIES
   pry
   rack-parser
   rack-rewrite
+  rack-ssl (= 1.4.1)
   rack-test
   rack-uploads (= 0.2.1)
   rake
