@@ -1,3 +1,3 @@
 Squareteam::Application.configure do |config|
-  config.app_url = 'http://alpha.squareteam.io'
+  config.app_url = 'https://alpha.squareteam.io'
 end
