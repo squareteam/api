@@ -16,7 +16,8 @@ class Api < Yodatra::Base
   use Yodatra::Logger
   use Yodatra::Throttle, redis_conf: config.redis
   use Rack::Parser, :parsers => { 'application/json' => proc { |data| JSON.parse data } }
-  use Rack::SSL
+  set :ssl, lambda { !test? }
+  use Rack::SSL if ssl
 
   # Omniauth
   use Rack::Session::Redis, redis_server: config.redis, :expire_after => 30
