@@ -19,24 +19,31 @@ class User < ActiveRecord::Base
 
   after_create :say_yo
 
-  def self.easy_new params
-    salt, pbkdf = Yodatra::Crypto.generate_pbkdf(params[:password])
-    email = params[:identifier]||params[:email]
-    uid = email.nil? ? nil : Digest::SHA1.hexdigest(email)
-    User.new(
-      :uid => uid,
-      :provider => 'squareteam',
-      :email => email,
-      :pbkdf => pbkdf,
-      :salt => salt,
-      :name => params[:name]
-    )
-  end
+  class << self
+    # limit access for this model depending on the user accessing it
+    def limit_read_for(resource, user)
+      resource.where(id: user.id)
+    end
 
-  def self.easy_create params
-    a_user = easy_new params
-    a_user.save
-    a_user
+    def easy_new params
+      salt, pbkdf = Yodatra::Crypto.generate_pbkdf(params[:password])
+      email = params[:identifier]||params[:email]
+      uid = email.nil? ? nil : Digest::SHA1.hexdigest(email)
+      User.new(
+               :uid => uid,
+               :provider => 'squareteam',
+               :email => email,
+               :pbkdf => pbkdf,
+               :salt => salt,
+               :name => params[:name]
+               )
+    end
+
+    def easy_create params
+      a_user = easy_new params
+      a_user.save
+      a_user
+    end
   end
 
   # Fully change a password

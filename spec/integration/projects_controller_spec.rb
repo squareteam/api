@@ -12,27 +12,64 @@ describe ProjectsController do
       allow_any_instance_of(Auth::Request).to receive(:valid?).and_return(true)
       User.destroy_all
       @user = User.easy_create(:email => 'projects@test.fr', :password => 'test', :name => 'test')
+      Organization.destroy_all
+      @user_orga = Organization.create name: 'One'
+      @user_orga.add_admin @user
+      @orga = Organization.create name: 'Two'
     end
 
     describe 'creating a project and updating it' do
-      it 'creates a project by the current logged in user and updates it successfully' do
-        expect {
-          post '/projects', {title: title, description: description}, {'HTTP_ST_IDENTIFIER' => @user.email}
-        }.to change(Project, :count).by(1)
+      context 'when targeting the /projects route' do
+        it 'creates a project by the current logged in user and updates it successfully' do
+          expect {
+            post '/projects', {title: title, description: description}, {'HTTP_ST_IDENTIFIER' => @user.email}
+          }.to change(Project, :count).by(1)
 
-        expect(last_response).to be_ok
-        expect(Project.last.owner).to eq @user
-        expect(ProjectAccess.last.object_id).to eq @user.id
+          expect(last_response).to be_ok
+          expect(Project.last.owner).to eq @user
+          expect(ProjectAccess.last.object_id).to eq @user.id
 
-        project_id = Project.last.id
-        project_params = Project.last.as_json(ProjectsController.read_scope)
-        project_params['description'] = 'new awesome description'
-        expect {
-          put "/projects/#{project_id}", project_params, {'HTTP_ST_IDENTIFIER' => @user.email}
-        }.to change(Project, :count).by(0)
+          project_id = Project.last.id
+          project_params = Project.last.as_json(ProjectsController.read_scope)
+          project_params['description'] = 'new awesome description'
+          expect {
+            put "/projects/#{project_id}", project_params, {'HTTP_ST_IDENTIFIER' => @user.email}
+          }.to change(Project, :count).by(0)
 
-        expect(last_response).to be_ok
-        expect(last_response.body).to include 'new awesome description'
+          expect(last_response).to be_ok
+          expect(last_response.body).to include 'new awesome description'
+        end
+      end
+      context 'through the user\'s organization' do
+        it 'creates a project owned by the orga and updates it successfully' do
+          expect {
+            post "/organizations/#{@user_orga.id}/projects", {title: title, description: description}, {'HTTP_ST_IDENTIFIER' => @user.email}
+          }.to change(Project, :count).by(1)
+
+          p = Project.last
+          expect(p.owner).to eq @user_orga
+          expect(last_response).to be_ok
+          expect(last_response.body).to include description
+
+          project_params = Project.last.as_json(ProjectsController.read_scope)
+          project_params['description'] = 'new awesome description'
+          expect {
+            put "/projects/#{p.id}", project_params, {'HTTP_ST_IDENTIFIER' => @user.email}
+          }.to change(Project, :count).by(0)
+
+          expect(last_response).to be_ok
+          expect(last_response.body).to include 'new awesome description'
+          expect(p.reload.description).to eq 'new awesome description'
+        end
+      end
+      context 'through another organization' do
+        it 'fails with not allowed error' do
+          expect {
+            post "/organizations/#{@orga.id}/projects", {title: title, description: description}, {'HTTP_ST_IDENTIFIER' => @user.email}
+          }.to change(Project, :count).by(0)
+
+          expect(last_response).to_not be_ok
+        end
       end
     end
 

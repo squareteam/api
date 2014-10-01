@@ -27,6 +27,11 @@ class Organization < ActiveRecord::Base
     )
   end
 
+  # limit access for this model depending on the user accessing it
+  def self.limit_read_for(resource, user)
+    resource.joins(:user_roles).where(user_roles: { user_id: user.id })
+  end
+
   private
 
   # When creating an organization, attach a default team: Admins
