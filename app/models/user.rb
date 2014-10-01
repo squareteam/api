@@ -70,17 +70,18 @@ class User < ActiveRecord::Base
       user.salt = SecureRandom.random_bytes(8) # Invalid as we will recalculate at login time
     end
 
-    user.save
     user
-   end
+  end
 
   # Github oauth information
   # https://developer.github.com/v3/oauth/#scopes
   def self.find_or_create_from_github(auth)
     user = find_for_oauth(auth)
 
-    user.email = auth.info.email
-    user.name = auth.info.name
+    if user.new_record?
+      user.email = auth.info.email
+      user.name = auth.info.name
+    end
 
     user.save
     user
@@ -91,8 +92,10 @@ class User < ActiveRecord::Base
   def self.find_or_create_from_behance(auth)
     user = find_for_oauth(auth)
 
-    user.email = auth.info.email
-    user.name = auth.info.name
+    if user.new_record?
+      user.email = auth.info.email
+      user.name = auth.info.name
+    end
 
     user.save
     user
