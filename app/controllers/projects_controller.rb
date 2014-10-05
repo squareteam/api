@@ -22,6 +22,12 @@ class ProjectsController < Yodatra::ModelsController
       orga_access = orga_access.where_values.reduce(:and)
       projects.joins(:project_accesses).where(user_access.or(orga_access)).uniq
     end
+    def limit_create_for(projects, user)
+      p = projects.new
+      allowed = true
+      allowed = user.has_permission?(UserRole::Permissions::ADD_PROJECT, p.owner) if p.owner.is_a?(Organization)
+      allowed ? projects : nil
+    end
     alias :limit_read_all_for :limit_read_for
     alias :limit_delete_for :limit_read_for
 

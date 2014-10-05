@@ -82,7 +82,9 @@ describe ProjectsController do
           expect {
             post "/organizations/#{@user_orga_no_permission.id}/projects", {title: title, description: description}, {'HTTP_ST_IDENTIFIER' => @user.email}
           }.to change(Project, :count).by(0)
+
           expect(last_response).to_not be_ok
+          expect(last_response.status).to eq 401
         end
       end
 

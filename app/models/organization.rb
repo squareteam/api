@@ -6,7 +6,7 @@ class Organization < ActiveRecord::Base
   before_destroy :destroy_admins_team
   has_many :teams, dependent: :destroy
   has_many :user_roles, through: :teams
-  has_many :users, through: :user_roles
+  has_many :users,  -> { uniq() }, through: :user_roles
   has_one :admins_team, -> { where(is_admin: true) }, class_name: 'Team'
 
   has_many :project_accesses, as: :object

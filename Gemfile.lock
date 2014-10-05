@@ -211,7 +211,7 @@ GEM
       coercible (~> 1.0)
       descendants_tracker (~> 0.0, >= 0.0.3)
       equalizer (~> 0.0, >= 0.0.9)
-    yodatra (0.3.10)
+    yodatra (0.3.11)
       rack (~> 1.4)
       rack-protection (~> 1.4)
       sinatra (~> 1.4.4, >= 1.4.4)
@@ -247,4 +247,4 @@ DEPENDENCIES
   simplecov
   sinatra
   sinatra-activerecord (= 2.0.2)
-  yodatra (= 0.3.10)
+  yodatra (= 0.3.11)
