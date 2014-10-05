@@ -14,6 +14,10 @@ class TeamsController < Yodatra::ModelsController
   end
 
   class << self
+    def limit_read_for(resource, user)
+      resource.joins(:users).where(users: { id: user.id })
+    end
+
     def read_scope
       user_read_scope = UsersController.read_scope
       user_read_scope[:only] << :permissions

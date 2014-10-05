@@ -20,11 +20,6 @@ class User < ActiveRecord::Base
   after_create :say_yo
 
   class << self
-    # limit access for this model depending on the user accessing it
-    def limit_read_for(resource, user)
-      resource.where(id: user.id)
-    end
-
     def easy_new params
       salt, pbkdf = Yodatra::Crypto.generate_pbkdf(params[:password])
       email = params[:identifier]||params[:email]
@@ -44,6 +39,17 @@ class User < ActiveRecord::Base
       a_user.save
       a_user
     end
+  end
+
+  # Given a permission and an organization
+  # @returns whether or not the user has the permission in the organization
+  # @returns nil if user does not belong to the organization
+  def has_permission?(permission, orga)
+    perms = orga.user_roles.
+      where(user_id: id).
+      maximum(:permissions)
+
+    UserRole.has_permission?(perms, permission)
   end
 
   # Fully change a password

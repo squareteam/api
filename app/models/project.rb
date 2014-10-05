@@ -22,20 +22,6 @@ class Project < ActiveRecord::Base
 
   public
 
-  class << self
-    # Limit access depending on the current_user
-    def limit_read_for(projects, user)
-      user_access = ProjectAccess.where(object_type: 'User', object_id: user.id)
-      orga_access = ProjectAccess.where(object_type: 'Organization', object_id: user.organizations.pluck(:id))
-      user_access = user_access.where_values.reduce(:and)
-      orga_access = orga_access.where_values.reduce(:and)
-      projects.joins(:project_accesses).where(user_access.or(orga_access)).uniq
-    end
-    alias :limit_read_all_for :limit_read_for
-    alias :limit_delete_for :limit_read_for
-
-  end
-
   # Defines the progress of a project by calculating the
   # percentage of closed tasks on the total amount of tasks
   def progress

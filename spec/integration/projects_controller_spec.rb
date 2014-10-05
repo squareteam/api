@@ -10,12 +10,22 @@ describe ProjectsController do
       allow_any_instance_of(Auth::Request).to receive(:invalid_timestamp).and_return(nil)
       allow_any_instance_of(Auth::Request).to receive(:token).and_return('fake')
       allow_any_instance_of(Auth::Request).to receive(:valid?).and_return(true)
-      User.destroy_all
-      @user = User.easy_create(:email => 'projects@test.fr', :password => 'test', :name => 'test')
-      Organization.destroy_all
-      @user_orga = Organization.create name: 'One'
+      User.delete_all
+      Organization.delete_all
+      Project.delete_all
+      @user_orga = create(:organization)
+      @user = create(:user)
       @user_orga.add_admin @user
-      @orga = Organization.create name: 'Two'
+
+      # Another orga where the user has not rights to create a project
+      @user_orga_no_permission = create(:organization)
+      @user_orga_no_permission.add_admin @user
+      @user_orga_no_permission.user_roles.where(user_id: @user.id).map do |ur|
+        ur.delete_permission UserRole::Permissions::ADD_PROJECT
+        ur.save
+      end
+
+      @orga = create(:organization, name: 'Two')
     end
 
     describe 'creating a project and updating it' do
@@ -40,8 +50,11 @@ describe ProjectsController do
           expect(last_response.body).to include 'new awesome description'
         end
       end
-      context 'through the user\'s organization' do
+      context 'through the user\'s organization when he has permission' do
         it 'creates a project owned by the orga and updates it successfully' do
+
+          perm = @user.has_permission? UserRole::Permissions::ADD_PROJECT, @user_orga
+          expect(perm).to be_truthy
           expect {
             post "/organizations/#{@user_orga.id}/projects", {title: title, description: description}, {'HTTP_ST_IDENTIFIER' => @user.email}
           }.to change(Project, :count).by(1)
@@ -62,6 +75,17 @@ describe ProjectsController do
           expect(p.reload.description).to eq 'new awesome description'
         end
       end
+      context 'through the user\s organization without the permissions' do
+        it 'fails with not allowed error' do
+          perm = @user.has_permission? UserRole::Permissions::ADD_PROJECT, @user_orga_no_permission
+          expect(perm).to be_falsy
+          expect {
+            post "/organizations/#{@user_orga_no_permission.id}/projects", {title: title, description: description}, {'HTTP_ST_IDENTIFIER' => @user.email}
+          }.to change(Project, :count).by(0)
+          expect(last_response).to_not be_ok
+        end
+      end
+
       context 'through another organization' do
         it 'fails with not allowed error' do
           expect {
@@ -76,9 +100,7 @@ describe ProjectsController do
     describe 'listing of projects' do
       context 'with non accessible projects' do
         before do
-          Project.destroy_all
-          u = User.easy_create name: 'yo', email: 'yo@yo.fr', password: 'yo'
-          u.projects.create title: 'Test project', owner: u
+          create(:project)
         end
         it 'does not list anything' do
           get '/projects', {}, { 'HTTP_ST_IDENTIFIER' => @user.email }
@@ -89,14 +111,14 @@ describe ProjectsController do
       end
       context 'with accessible projects' do
         before do
-          Project.destroy_all
-          @user.projects.create title: 'Test project', owner: @user
+          create(:project, owner: @user)
         end
-        it 'does not list anything' do
+        it 'lists my projects' do
           get '/projects', {}, { 'HTTP_ST_IDENTIFIER' => @user.email }
 
           expect(last_response).to be_ok
           expect(last_response.body).to include Project.all.as_json(ProjectsController.read_scope).to_json
+          expect(Project.count).to be 1
         end
       end
 

@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem 'rake'
 
 gem 'sinatra'
-gem 'yodatra', '0.3.9'
+gem 'yodatra', '0.3.10'
 
 gem 'rack-rewrite'
 gem 'rack-parser', :require => 'rack/parser'
@@ -41,6 +41,7 @@ end
 
 group :test do
   # Testing
+  gem 'factory_girl'
   gem 'simplecov'
   gem 'rack-test', require: 'rack/test'
   gem 'ci_reporter_rspec'

@@ -16,9 +16,14 @@ ST_TIMESTAMP_HEADER = 'HTTP_ST_TIMESTAMP'
 ST_HASH_HEADER = 'HTTP_ST_HASH'
 ST_ID_HEADER = 'HTTP_ST_IDENTIFIER'
 
+# Load FactoryGirl
+require 'factory_girl'
+FactoryGirl.find_definitions
+
 RSpec.configure do |c|
   c.include RSpecMixin
   c.include OmniauthMixin
+  c.include FactoryGirl::Syntax::Methods
 end
 
 # Omniauth testing

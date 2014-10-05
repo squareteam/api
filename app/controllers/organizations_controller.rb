@@ -59,6 +59,11 @@ class OrganizationsController < Yodatra::ModelsController
   end
 
   class << self
+    # limit access for read depending on the user accessing it
+    def limit_read_for(resource, user)
+      resource.joins(:users).where(users: { id: user.id })
+    end
+
     def read_scope
       {
         only: [:id, :name, :admin_team_id],

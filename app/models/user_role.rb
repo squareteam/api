@@ -5,18 +5,31 @@ class UserRole < ActiveRecord::Base
   belongs_to :user
   belongs_to :team
 
+  class << self
+    def add_permission(permissions, permission)
+      permissions | permission
+    end
+
+    def delete_permission(permissions, permission)
+      permissions & ~permission
+    end
+
+    def has_permission?(permissions, permission)
+      permissions & permission == permission
+    end
+  end
+
   def add_permission(permission)
-    self.permissions = self.permissions | permission
+    self.permissions = UserRole.add_permission(permissions, permission)
   end
 
   def delete_permission(permission)
-    self.permissions = self.permissions & ~permission
+    self.permissions = UserRole.delete_permission(permissions, permission)
   end
 
-  def has_permission(permission)
-    self.permissions & permission == permission
+  def has_permission?(permission)
+    self.permissions = UserRole.has_permission?(permissions, permission)
   end
-
 end
 
 class UserRole::Permissions
@@ -40,4 +53,3 @@ class UserRole::Permissions
     MANAGE_TEAM | ADD_PROJECT | MANAGE_PROJECTS | ADD_TASK | MANAGE_TASKS | ADD_MISSION | MANAGE_ORGANIZATION | MANAGE_MISSION
   end
 end
-
