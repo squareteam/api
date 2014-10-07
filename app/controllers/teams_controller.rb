@@ -10,7 +10,7 @@ class TeamsController < Yodatra::ModelsController
   end
 
   def team_params
-    params.select { |k, _| %w(name).include?(k.to_s) }
+    params.select { |k, _| %w(name color).include?(k.to_s) }
   end
 
   class << self
@@ -24,7 +24,7 @@ class TeamsController < Yodatra::ModelsController
       {
         # organization_id is needed by the front-end
         #   - avoid unnecessary requests
-        only: [:id, :name, :organization_id],
+        only: [:id, :name, :organization_id, :color],
         include: {
           users: user_read_scope
         }
