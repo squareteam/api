@@ -53,7 +53,10 @@ class UsersController < Yodatra::ModelsController
       )
       if role.save
         status 201
-        'ok'.to_json
+        {
+          :permissions => role.permissions,
+          :user_id     => role.user_id
+        }.to_json
       else
         status 400
         role.errors.to_json
@@ -76,7 +79,10 @@ class UsersController < Yodatra::ModelsController
       role.permissions = params[:permissions].to_i
       if role.save
         status 200
-        'ok'.to_json
+        {
+          :permissions => role.permissions,
+          :user_id     => role.user_id
+        }.to_json
       else
         status 400
         role.errors.to_json
