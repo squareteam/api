@@ -53,10 +53,7 @@ class UsersController < Yodatra::ModelsController
       )
       if role.save
         status 201
-        {
-          :permissions => role.permissions,
-          :user_id     => role.user_id
-        }.to_json
+        role.as_json(self.class.user_roles_read_scope).to_json
       else
         status 400
         role.errors.to_json
@@ -79,10 +76,7 @@ class UsersController < Yodatra::ModelsController
       role.permissions = params[:permissions].to_i
       if role.save
         status 200
-        {
-          :permissions => role.permissions,
-          :user_id     => role.user_id
-        }.to_json
+        role.as_json(self.class.user_roles_read_scope).to_json
       else
         status 400
         role.errors.to_json
@@ -100,7 +94,7 @@ class UsersController < Yodatra::ModelsController
     else
       if role.destroy
         status 200
-        'ok'.to_json
+        role.as_json(self.class.user_roles_read_scope).to_json
       else
         status 400
         role.errors.to_json
@@ -124,6 +118,10 @@ class UsersController < Yodatra::ModelsController
 
     def read_scope
       { only: [:id, :name, :email, :provider] }
+    end
+
+    def user_roles_read_scope
+      { only: [:user_id, :permissions, :team_id] }
     end
   end
 end
