@@ -13,19 +13,19 @@ describe ProjectsController do
       User.delete_all
       Organization.delete_all
       Project.delete_all
-      @user_orga = create(:organization)
-      @user = create(:user)
+      @user_orga = create :organization
+      @user = create :user
       @user_orga.add_admin @user
 
       # Another orga where the user has not rights to create a project
-      @user_orga_no_permission = create(:organization)
+      @user_orga_no_permission = create :organization
       @user_orga_no_permission.add_admin @user
       @user_orga_no_permission.user_roles.where(user_id: @user.id).map do |ur|
         ur.delete_permission UserRole::Permissions::ADD_PROJECT
         ur.save
       end
 
-      @orga = create(:organization, name: 'Two')
+      @orga = create :organization, name: 'Two'
     end
 
     describe 'creating a project and updating it' do
@@ -102,7 +102,7 @@ describe ProjectsController do
     describe 'listing of projects' do
       context 'with non accessible projects' do
         before do
-          create(:project)
+          create :project, :owned_by_user
         end
         it 'does not list anything' do
           get '/projects', {}, { 'HTTP_ST_IDENTIFIER' => @user.email }
@@ -113,7 +113,7 @@ describe ProjectsController do
       end
       context 'with accessible projects' do
         before do
-          create(:project, owner: @user)
+          create :project, owner: @user
         end
         it 'lists my projects' do
           get '/projects', {}, { 'HTTP_ST_IDENTIFIER' => @user.email }
@@ -127,25 +127,40 @@ describe ProjectsController do
     end
 
     describe 'Retrieving a project' do
-      before do
-        @u = User.easy_create(name: 'john', email: 'john@projects.com', password: 'joh')
-        @p = Project.create(title: title, description: description, owner: @u)
+      context 'owned by a user' do
+        before do
+          @p = create :project, :owned_by_user
+          @u = @p.owner
+        end
+
+        it 'returns all projects information' do
+          get "/projects/#{@p.id}", {}, { 'HTTP_ST_IDENTIFIER' => @u.email }
+
+          expect(last_response).to be_ok
+          expect(last_response.body).to include Project.find(@p.id).as_json(ProjectsController.read_scope).to_json
+        end
       end
+      context 'owned by an organization' do
+        before do
+          @p = create :project, :owned_by_organization
+          @o = @p.owner
+        end
 
-      it 'returns all projects information' do
-        get "/projects/#{@p.id}", {}, { 'HTTP_ST_IDENTIFIER' => @u.email }
+        it 'returns all projects information' do
+          get "/projects/#{@p.id}"
 
-        expect(last_response).to be_ok
-        expect(last_response.body).to include Project.find(@p.id).as_json(ProjectsController.read_scope).to_json
+          expect(last_response).to be_ok
+          expect(last_response.body).to include Project.find(@p.id).as_json(ProjectsController.read_scope).to_json
+        end
       end
     end
 
     describe 'deleting a project' do
       context 'when you don\'t have access to  it' do
         before do
-          @u = User.easy_create(name: 'john', email: 'john@projects.com', password: 'joh')
-          @ou = User.easy_create(name: 'marie', email: 'marie@projects.com', password: 'joh')
-          @p = Project.create(title: title, description: description, owner: @ou)
+          @u = create :user
+          @p = create :project, :owned_by_user, title: title, description: description
+          @ou = @p.owner
         end
 
         it 'fails with no record found error' do
@@ -158,9 +173,9 @@ describe ProjectsController do
       end
       context 'when you have access to it' do
         before do
-          @u = User.easy_create(name: 'john', email: 'john@projects.com', password: 'joh')
-          @ou = User.easy_create(name: 'marie', email: 'marie@projects.com', password: 'joh')
-          @p = Project.create(title: title, description: description, owner: @u)
+          @ou = create :user
+          @p = create :project, :owned_by_user, title: title, description: description
+          @u = @p.owner
         end
 
         it 'fails with no record found error' do

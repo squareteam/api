@@ -33,7 +33,7 @@ class ProjectsController < Yodatra::ModelsController
 
     def read_scope
       {
-        only: [:id, :title, :description, :deadline, :created_at, :status],
+        only: [:id, :title, :description, :deadline, :created_at, :status, :owner_type],
         methods: [:progress, :metadata],
         include: {
           owner: UsersController.read_scope
