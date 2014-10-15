@@ -81,11 +81,11 @@ class User < ActiveRecord::Base
 
   # Github oauth information
   # https://developer.github.com/v3/oauth/#scopes
-  def self.find_or_create_from_github(auth)
+  def self.find_or_create_from_github(auth, auth_params = {})
     user = find_for_oauth(auth)
 
     if user.new_record?
-      user.email = auth.info.email
+      user.email = auth.info.email || auth_params['email']
       user.name = auth.info.name
     end
 
@@ -95,11 +95,11 @@ class User < ActiveRecord::Base
 
   # Behance oauth information
   # https://www.behance.net/dev/authentication#scopes
-  def self.find_or_create_from_behance(auth)
+  def self.find_or_create_from_behance(auth, auth_params = {})
     user = find_for_oauth(auth)
 
     if user.new_record?
-      user.email = auth.info.email
+      user.email = auth.info.email || auth_params['email']
       user.name = auth.info.name
     end
 

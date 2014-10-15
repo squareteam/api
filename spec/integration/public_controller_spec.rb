@@ -91,12 +91,12 @@ describe 'Public controller' do
         expect(Auth.cache.get("#{user.email}:TOKEN")).should_not be_nil
       end
     end
-    context 'with an external github user (via oauth) with no public email' do
-      it 'is not possible' do
+    context 'with an external github user (via oauth) that has no public email' do
+      it 'is not possible and redirect to the frontend login page with errors in parameters' do
         get '/auth/github/callback', { 'omniauth.auth' => github_auth_hash_without_email }
         expect(last_response.status).to be 302
-        expect(last_response['Location']).to include 'error?messages={:email=>'
-     end
+        expect(last_response['Location']).to include 'login?errors={:email=>'
+      end
     end
     context 'when the user does not exist' do
       it 'fails with an error message' do

@@ -9,7 +9,7 @@ class OmniauthController < Sinatra::Base
 
   # Generic oauth callback
   get '/auth/:provider/callback' do
-    one = User.send "find_or_create_from_#{params[:provider]}", auth_hash
+    one = User.send "find_or_create_from_#{params[:provider]}", auth_hash, request.env['omniauth.params']
     url = Squareteam::Application::CONFIG.app_url
     if one.nil?
       path = '/#/register'
@@ -29,7 +29,7 @@ class OmniauthController < Sinatra::Base
         provider = one.provider
         path = "/#/login?email=#{identifier}&provider=#{provider}"
       else
-        path = "/#/error?messages=#{one.errors.messages}"
+        path = "/#/login?errors=#{one.errors.messages}"
       end
     end
 
