@@ -7,7 +7,7 @@ fi
 
 # Reset root password to root
 /usr/bin/mysqld_safe --skip-grant-tables > /dev/null 2>&1 &
-/bin/sleep 2s
+while [ "$(netstat -l | grep LISTEN | grep mysql | wc -l)" -le 0 ]; do /bin/sleep 1; done
 mysql -e "UPDATE mysql.user SET Password=PASSWORD('root') WHERE User='root';flush privileges;" -u root mysql
 
 
