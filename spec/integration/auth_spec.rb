@@ -12,31 +12,31 @@ describe 'Squareteam authentication' do
   context 'when it fails the WWW-Authenticate header should explain why in case of' do
     it 'missing header' do
       get '/users'
-      last_response.should_not be_ok
+      expect(last_response).to_not be_ok
       expect(last_response.headers['WWW-Authenticate']).to eq('St auth headers not found')
     end
 
     it 'wrong timestamp' do
-      get '/users', {}, {ST_TIMESTAMP_HEADER => (Time.now-3.minutes).to_i.to_s, ST_HASH_HEADER => '*', ST_ID_HEADER => '*'}
-      last_response.should_not be_ok
+      get '/users', {}, {'HTTP_ST_TIMESTAMP' => (Time.now-3.minutes).to_i.to_s, 'HTTP_ST_HASH' => '*', 'HTTP_ST_IDENTIFIER' => '*'}
+      expect(last_response).to_not be_ok
       expect(last_response.headers['WWW-Authenticate']).to eq('Timestamp expired')
 
-      get '/users', {}, {ST_TIMESTAMP_HEADER => (Time.now+3.minutes).to_i.to_s, ST_HASH_HEADER => '*', ST_ID_HEADER => '*'}
-      last_response.should_not be_ok
+      get '/users', {}, {'HTTP_ST_TIMESTAMP' => (Time.now+3.minutes).to_i.to_s, 'HTTP_ST_HASH' => '*', 'HTTP_ST_IDENTIFIER' => '*'}
+      expect(last_response).to_not be_ok
       expect(last_response.headers['WWW-Authenticate']).to eq('Timestamp too recent')
     end
 
     it 'missing token' do
       @r.del '*:TOKEN'
-      get '/users', {}, {ST_TIMESTAMP_HEADER => (Time.now).to_i.to_s, ST_HASH_HEADER => '*', ST_ID_HEADER => '*'}
-      last_response.should_not be_ok
+      get '/users', {}, {'HTTP_ST_TIMESTAMP' => (Time.now).to_i.to_s, 'HTTP_ST_HASH' => '*', 'HTTP_ST_IDENTIFIER' => '*'}
+      expect(last_response).to_not be_ok
       expect(last_response.headers['WWW-Authenticate']).to eq('Failed to retrieve token')
     end
 
     it 'invalid authentication' do
       @r.set '*:TOKEN', 'my_token'
-      get '/users', {}, {ST_TIMESTAMP_HEADER => (Time.now).to_i.to_s, ST_HASH_HEADER => '*', ST_ID_HEADER => '*'}
-      last_response.should_not be_ok
+      get '/users', {}, {'HTTP_ST_TIMESTAMP' => (Time.now).to_i.to_s, 'HTTP_ST_HASH' => '*', 'HTTP_ST_IDENTIFIER' => '*'}
+      expect(last_response).to_not be_ok
       expect(last_response.headers['WWW-Authenticate']).to eq('Invalid auth')
       @r.del '*:TOKEN'
     end
@@ -63,17 +63,13 @@ describe 'Squareteam authentication' do
         hmac << ""
         hash = hmac.digest.unpack('H*').first
 
-        get http_url, data, {ST_TIMESTAMP_HEADER => timestamp, ST_HASH_HEADER => hash, ST_ID_HEADER => @identifier}
+        get http_url, data, {'HTTP_ST_TIMESTAMP' => timestamp, 'HTTP_ST_HASH' => hash, 'HTTP_ST_IDENTIFIER' => @identifier}
 
-        last_response.should be_ok
+        expect(last_response).to be_ok
       end
     end
 
     context 'POSTing a private route' do
-      before do
-        Organization.destroy_all
-        Team.destroy_all
-      end
       it 'should succeed' do
         @r.set "#{@identifier}:TOKEN", [@token].pack('H*')
         timestamp = (Time.now).to_i.to_s
@@ -87,9 +83,9 @@ describe 'Squareteam authentication' do
         hmac << "name=st"
         hash = hmac.digest.unpack('H*').first
 
-        post http_url, data, {ST_TIMESTAMP_HEADER => timestamp, ST_HASH_HEADER => hash, ST_ID_HEADER => @identifier}
+        post http_url, data, {'HTTP_ST_TIMESTAMP' => timestamp, 'HTTP_ST_HASH' => hash, 'HTTP_ST_IDENTIFIER' => @identifier}
 
-        last_response.should be_ok
+        expect(last_response).to be_ok
       end
     end
 
@@ -107,7 +103,7 @@ describe 'Squareteam authentication' do
         hmac << ""
         hash = hmac.digest.unpack('H*').first
 
-        get http_url, data, {ST_TIMESTAMP_HEADER => timestamp, ST_HASH_HEADER => hash, ST_ID_HEADER => @identifier}
+        get http_url, data, {'HTTP_ST_TIMESTAMP' => timestamp, 'HTTP_ST_HASH' => hash, 'HTTP_ST_IDENTIFIER' => @identifier}
 
         expect(last_response.status).to be(400)
         expect(last_response.body).to match(/api.no_route/)
@@ -129,9 +125,9 @@ describe 'Squareteam authentication' do
         hmac << ""
         hash = hmac.digest.unpack('H*').first
 
-        get http_url, data, {ST_TIMESTAMP_HEADER => timestamp, ST_HASH_HEADER => hash, ST_ID_HEADER => @identifier}
+        get http_url, data, {'HTTP_ST_TIMESTAMP' => timestamp, 'HTTP_ST_HASH' => hash, 'HTTP_ST_IDENTIFIER' => @identifier}
 
-        last_response.should be_ok
+        expect(last_response).to be_ok
         expect(@r.get "#{@identifier}:TOKEN").to be_nil
         expect(@r.get "#{@identifier}:SALT2").to be_nil
       end

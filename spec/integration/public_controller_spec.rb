@@ -13,7 +13,7 @@ describe 'Public controller' do
       it 'responds with a 400 and an error message' do
         post '/users', {:identifier => 'hello@example.com'}
 
-        last_response.status.should be 400
+        expect(last_response.status).to be 400
         expect(last_response.body).to match(/api\.no_password/)
       end
     end
@@ -21,7 +21,7 @@ describe 'Public controller' do
       it 'responds with a 400 and an error message' do
         post '/users', {:password => 'hello@example.com'}
 
-        last_response.status.should be 400
+        expect(last_response.status).to be 400
         expect(last_response.body).to match(/api\.violation/)
       end
     end
@@ -34,7 +34,7 @@ describe 'Public controller' do
       it 'responds with a 400 and an explicit error message' do
         post '/users', {:password => 'test', :identifier => @email_already_taken, :name => 'test'}
 
-        last_response.status.should be 400
+        expect(last_response.status).to be 400
         expect(last_response.body).to match(/api\..*already_taken/)
       end
     end
@@ -45,13 +45,9 @@ describe 'Public controller' do
           post('/users', {:password => 'test', :identifier => 'test2@test.fr', :name => ''})
         }.to change(User, :count).by(1)
 
-        last_response.should be_ok
+        expect(last_response).to be_ok
       end
     end
-  end
-
-  after do
-    User.destroy_all
   end
 
   describe 'login' do
@@ -63,14 +59,14 @@ describe 'Public controller' do
       it 'responds with two salts and caches the login token' do
         put '/login', {:identifier => @existing_identifier}
 
-        last_response.should be_ok
+        expect(last_response).to be_ok
 
         user = User.find_by_email(@existing_identifier)
         expect(user.provider).to eql 'squareteam'
         salt = Auth.login(user) # This should only take token and salts from cache as we already logged in
         response_expected = {:salt1 => user.salt.unpack('H*').first, :salt2 => salt.unpack('H*').first}.to_json
         expect(last_response.body).to match(response_expected)
-        expect(Auth.cache.get("#{user.email}:TOKEN")).should_not be_nil
+        expect(Auth.cache.get("#{user.email}:TOKEN")).to_not be_nil
       end
     end
     context 'with an external github user (via oauth)' do
@@ -80,7 +76,7 @@ describe 'Public controller' do
       it 'responds with two salts and caches the login token' do
         put '/login', {:identifier => 'john@external.com'}
 
-        last_response.should be_ok
+        expect(last_response).to be_ok
 
         user = User.find_by_email('john@external.com')
         expect(user.provider).to eql 'github'
@@ -88,7 +84,7 @@ describe 'Public controller' do
         salt = Auth.login(user) # This should only take token and salts from cache as we already logged in
         response_expected = {:salt1 => user.salt.unpack('H*').first, :salt2 => salt.unpack('H*').first}.to_json
         expect(last_response.body).to match(response_expected)
-        expect(Auth.cache.get("#{user.email}:TOKEN")).should_not be_nil
+        expect(Auth.cache.get("#{user.email}:TOKEN")).to_not be_nil
       end
     end
     context 'with an external github user (via oauth) that has no public email' do
@@ -102,7 +98,7 @@ describe 'Public controller' do
       it 'fails with an error message' do
         put '/login', {:identifier => 'none@example.com'}
 
-        last_response.should_not be_ok
+        expect(last_response).to_not be_ok
         expect(last_response.body).to match(['Login fail'].to_json)
       end
     end
@@ -119,7 +115,7 @@ describe 'Public controller' do
 
           post "/forgot_password"
 
-          expect last_response.should_not be_ok
+          expect(last_response).to_not be_ok
           expect(last_response.body).to match("api.bad_request".to_json)
         end
       end
@@ -129,33 +125,27 @@ describe 'Public controller' do
 
           post "/forgot_password", {:email => "notexistent@user.com"}
 
-          expect last_response.should_not be_ok
+          expect(last_response).to_not be_ok
           expect(last_response.body).to match("api.not_found".to_json)
         end
       end
 
       context 'with a valid email' do
         it 'should create a token and sent it to the given email' do
-          u = User.easy_create(email:'te@fo.com', name:'test', password:'test')
-          SecureRandom.stub(:hex) { 'abcd' }
-          expect(UserMailer).to receive(:forgot_password).with(u, 'abcd').
-            and_call_original
+          u = create :user, email:'te@fo.com'
+          allow(SecureRandom).to receive(:hex).and_return('abcd')
+          expect(UserMailer).to receive(:forgot_password).with(u, 'abcd').and_call_original
 
           post '/forgot_password', email: 'te@fo.com'
 
-          expect last_response.should be_ok
-          @r.get('abcd:FORGOT_TOKEN').should_not be_nil
+          expect(last_response).to be_ok
+          expect(@r.get('abcd:FORGOT_TOKEN')).to_not be_nil
         end
       end
 
       context 'with a valid email but an oauth account' do
         it 'doesn\'t create a token and returns a 400 with provider in error' do
-          u = User.create(
-                          email:'test@forgot.com',
-                          pbkdf:'test',
-                          salt:'test',
-                          provider: 'github'
-                          )
+          u = create :user, email:'test@forgot.com', provider: 'github'
           expect(SecureRandom).to_not receive(:hex)
 
           post '/forgot_password', email: 'test@forgot.com'
@@ -165,11 +155,6 @@ describe 'Public controller' do
           expect(last_response.body).to match(expected_response)
         end
       end
-
-      after do
-        User.destroy_all
-      end
-
     end
 
     describe 'when changing password' do
@@ -178,7 +163,7 @@ describe 'Public controller' do
         it 'should respond "400 Bad Request"' do
           post "/forgot_password/change", {:password => "test"}
 
-          expect last_response.should_not be_ok
+          expect(last_response).to_not be_ok
           expect(last_response.body).to match("api.bad_request".to_json)
         end
       end
@@ -187,7 +172,7 @@ describe 'Public controller' do
         it 'should respond "400 Bad Request"' do
           post "/forgot_password/change", {:token => "abcd"}
 
-          expect last_response.should_not be_ok
+          expect(last_response).to_not be_ok
           expect(last_response.body).to match("api.bad_request".to_json)
         end
       end
@@ -199,7 +184,7 @@ describe 'Public controller' do
             password: 'mynewpassword'
           }
 
-          expect last_response.should_not be_ok
+          expect(last_response).to_not be_ok
           expect(last_response.body).to match "api.not_found".to_json
         end
       end
@@ -213,21 +198,14 @@ describe 'Public controller' do
             password: 'mynewpassword'
           }
 
-          expect last_response.should_not be_ok
+          expect(last_response).to_not be_ok
           expect(last_response.body).to match('api.not_found'.to_json)
         end
       end
 
       context 'with a valid token' do
         before do
-          user = User.create(
-                             :uid => 'fdsfdsfdsfds',
-                             :provider => 'squareteam',
-                             :email => 'test@changepassword.com',
-                             :pbkdf => 'pbkdf',
-                             :salt => 'salt',
-                             :name => 'Mr. change password'
-                             )
+          user = create :user, :email => 'test@changepassword.com'
           @r.set('abcd:FORGOT_TOKEN', user.id)
         end
 
@@ -237,13 +215,12 @@ describe 'Public controller' do
             token: 'abcd'
           }
 
-          expect last_response.should be_ok
+          expect(last_response).to be_ok
 
           user = User.find_by_email('test@changepassword.com')
-
           _, pbkdf = Yodatra::Crypto.generate_pbkdf('newpassword', user.salt)
 
-          pbkdf.should be_eql user.pbkdf
+          expect(pbkdf).to be_eql user.pbkdf
         end
       end
 

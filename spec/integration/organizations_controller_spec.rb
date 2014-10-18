@@ -2,34 +2,42 @@
 require File.expand_path '../../spec_helper.rb', __FILE__
 require File.expand_path '../../../app/auth/auth.rb', __FILE__
 
-describe 'Organizations controller' do
+describe OrganizationsController do
 
   context 'with an authenticated request' do
 
     before do
-      Team.destroy_all
-      Organization.destroy_all
+      @user = create :user
 
-      @user = User.last || User.create(:email => 'test@test.fr', :pbkdf => 'fff', :salt => 'fff')
-
-      allow_any_instance_of(Auth::Request).to receive(:provided?).and_return(true)
-      allow_any_instance_of(Auth::Request).to receive(:invalid_timestamp).and_return(nil)
-      allow_any_instance_of(Auth::Request).to receive(:token).and_return('fake')
-      allow_any_instance_of(Auth::Request).to receive(:valid?).and_return(true)
+      authenticate_requests_as @user
     end
 
-    describe 'GET an organization' do
+    describe 'GET an organization which I can access' do
       before do
-        @orga_ascii = Organization.create name: 'squareteam'
-        @orga_utf8 = Organization.create name: 'test //()!%?-_éàè"'
+        @orga_ascii = create :organization, name: 'square'
+        @orga_utf8 = create :organization, name: 'test //()!%?-_éàè"'
         @orga = @orga_ascii if rand(2) == 0
         @orga = @orga || @orga_utf8
+        @orga.add_admin @user
       end
       it 'responds with the data of the organization' do
         get "/organizations/#{@orga.id}"
 
         expect(last_response).to be_ok
         expect(last_response.body).to include(@orga.to_json(OrganizationsController.read_scope))
+      end
+    end
+    describe 'GET an organization which I DO NOT have access' do
+      before do
+        @orga_ascii = create :organization, name: 'square'
+        @orga_utf8 = create :organization, name: 'test //()!%?-_éàè"'
+        @orga = @orga_ascii if rand(2) == 0
+        @orga = @orga || @orga_utf8
+      end
+      it 'responds with the data of the organization' do
+        get "/organizations/#{@orga.id}"
+
+        expect(last_response.status).to be 404
       end
     end
 
@@ -47,8 +55,7 @@ describe 'Organizations controller' do
       end
       context 'that already exist' do
         before do
-          Organization.destroy_all
-          Organization.create(:name => 'swcc')
+          create :organization, :name => 'swcc'
         end
         it 'responds with an error message' do
           expect {
@@ -73,13 +80,8 @@ describe 'Organizations controller' do
         end
       end
       context 'create organization and add given users to "Admins" team' do
-        before do
-          Organization.destroy_all
-          UserRole.destroy_all
-        end
         it 'create organization and add given users to "Admins" team' do
-          u = User.easy_new(name: 'test', email: 'test@example.com', password: 'yo')
-          u.save
+          u = create :user
           expect {
             post '/organizations/with_admins', {:name => 'swcc', :admins_ids => [u.id]}
             expect(last_response).to be_ok
@@ -93,10 +95,8 @@ describe 'Organizations controller' do
     describe 'Remove a User from an organization' do
       context 'if the targeted user doesn\'t belong to the organization' do
         before do
-          Organization.destroy_all
-          User.destroy_all
-          @orga = Organization.create(name: 'test')
-          @user = User.easy_create(name: 'jo',password:'jo',email:'jo@com.fr')
+          @orga = create :organization
+          @user = create :user
         end
         it 'fails with a error message' do
           expect {
@@ -107,10 +107,8 @@ describe 'Organizations controller' do
       end
       context 'if the targeted user belongs to the organization' do
         before do
-          Organization.destroy_all
-          User.destroy_all
-          @orga = Organization.create(name: 'test')
-          @user = User.easy_create(name: 'jo',password:'jo',email:'jo@com.fr')
+          @orga = create :organization
+          @user = create :user
           @orga.add_admin @user
         end
         it 'deletes the userrole and succeeds' do

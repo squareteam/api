@@ -6,13 +6,6 @@ describe ProjectsController do
 
   context 'when authenticated' do
     before do
-      allow_any_instance_of(Auth::Request).to receive(:provided?).and_return(true)
-      allow_any_instance_of(Auth::Request).to receive(:invalid_timestamp).and_return(nil)
-      allow_any_instance_of(Auth::Request).to receive(:token).and_return('fake')
-      allow_any_instance_of(Auth::Request).to receive(:valid?).and_return(true)
-      User.delete_all
-      Organization.delete_all
-      Project.delete_all
       @user_orga = create :organization
       @user = create :user
       @user_orga.add_admin @user
@@ -26,13 +19,15 @@ describe ProjectsController do
       end
 
       @orga = create :organization, name: 'Two'
+
+      authenticate_requests_as @user
     end
 
     describe 'creating a project and updating it' do
       context 'when targeting the /projects route' do
         it 'creates a project by the current logged in user and updates it successfully' do
           expect {
-            post '/projects', {title: title, description: description}, {'HTTP_ST_IDENTIFIER' => @user.email}
+            post '/projects', {title: title, description: description}
           }.to change(Project, :count).by(1)
 
           expect(last_response).to be_ok
@@ -43,7 +38,7 @@ describe ProjectsController do
           project_params = Project.last.as_json(ProjectsController.read_scope)
           project_params['description'] = 'new awesome description'
           expect {
-            put "/projects/#{project_id}", project_params, {'HTTP_ST_IDENTIFIER' => @user.email}
+            put "/projects/#{project_id}", project_params
           }.to change(Project, :count).by(0)
 
           expect(last_response).to be_ok
@@ -56,7 +51,7 @@ describe ProjectsController do
           perm = @user.has_permission? UserRole::Permissions::ADD_PROJECT, @user_orga
           expect(perm).to be_truthy
           expect {
-            post "/organizations/#{@user_orga.id}/projects", {title: title, description: description}, {'HTTP_ST_IDENTIFIER' => @user.email}
+            post "/organizations/#{@user_orga.id}/projects", {title: title, description: description}
           }.to change(Project, :count).by(1)
 
           p = Project.last
@@ -67,7 +62,7 @@ describe ProjectsController do
           project_params = Project.last.as_json(ProjectsController.read_scope)
           project_params['description'] = 'new awesome description'
           expect {
-            put "/projects/#{p.id}", project_params, {'HTTP_ST_IDENTIFIER' => @user.email}
+            put "/projects/#{p.id}", project_params
           }.to change(Project, :count).by(0)
 
           expect(last_response).to be_ok
@@ -80,7 +75,7 @@ describe ProjectsController do
           perm = @user.has_permission? UserRole::Permissions::ADD_PROJECT, @user_orga_no_permission
           expect(perm).to be_falsy
           expect {
-            post "/organizations/#{@user_orga_no_permission.id}/projects", {title: title, description: description}, {'HTTP_ST_IDENTIFIER' => @user.email}
+            post "/organizations/#{@user_orga_no_permission.id}/projects", {title: title, description: description}
           }.to change(Project, :count).by(0)
 
           expect(last_response).to_not be_ok
@@ -91,7 +86,7 @@ describe ProjectsController do
       context 'through another organization' do
         it 'fails with not allowed error' do
           expect {
-            post "/organizations/#{@orga.id}/projects", {title: title, description: description}, {'HTTP_ST_IDENTIFIER' => @user.email}
+            post "/organizations/#{@orga.id}/projects", {title: title, description: description}
           }.to change(Project, :count).by(0)
 
           expect(last_response).to_not be_ok
@@ -105,7 +100,7 @@ describe ProjectsController do
           create :project, :owned_by_user
         end
         it 'does not list anything' do
-          get '/projects', {}, { 'HTTP_ST_IDENTIFIER' => @user.email }
+          get '/projects'
 
           expect(last_response).to be_ok
           expect(JSON.parse(last_response.body)['data']).to eq []
@@ -116,7 +111,7 @@ describe ProjectsController do
           create :project, owner: @user
         end
         it 'lists my projects' do
-          get '/projects', {}, { 'HTTP_ST_IDENTIFIER' => @user.email }
+          get '/projects'
 
           expect(last_response).to be_ok
           expect(last_response.body).to include Project.all.as_json(ProjectsController.read_scope).to_json
@@ -131,10 +126,12 @@ describe ProjectsController do
         before do
           @p = create :project, :owned_by_user
           @u = @p.owner
+
+          authenticate_requests_as @u
         end
 
         it 'returns all projects information' do
-          get "/projects/#{@p.id}", {}, { 'HTTP_ST_IDENTIFIER' => @u.email }
+          get "/projects/#{@p.id}", {}
 
           expect(last_response).to be_ok
           expect(last_response.body).to include Project.find(@p.id).as_json(ProjectsController.read_scope).to_json
@@ -144,6 +141,10 @@ describe ProjectsController do
         before do
           @p = create :project, :owned_by_organization
           @o = @p.owner
+          @u = create :user
+          @o.add_admin @u
+
+          authenticate_requests_as @u
         end
 
         it 'returns all projects information' do
@@ -161,11 +162,13 @@ describe ProjectsController do
           @u = create :user
           @p = create :project, :owned_by_user, title: title, description: description
           @ou = @p.owner
+
+          authenticate_requests_as @u
         end
 
         it 'fails with no record found error' do
           expect {
-            delete "/projects/#{@p.id}", {}, { 'HTTP_ST_IDENTIFIER' => @u.email }
+            delete "/projects/#{@p.id}"
           }.to_not change(Project, :count)
           expect(last_response).to_not be_ok
           expect(last_response.body).to include 'record not found'
@@ -176,11 +179,13 @@ describe ProjectsController do
           @ou = create :user
           @p = create :project, :owned_by_user, title: title, description: description
           @u = @p.owner
+
+          authenticate_requests_as @u
         end
 
         it 'fails with no record found error' do
           expect {
-            delete "/projects/#{@p.id}", {}, { 'HTTP_ST_IDENTIFIER' => @u.email }
+            delete "/projects/#{@p.id}"
           }.to change(Project, :count).by(-1)
 
           expect(last_response).to be_ok

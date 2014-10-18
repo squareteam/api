@@ -41,6 +41,7 @@ end
 
 group :test do
   # Testing
+  gem 'database_cleaner'
   gem 'factory_girl'
   gem 'simplecov'
   gem 'rack-test', require: 'rack/test'

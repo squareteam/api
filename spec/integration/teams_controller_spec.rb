@@ -6,18 +6,11 @@ describe 'Teams controller' do
   context 'with an authenticated request' do
 
     before do
-      Organization.destroy_all
-      Team.destroy_all
-      UserRole.destroy_all
+      @user = create :user
+      @organization = create :organization
+      @organization.add_admin @user
 
-      @user = User.easy_create(name: 'test', email: 'test@test.fr', password: 'fff')
-
-      @organization = Organization.create(:name => 'test')
-
-      allow_any_instance_of(Auth::Request).to receive(:provided?).and_return(true)
-      allow_any_instance_of(Auth::Request).to receive(:invalid_timestamp).and_return(nil)
-      allow_any_instance_of(Auth::Request).to receive(:token).and_return('fake')
-      allow_any_instance_of(Auth::Request).to receive(:valid?).and_return(true)
+      authenticate_requests_as @user
     end
 
     describe 'POST a team in a organization' do
@@ -26,7 +19,7 @@ describe 'Teams controller' do
 
         expect {
           post "/organizations/#{@organization.id}/teams", {:name => 'developers'}
-          last_response.should be_ok
+          expect(last_response).to be_ok
         }.to change(Team, :count).by(1)
         expect(last_response.body).to include(Team.last.to_json(TeamsController.read_scope))
 
@@ -34,14 +27,14 @@ describe 'Teams controller' do
 
       context 'with an already taken name' do
         before do
-          Team.create(organization: @organization, name:'developers')
+          create :team, organization: @organization, name: 'developers'
         end
 
         it 'responds with an error message' do
 
           expect {
             post "/organizations/#{@organization.id}/teams", {:name => 'developers'}
-            last_response.should_not be_ok
+            expect(last_response).to_not be_ok
             expect(last_response.body).to match(/api.already_taken/)
           }.not_to change(Team, :count)
 

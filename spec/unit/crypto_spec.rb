@@ -66,7 +66,7 @@ describe 'Crypto' do
         @request = Auth::Request.new env
       end
       it 'should be a valid request' do
-        @request.valid?.should be_truthy
+        expect(@request.valid?).to be_truthy
       end
     end
   end
