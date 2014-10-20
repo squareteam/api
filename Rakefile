@@ -42,9 +42,9 @@ end
 
 # DEV run console
 task :console do
-  require 'irb'
+  require 'pry'
   ARGV.clear
-  IRB.start
+  Pry.start
 end
 
 task :spec => 'ci:setup:rspec'
