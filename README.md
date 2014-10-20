@@ -1,6 +1,6 @@
 Squareteam
 ===
-[![Dependency Status](https://gemnasium.com/squareteam/api.svg)](https://gemnasium.com/squareteam/api)[![Build Status](https://travis-ci.org/squareteam/api.svg?branch=master)](https://travis-ci.org/squareteam/api)[![Coverage Status](https://coveralls.io/repos/squareteam/api/badge.png)](https://coveralls.io/r/squareteam/api)
+[![Dependency Status](https://gemnasium.com/squareteam/api.svg)](https://gemnasium.com/squareteam/api) [![Build Status](https://travis-ci.org/squareteam/api.svg?branch=master)](https://travis-ci.org/squareteam/api) [![Coverage Status](https://coveralls.io/repos/squareteam/api/badge.png)](https://coveralls.io/r/squareteam/api)
 
 This is the backend of Squareteam. Written in Ruby with Sinatra.
 
