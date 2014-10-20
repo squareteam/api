@@ -3,7 +3,15 @@ rvm:
   - 2.1.3
   - 2.0.0
   - 1.9.3
+services:
+  - redis-server
+  # - mysql is started by default
 before_script:
   - cp config/database_ci.yml config/database.yml
+  - cp config/redis_ci.yml config/redis.yml
   - "mysql -uroot -e \"CREATE DATABASE IF NOT EXISTS st_test DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;\""
   - "mysql -uroot -e \"GRANT ALL PRIVILEGES ON st_test.* TO 'st_test'@'localhost' IDENTIFIED BY 'st_test';\""
+script:
+  - RACK_ENV=test bundle exec rake db:setup
+  - RACK_ENV=test bundle exec rake db:migrate --trace
+  - RACK_ENV=test bundle exec rake spec

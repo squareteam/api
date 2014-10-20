@@ -1,12 +1,17 @@
 ENV['RACK_ENV'] ||= 'test'
-require 'rack/test'
-require 'rspec'
+# Setup coverage before all!
 require 'simplecov'
 SimpleCov.start do
   add_filter 'db/'
   add_filter 'vendor/'
   add_filter 'spec/'
 end
+require 'coveralls'
+Coveralls.wear!
+
+# Let's get on with the tests
+require 'rack/test'
+require 'rspec'
 
 # Load FactoryGirl
 require 'factory_girl'
@@ -15,7 +20,10 @@ FactoryGirl.find_definitions
 # Load DatabaseCleaner
 require 'database_cleaner'
 
+# Load Api
 require File.expand_path '../../api.rb', __FILE__
+
+# Load test mixins
 require File.expand_path '../rspec_mixin.rb', __FILE__
 require File.expand_path '../omniauth_mixin.rb', __FILE__
 
@@ -30,6 +38,7 @@ module SquareteamAuthMixin
   end
 end
 
+# Setup RSpec
 RSpec.configure do |c|
   c.include RSpecMixin
   c.include OmniauthMixin
