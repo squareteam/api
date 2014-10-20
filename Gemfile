@@ -44,6 +44,7 @@ group :test do
   gem 'database_cleaner'
   gem 'factory_girl'
   gem 'simplecov'
+  gem 'coveralls'
   gem 'rack-test', require: 'rack/test'
   gem 'ci_reporter_rspec'
 end
