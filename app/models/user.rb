@@ -11,9 +11,19 @@ class User < ActiveRecord::Base
   has_many :organizations, -> { uniq }, :through => :teams
 
   has_many :project_accesses, as: :object
-  has_many :accessible_projects, through: :project_accesses, source: :project
-  # Own projects
+  # Owned projects
   has_many :projects, as: :owner
+
+  # All accessible projects (owned by me and by my organizations)
+  # @param [optional] ActiveRecord::relation base of projects amongst which to search for accessible ones.
+  def accessible_projects(base = nil)
+    projects = base || Project
+    user_access = ProjectAccess.where(object: self)
+    orga_access = ProjectAccess.where(object_type: 'Organization', object_id: self.organizations.pluck(:id))
+    user_access = user_access.where_values.reduce(:and)
+    orga_access = orga_access.where_values.reduce(:and)
+    projects.joins(:project_accesses).where(user_access.or(orga_access)).uniq
+  end
 
   accepts_nested_attributes_for :user_roles, :teams
 
@@ -32,12 +42,6 @@ class User < ActiveRecord::Base
                :salt => salt,
                :name => params[:name]
                )
-    end
-
-    def easy_create params
-      a_user = easy_new params
-      a_user.save
-      a_user
     end
   end
 

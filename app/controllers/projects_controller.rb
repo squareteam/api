@@ -16,20 +16,18 @@ class ProjectsController < Yodatra::ModelsController
   class << self
     # Limit access depending on the current_user
     def limit_read_for(projects, user)
-      user_access = ProjectAccess.where(object_type: 'User', object_id: user.id)
-      orga_access = ProjectAccess.where(object_type: 'Organization', object_id: user.organizations.pluck(:id))
-      user_access = user_access.where_values.reduce(:and)
-      orga_access = orga_access.where_values.reduce(:and)
-      projects.joins(:project_accesses).where(user_access.or(orga_access)).uniq
+      user.accessible_projects(projects)
     end
+
     def limit_create_for(projects, user)
       p = projects.new
       allowed = true
       allowed = user.has_permission?(UserRole::Permissions::ADD_PROJECT, p.owner) if p.owner.is_a?(Organization)
       allowed ? projects : nil
     end
-    alias :limit_read_all_for :limit_read_for
-    alias :limit_delete_for :limit_read_for
+
+    alias_method :limit_read_all_for, :limit_read_for
+    alias_method :limit_delete_for, :limit_read_for
 
     def read_scope
       {

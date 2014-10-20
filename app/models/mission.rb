@@ -2,7 +2,7 @@ class Mission < ActiveRecord::Base
 
   enum status: [:inprogress, :paused, :validation, :done, :due]
 
-  validates :title, :created_by, presence: true
+  validates :title, :creator, :project, presence: true
 
   belongs_to :creator, foreign_key: 'created_by', class_name: 'User'
 
