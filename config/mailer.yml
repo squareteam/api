@@ -1,0 +1,21 @@
+common: &default_settings
+  smtp_settings:
+    address: smtp.mandrillapp.com
+    port: 587
+    # domain: "squareteam.io"
+    authentication: plain
+    user_name: <%=ENV['MANDRILL_USERNAME']%>
+    password: <%=ENV['MANDRILL_PASSWORD']%>
+    enable_starttls_auto: true
+
+development:
+  <<: *default_settings
+  perform_deliveries: false
+
+test:
+  <<: *default_settings
+  perform_deliveries: false
+
+production:
+  <<: *default_settings
+  perform_deliveries: true
