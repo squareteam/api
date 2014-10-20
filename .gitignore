@@ -12,3 +12,4 @@ doc/
 spec/reports/
 tmp/restart.txt
 tmp/rubycritic/
+.env/

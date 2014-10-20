@@ -5,6 +5,7 @@ nginx:
     - "443:443"
     - "2222:22"
   volumes:
+    - .env/:/etc/nginx/main.d
     - .:/home/app
     - ../front:/home/front
   links:
