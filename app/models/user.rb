@@ -90,7 +90,7 @@ class User < ActiveRecord::Base
 
     if user.new_record?
       user.email = auth.info.email || auth_params['email']
-      user.name = auth.info.name
+      user.name = auth.info.name || auth_param['name']
     end
 
     user.save

@@ -20,20 +20,20 @@ class OmniauthController < Sinatra::Base
         # Validity of the oauth_token is OAUTH_TIMEOUT
         Auth.cache.set "#{identifier}:OAUTH", OAUTH_TIMEOUT, oauth_token
         response.set_cookie 'st.oauth', value: oauth_token, expires: Time.now + OAUTH_TIMEOUT, path: '/'
+        path = "/#/login?email=#{identifier}"
       else
+        errors = one.errors
         one = User.find_by_email(one.email) if one.email
+        if one.nil?
+          path = "/#/login?errors=#{errors.messages}"
+        else
+          path = "/#/login?errors=#{['api.st_account_exist'].to_json}"
+        end
       end
 
-      if one && one.valid?
-        identifier = one.email
-        provider = one.provider
-        path = "/#/login?email=#{identifier}&provider=#{provider}"
-      else
-        path = "/#/login?errors=#{one.errors.messages}"
-      end
     end
 
-    redirect "#{url}#{path}"
+    redirect "#{url}#{path}&provider=#{params[:provider]}"
   end
 
   private
