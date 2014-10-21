@@ -23,7 +23,7 @@ popd
 # Configure NGINX
 mkdir -p /etc/nginx/ssl
 mkdir -p /etc/nginx/sites-enabled
-cp /home/app/ssl/dev.squareteam.io.key /etc/nginx/ssl
-cp /home/app/ssl/dev.squareteam.io.crt /etc/nginx/ssl
-cp /home/app/dev.squareteam.io.conf /etc/nginx/sites-enabled
+cp /home/app/nginx/ssl/dev.squareteam.io.key /etc/nginx/ssl
+cp /home/app/nginx/ssl/dev.squareteam.io.crt /etc/nginx/ssl
+cp /home/app/nginx/squareteam.io.conf /etc/nginx/sites-enabled
 # ##############################
