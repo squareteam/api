@@ -1,4 +1,5 @@
 require File.expand_path '../../spec_helper.rb', __FILE__
+require 'cgi'
 
 describe 'Public controller' do
 
@@ -91,7 +92,7 @@ describe 'Public controller' do
       it 'is not possible and redirect to the frontend login page with errors in parameters' do
         get '/auth/github/callback', { 'omniauth.auth' => github_auth_hash_without_email }
         expect(last_response.status).to be 302
-        expect(last_response['Location']).to include 'login?errors={:email=>'
+        expect(last_response['Location']).to include "login?#{CGI.escape('errors[email][]')}"
       end
     end
     context 'when the user does not exist' do
