@@ -1,0 +1,96 @@
+<div class="project_card">
+   <div class="top row">
+      <div class="col-xs-10">
+         <h3>
+            {{ project.title }}
+         </h3>
+         <span class="created_at">
+            {{ 'directives.stProjectCard.created' | translate }}
+            <time datetime="{{ project.created_at }}">
+               {{ project.createdAt | amCalendar }}
+            </time>
+         </span>
+      </div>
+      <div class="col-xs-2">
+         <st-project-edit-icon project="project" ng-show="project.$can('manage')"></st-project-edit-icon>
+      </div>
+   </div>
+
+   <div class="status row" ng-if="project.status !== 'done'">
+      <div class="col-xs-7">
+         <div>
+            <i class="icon icon-status-due" ng-if="project.status === 'due'"></i>
+            <i class="icon icon-status-inprogress" ng-if="project.status !== 'due'"></i>
+            <time datetime="{{ project.deadline }}">
+               {{ project.deadline | amCalendar }}
+            </time>
+         </div>
+         <div>
+            <div class="progress_bg">
+               <div class="progress" ng-style="{ width : project.progress }"></div>
+               <div class="cursor" ng-style="{ left : project.progress }">
+                  <div class="inner"></div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="col-xs-5">
+         <button  ng-class="['status_name', project.status ]" class="{{ project.$can('manage') ? 'editable' : '' }}"
+                  ng-click="project.$can('manage') && openChangeStatusTooltip()">
+            <span>
+               {{ 'directives.stProjectCard.status.' + project.status | translate | characters:8:true }}
+            </span>
+            <i class="icon icon-arrow-down-small" ng-show="project.$can('manage')"></i>
+         </button>
+      </div>
+   </div>
+
+   <div class="status row" ng-if="project.status === 'done'">
+      <div class="col-xs-7">
+         <i class="icon icon-status-done"></i>
+         <time datetime="{{ project.deadline }}">
+            {{ project.deadline | amCalendar }}
+         </time>
+      </div>
+      <div class="col-xs-5">
+         <button  class="status_name done {{ project.$can('manage') ? 'editable' : '' }}"
+                  ng-click="project.$can('manage') && openChangeStatusTooltip()">
+            <span>{{ 'directives.stProjectCard.status.done' | translate }}</span>
+            <i class="icon icon-arrow-down-small" ng-show="project.$can('manage')"></i>
+         </button>
+      </div>
+   </div>
+
+   <div class="project_thumbnail"  ng-if="project.thumbnail">
+      <img st-file-id="{{ project.thumbnail }}" alt="">
+   </div>
+
+   <div class="description" ng-if="project.description" ng-bind-html="project.description | nl2br">
+   </div>
+
+   <div class="metadata row">
+      <div class="col-xs-3 vertical-center">
+         <i class="icon icon-metadata-documents"></i>
+         <span>{{ project.metadata.documentsCount }}</span>
+      </div>
+      <div class="col-xs-3 vertical-center">
+         <i class="icon icon-metadata-comments"></i>
+         <span>{{ project.metadata.tasksCount }}</span>
+      </div>
+      <div class="col-xs-3 vertical-center">
+         <i class="icon icon-metadata-missions"></i>
+         <span>{{ project.metadata.missionsCount }}</span>
+      </div>
+      <div class="col-xs-3 vertical-center">
+         <i class="icon icon-metadata-members"></i>
+         <span>{{ project.metadata.membersCount }}</span>
+      </div>
+   </div>
+
+   <div class="view_project">
+      <div>
+         <a ui-sref="app.project_view({ projectId : project.id })">{{ 'directives.stProjectCard.seeProject' | translate }}</a>
+      </div>
+   </div>
+
+</div>

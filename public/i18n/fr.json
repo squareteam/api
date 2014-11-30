@@ -1,0 +1,252 @@
+{
+
+   "public" : {
+      "login" : {
+         "wantAnAccount_1"   : "Pas de compte ?",
+         "wantAnAccount_2"   : "Découvrir"
+      },
+
+      "oauth" : {
+
+         "login" : {
+
+            "authenticating" : "Nous vérifions votre identité...",
+
+            "authenticating_error": "La vérification de votre identité a échouée, merci de contacter le support.",
+
+            "github" : {
+               "authenticating"  : "Authentification avec Github",
+               "tooltipBtn"      : "Se connecter avec Github"
+            },
+
+            "behance" : {
+               "authenticating"  : "Authentification avec Behance",
+               "tooltipBtn"      : "Se connecter avec Behance"
+            }
+
+         },
+
+         "email" : {
+
+            "wrong_provider" : "Vous ne supportons pas encore la connexion via ce service.",
+            "title" : "Confirmer votre email",
+            "confirmBtn" : "Confirmer"
+
+         }
+
+      },
+
+      "register" : {
+         "title"                 : "Vous y êtes presque.",
+         "alreadyHaveAnAccount_1"   : "Déjà inscrit ?",
+         "alreadyHaveAnAccount_2"   : "Se connecter"
+      },
+
+      "forgotPassword" : {
+         "emailInvalid"          : "Aucun compte n'existe avec cet email",
+         "oAuthAccountFound"     : "Merci de vous connecter avec",
+         "tokenInvalid"          : "Votre demande de changement de mot de passe est expirée",
+         "tokenInvalidClickHere" : "Effectuer une nouvelle demande",
+         "request": {
+            "title" : "Mot de passe oublié ?",
+            "notice"          : "Entrez l'adresse e-mail utilisée lors de votre inscription et nous vous enverrons les instructions pour changer de mot de passe.",
+            "send"            : "Envoyer les instructions",
+            "returnToSignIn"  : "Se connecter",
+
+            "sent_1" : "Merci de vérifier vos emails, vous devriez bientôt recevoir des instructions pour changer votre mot de passe.",
+            "sent_2" : "Vous pouvez maintenant fermer cette page."
+         },
+         "change" : {
+            "title" : "Choisissez un nouveau mot de passe",
+            "submitBtn" : "Changer le mot de passe"
+         },
+         "updated": {
+            "title" : "Mot de passe mis à jour !",
+            "content_1" : "Votre mot de passe a été mis à jour !",
+            "content_2" : "Vous pouvez maintenant vous connecter."
+         }
+      }
+   },
+
+   "header" : {
+      "logout" : "Deconnexion",
+
+      "menu"   : {
+         "home"            : "Timeline",
+         "admin"           : "Admin",
+         "tasks"           : "Tâches",
+         "projects"        : "Projets",
+         "knowledgeCenter" : "Knowledge"
+      }
+   },
+
+   "app" : {
+
+      "projects" : {
+         "filters" : {
+            "byStatus" : "Status",
+            "byTeam"   : "Equipe",
+            "sortBy"   : "Trier par",
+            "sort" : {
+               "deadline"  : "Deadline",
+               "date"      : "Création",
+               "progress"  : "Progression"
+            }
+         },
+
+         "add_project"  : "Nouveau projet",
+         "projects"     : "projets"
+      },
+
+      "manage" : {
+         "account" : {
+            "title"           : "Mon Compte",
+            "subtitle"        : "Besoin de mettre à jour vos informations ?",
+            "change_avatar"   : "Changer mon avatar",
+            "name"            : "Pseudo",
+            "password"        : "Mot de passe",
+            "email"           : "E-mail",
+            "save"            : "Sauver"
+         },
+         "organizations" : {
+            "title"           : "Organisations",
+            "subtitle"        : "Organisations dont vous êtes membre",
+            "leave"           : "Quitter",
+            "no_organizations": "Aucune organisation.",
+            "create"          : "Créer"
+         },
+         "organization" : {
+            "subtitle_singular"  : "équipes",
+            "subtitle_plural"    : "équipe",
+            "team_list_user_singular"  : "membre",
+            "team_list_user_plural"    : "membres",
+            "manage" : "Gérer",
+            "no_team": "Aucune équipe.",
+            "create_team": "Créer une équipe"
+         },
+         "team" : {
+            "edit" : "Editer",
+            "save" : "Sauver",
+            "remove" : "Enlever",
+            "no_users" : "Aucun membre.",
+            "add_member" : "Ajouter un membre",
+            "edit_team" : "Editer l'équipe"
+         }
+      }
+
+   },
+
+   "api" : {
+      "loading"    : "Chargement...",
+      "serverBusy" : "Nos serveurs sont momentanéments indisponibles",
+      "no_results" : "Aucun résultats"
+   },
+
+
+   "registerOrganization" : {
+      "title"  : "Créer une organisation",
+      "info"   : "Une organisation représente un ensemble d'équipes et de personnes travaillant ensemble."
+   },
+
+   "popin" : {
+      "passwordConfirm" : {
+         "title"     : "Merci de confirmer votre mot de passe",
+         "subtitle"  : "Pour votre sécurité.",
+         "continue"   : "Continuer"
+      },
+      "team" : {
+         "title" : "Equipe",
+         "subtitle_create" : "Créons une équipe!",
+         "subtitle_update" : "Des informations à mettre à jour ?",
+         "subtitle_workers" : "Gérer les workers",
+         "labels" : {
+            "name" : "Nom",
+            "color" : "Choisissez une couleur",
+            "workers" : "Choisissez des worker(s)"
+         },
+         "buttons" : {
+            "create" : "Créer",
+            "update" : "Mettre à jour",
+            "workers" : "Mettre à jour les workers"
+         }
+      }
+   },
+
+
+   "directives" : {
+      "stLoginForm" : {
+         "title"                 : "Veuillez vous connecter",
+         "passwordInvalid"       : "Le mot de passe n'est pas valide",
+         "emailInvalid"          : "L'e-mail n'est pas valide",
+         "passwordLabel"         : "Mot de passe",
+         "emailLabel"            : "E-mail",
+         "loginBtn"              : "Se connecter",
+         "rememberMe"            : "Se souvenir de moi",
+         "forgotLink"            : "Mot de passe oublié ?",
+         "FAQLink"               : "Impossible de se connecter ?",
+         "youAlreadyHaveAccount" : "Vous possédez déjà un compte Squareteam"
+      },
+
+      "stOAuthLink" : {
+         "signIn"    : "Sign in",
+         "signUp"    : "Sign up",
+         "with"    : "with"
+      },
+
+      "stUserCreate" : {
+         "emailTaken"            : "Cet e-mail est déjà pris",
+         "loginLabel"            : "Identifiant",
+         "emailLabel"            : "E-mail",
+         "passwordLabel"         : "Mot de passe",
+         "passwordConfirmLabel"  : "Confirmation du mot de passe",
+         "passwordNotMatch"      : "La confirmation de mot de passe n'est pas correcte",
+         "passwordFormatHelp"    : "Nous vous recommandons d'inclure un minimum de 8 caractères contenant au moins un nombre, une lettre minuscule et une majuscule",
+         "CGULabel"              : "Accepter les conditions d'utilisation",
+         "CGUNotice"             : "Merci d'accepter les conditions d'utilisation",
+         "createAccountBtn"      : "Créer un compte"
+      },
+
+      "stUserSearch" : {
+         "noResults"    : "Aucun résultats",
+         "placeholder"  : "Chercher un utilisateur"
+      },
+
+      "stOrganizationCreate" : {
+         "nameTaken"    : "Nom d'organisation déjà pris",
+         "nameLabel"    : "Nom",
+         "createBtn"    : "Créer"
+      },
+
+      "stTeamManage" : {
+         "selectAll" : "Tout seléctionner/desélectionner",
+         "errors"    : {
+            "loadTeam"     : "Erreur lors du chargement des données de l'équipe",
+            "removeUsers"  : "Erreur de l'exclusion des utilisateurs",
+            "addUser"      : "Erreur lors de l'ajout de l'utilisateur",
+            "updateUser"   : "Erreur lors de la mise à jour"
+         },
+         "roles"     : {
+            "MANAGE_TEAM"           : "Gérer l'équipe",
+            "ADD_PROJECT"           : "Créer un projet",
+            "MANAGE_PROJECTS"       : "Gérer les projets",
+            "ADD_TASK"              : "Créer une tâche",
+            "MANAGE_TASKS"          : "Gérer les tâches",
+            "ADD_MISSION"           : "Créer une mission",
+            "MANAGE_ORGANIZATION"   : "Gérer l'organisation",
+            "MANAGE_MISSION"        : "Gérer les missions"
+         }
+      },
+
+      "stProjectCard" : {
+         "created" : "Créé",
+         "seeProject"   : "Voir le projet",
+         "status" : {
+            "done"      : "Terminé",
+            "due"       : "En retard",
+            "inprogress": "En cours",
+            "validation": "Validation",
+            "paused"    : "En pause"
+         }
+      }
+   }
+}

@@ -1,0 +1,18 @@
+<form action="" name="createOrganizationForm" class="form-horizontal" ng-submit="create()">
+  <div class="alert alert-danger" ng-show="!!createOrganizationForm.name.$error.unique">
+      {{ 'directives.stOrganizationCreate.nameTaken' | translate }}
+  </div>
+  <div class="alert alert-danger" ng-show="!!serverBusy">
+    {{ 'api.serverBusy' | translate }}
+  </div>
+
+  <label for="name">
+    {{ 'directives.stOrganizationCreate.nameLabel' | translate }}
+  </label>
+  <input type="text" name="name" ng-model="organization.name" class="form-control" required autofocus />
+
+  <div class="submit-footer">
+    <input type="submit" class="btn btn-primary" value="{{ 'directives.stOrganizationCreate.createBtn' | translate }}" />
+  </div>
+
+</form>
