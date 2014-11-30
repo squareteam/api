@@ -1,7 +1,1 @@
 #!/bin/bash
-
-# Run tests here
-pushd $OPENSHIFT_REPO_DIR
-RACK_ENV=test bundle exec rake db:migrate
-RACK_ENV=test bundle exec rake
-popd
