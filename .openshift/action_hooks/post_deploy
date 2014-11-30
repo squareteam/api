@@ -5,4 +5,4 @@
 curl -H "x-api-key:$NEWRELIC_API_KEY" -d "deployment[application_id]=$NEWRELIC_APPLICATION_ID" https://api.newrelic.com/deployments.xml
 
 # Pre start passenger
-curl  https://alpha.squareteam.io/api
+curl --insecure  https://alpha.squareteam.io/api
