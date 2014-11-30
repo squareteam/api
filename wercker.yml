@@ -1,0 +1,32 @@
+box: wercker/rvm
+# Build definition
+# See the Rails section on the wercker devcenter:
+# http://devcenter.wercker.com/articles/languages/ruby/settingup-rails4.html
+# You will want to define your database as follows:
+# services:
+#   - wercker/postgresql
+# See more about services on our devcenter:
+# http://devcenter.wercker.com/articles/services/
+services:
+  - wercker/mysql
+  - wercker/redis
+build:
+  steps:
+    # Uncomment this to force RVM to use a specific Ruby version
+    # - rvm-use:
+    #       version: 2.1.5
+    # A step that executes `bundle install` command
+    - bundle-install
+    # A step that prepares the database.yml and redis.yml using the database in services
+    - rails-database-yml
+    - script:
+        name: set-redis-yml
+        code: cp config/redis-wercker.yml config/redis.yml
+    # Add more steps here:
+    - script:
+        name: test-prepare-database
+        code: RACK_ENV=test bundle exec rake db:setup
+    - script:
+        name: rspec
+        code: RACK_ENV=test bundle exec rake spec
+

@@ -2,6 +2,10 @@ development:
   host: redis_1
   port: 6379
 
+test:
+  host: redis_1
+  port: 6379
+
 production:
   host: <%=ENV['ST_REDIS_HOST']%>
   port: <%=ENV['ST_REDIS_PORT']%>

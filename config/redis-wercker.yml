@@ -1,0 +1,2 @@
+test:
+  url: WERCKER_REDIS_URL
