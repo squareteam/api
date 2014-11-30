@@ -9,12 +9,12 @@ require 'mina/git'
 #   repository   - Git repo to clone from. (needed by mina/git)
 #   branch       - Branch name to deploy. (needed by mina/git)
 
-set :user, '542f2dbd5973ca91100006bf'
-set :domain, 'alpha.squareteam.io'
+set :user, ENV['on'].nil? ? '542f2dbd5973ca91100006bf' : ''
+set :domain, ENV['on'].nil? ? 'alpha.squareteam.io' : ENV['on']
 set :deploy_to, "/var/lib/openshift/#{user}/app-root/data"
 set :current_dir, "/var/lib/openshift/#{user}/app-root/runtime/repo"
 set :repository, 'git@bitbucket.org:squareteam/api-sinatra.git'
-set :branch, 'master'
+set :branch, ENV['branch'].nil? ? 'master' : ENV['branch']
 
 # Manually create these paths in shared/ (eg: shared/config/database.yml) in your server.
 # They will be linked in the 'deploy:link_shared_paths' step.
