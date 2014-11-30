@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if ! [ "$(type -t set_env_var)" == "function" ]; then
+  if [ ! -z "$OPENSHIFT_POSTGRESQL_DB_HOST" ]; then
+    export RACK_DB="postgresql"
+  fi
+
+  if [ ! -z "$OPENSHIFT_MYSQL_DB_HOST" ]; then
+    export RACK_DB="mysql"
+  fi
+fi

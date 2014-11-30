@@ -1,0 +1,8 @@
+#!/bin/bash
+# This post-deploy hook gets executed  after the application starts
+
+# Set new deployment on new relic
+curl -H "x-api-key:$NEWRELIC_API_KEY" -d "deployment[application_id]=$NEWRELIC_APPLICATION_ID" https://api.newrelic.com/deployments.xml
+
+# Pre start passenger
+curl  https://alpha.squareteam.io/api
