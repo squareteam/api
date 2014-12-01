@@ -1,2 +1,3 @@
 test:
-  url: WERCKER_REDIS_URL
+  host: <%=ENV['WERCKER_REDIS_HOST']%>
+  port: <%=ENV['WERCKER_REDIS_PORT']%>
