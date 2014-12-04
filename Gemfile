@@ -7,24 +7,24 @@ gem 'yodatra', '0.3.12'
 
 gem 'rack-rewrite'
 gem 'rack-parser', :require => 'rack/parser'
-gem 'rack-uploads', '0.2.1'
-gem 'rack-ssl', '1.4.1'
+gem 'rack-uploads'
+gem 'rack-ssl'
 
 # DB adapter
 gem 'mysql2'
-gem 'activerecord', '4.1.5'
-gem 'sinatra-activerecord', '2.0.2'
+gem 'activerecord', '4.1.8'
+gem 'sinatra-activerecord'
 
 # Cache
 gem 'redis'
 gem 'redis-rack'
 
 # Omniauth
-gem 'omniauth-github', '1.1.2'
+gem 'omniauth-github'
 gem 'omniauth-behance', :github => 'popox/omniauth-behance'
 
 # Mails
-gem 'actionmailer', '4.1.5'
+gem 'actionmailer', '4.1.8'
 gem 'inline-style', '0.5.1'
 
 # Monitoring
