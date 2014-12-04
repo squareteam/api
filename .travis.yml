@@ -14,4 +14,4 @@ before_script:
 script:
   - RACK_ENV=test bundle exec rake db:setup
   - RACK_ENV=test bundle exec rake db:migrate --trace
-  - RACK_ENV=test bundle exec rake spec
+  - RACK_ENV=test bundle exec rspec
