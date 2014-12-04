@@ -41,6 +41,7 @@ task :run do
 end
 
 # DEV run console
+task :c => :console
 task :console do
   require 'pry'
   ARGV.clear
