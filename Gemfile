@@ -30,6 +30,10 @@ gem 'inline-style', '0.5.1'
 # Monitoring
 gem 'newrelic_rpm'
 
+# Tools
+gem 'github-markup'
+gem 'redcarpet'
+
 gem 'rspec'
 group :development do
   # Debug

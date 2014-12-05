@@ -1,3 +1,8 @@
+require 'github/markup'
+
+#
+# Modeling a Project within Squareteam
+#
 class Project < ActiveRecord::Base
 
   enum status: [:inprogress, :paused, :validation, :done, :due]
@@ -21,6 +26,11 @@ class Project < ActiveRecord::Base
   end
 
   public
+
+  # Format description
+  def description_md
+    GitHub::Markup.render '.md', read_attribute(:description)
+  end
 
   # Defines the progress of a project by calculating the
   # percentage of closed tasks on the total amount of tasks

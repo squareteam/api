@@ -1,3 +1,8 @@
+require 'github/markup'
+
+#
+# Missions belongs to projects
+#
 class Mission < ActiveRecord::Base
 
   enum status: [:inprogress, :paused, :validation, :done, :due]
@@ -10,12 +15,19 @@ class Mission < ActiveRecord::Base
   has_many :tasks
   has_many :open_tasks, -> { where(closed: false) }, class_name: 'Task'
 
+  public
+
+  # Format description
+  def description_md
+    GitHub::Markup.render '.md', read_attribute(:description)
+  end
+
   # Defines the progress of a project by calculating the
   # percentage of closed tasks on the total amount of tasks
   def progress
-    total_amount_of_tasks = tasks.map(&:size).reduce(&:+) || 0
+    total_amount_of_tasks = tasks.count
     if total_amount_of_tasks > 0
-      total_open_tasks = open_tasks.map(&:size).reduce(&:+)
+      total_open_tasks = open_tasks.count
       100 - total_open_tasks * 100 / total_amount_of_tasks
     else
       0
@@ -25,7 +37,7 @@ class Mission < ActiveRecord::Base
   def metadata
     {
       documents_count: 0,
-      tasks_count: open_tasks.map(&:size).reduce(&:+),
+      tasks_count: open_tasks.count,
       members_count: 0 #users.size
     }
   end
