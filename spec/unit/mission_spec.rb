@@ -12,7 +12,7 @@ describe Mission do
     describe 'reading it\'s description markup' do
       it do
         expect(GitHub::Markup).to receive(:render).with(kind_of(String), instance.read_attribute(:description)) { '<em>hello</em>' }
-        expect(instance.description_md).to eq '<em>hello</em>'
+        instance.description_md
       end
     end
   end

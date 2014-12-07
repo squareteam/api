@@ -7,8 +7,8 @@ FactoryGirl.define do
     pbkdf 'xxxxx'
     salt 'xxxxx'
     provider 'squareteam'
-    uid do
-      SecureRandom.hex
+    sequence :uid do |n|
+      "#{SecureRandom.hex}#{n}"
     end
   end
 end

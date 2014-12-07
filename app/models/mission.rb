@@ -19,7 +19,7 @@ class Mission < ActiveRecord::Base
 
   # Format description
   def description_md
-    GitHub::Markup.render '.md', read_attribute(:description)
+    GitHub::Markup.render '.md', read_attribute(:description) unless read_attribute(:description).nil?
   end
 
   # Defines the progress of a project by calculating the

@@ -36,13 +36,17 @@ describe ProjectsController do
 
           project_id = Project.last.id
           project_params = Project.last.as_json(ProjectsController.read_scope)
-          project_params['description'] = 'new awesome description'
+          project_params['description'] = 'new _awesome_ description'
           expect {
             put "/projects/#{project_id}", project_params
           }.to change(Project, :count).by(0)
 
           expect(last_response).to be_ok
-          expect(last_response.body).to include 'new awesome description'
+          json_response = ''
+          expect{
+            json_response = JSON.parse last_response.body
+          }.to_not raise_error
+          expect(json_response['data']['description_md']).to include 'new <em>awesome</em> description'
         end
       end
       context 'through the user\'s organization when he has permission' do
