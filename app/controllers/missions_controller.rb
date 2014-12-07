@@ -27,7 +27,7 @@ class MissionsController < Yodatra::ModelsController
     def read_scope
       {
         only: [:id, :title, :description, :deadline, :created_at, :status],
-        methods: [:progress, :metadata]#,
+        methods: [:progress, :metadata, :description_md]#,
         # include: {
         #   creator: UsersController.read_scope
         # }
