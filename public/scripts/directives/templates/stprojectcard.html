@@ -65,7 +65,7 @@
       <img st-file-id="{{ project.thumbnail }}" alt="">
    </div>
 
-   <div class="description" ng-if="project.description" ng-bind-html="project.description | nl2br">
+   <div class="description" ng-if="project.description" ng-bind-html="project.descriptionMd">
    </div>
 
    <div class="metadata row">
@@ -89,7 +89,7 @@
 
    <div class="view_project">
       <div>
-         <a ui-sref="app.project_view({ projectId : project.id })">{{ 'directives.stProjectCard.seeProject' | translate }}</a>
+         <a ng-click="openProject()">{{ 'directives.stProjectCard.seeProject' | translate }}</a>
       </div>
    </div>
 
