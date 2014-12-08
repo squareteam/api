@@ -17,9 +17,10 @@ class OmniauthController < Sinatra::Base
       if one.valid?
         identifier = one.email
         oauth_token = auth_hash.credentials.token
-        # Validity of the oauth_token is OAUTH_TIMEOUT
-        Auth.cache.set "#{identifier}:OAUTH", OAUTH_TIMEOUT, oauth_token
-        response.set_cookie 'st.oauth', value: oauth_token, expires: Time.now + OAUTH_TIMEOUT, path: '/'
+        # Validity of the login_token is OAUTH_TIMEOUT
+        login_token = OpenSSL::HMAC.new(one.pbkdf + oauth_token, 'sha256').digest.unpack('H*').first
+        Auth.cache.set "#{identifier}:OAUTH", OAUTH_TIMEOUT, login_token
+        response.set_cookie 'st.oauth', value: login_token, expires: Time.now + OAUTH_TIMEOUT, path: '/'
         query_string = { email: identifier }.to_query
       else
         query_string = { errors: one.errors.messages }.to_query

@@ -7,8 +7,8 @@ class User < ActiveRecord::Base
             uniqueness: { scope: :provider }
 
   has_many :user_roles
-  has_many :teams, :through => :user_roles
-  has_many :organizations, -> { uniq }, :through => :teams
+  has_many :teams, through: :user_roles
+  has_many :organizations, -> { uniq }, through: :teams
 
   has_many :project_accesses, as: :object
   # Owned projects
@@ -49,9 +49,9 @@ class User < ActiveRecord::Base
   # @returns whether or not the user has the permission in the organization
   # @returns nil if user does not belong to the organization
   def has_permission?(permission, orga)
-    perms = orga.user_roles.
-      where(user_id: id).
-      maximum(:permissions)
+    perms = orga.user_roles
+      .where(user_id: id)
+      .maximum(:permissions)
 
     UserRole.has_permission?(perms, permission)
   end
@@ -86,6 +86,20 @@ class User < ActiveRecord::Base
   # Github oauth information
   # https://developer.github.com/v3/oauth/#scopes
   def self.find_or_create_from_github(auth, auth_params = {})
+    user = find_for_oauth(auth)
+
+    if user.new_record?
+      user.email = auth.info.email || auth_params['email']
+      user.name = auth.info.name || auth_param['name']
+    end
+
+    user.save
+    user
+  end
+
+  # Google oauth information
+  # https://github.com/zquestz/omniauth-google-oauth2
+  def self.find_or_create_from_google_oauth2(auth, auth_params = {})
     user = find_for_oauth(auth)
 
     if user.new_record?

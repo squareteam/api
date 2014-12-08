@@ -1,3 +1,6 @@
+google:
+  key: <%=ENV['GOOGLE_CLIENT_ID']%>
+  secret: <%=ENV['GOOGLE_CLIENT_SECRET']%>
 github:
   key: <%=ENV['GITHUB_APP_KEY']%>
   secret: <%=ENV['GITHUB_APP_SECRET']%>

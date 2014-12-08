@@ -22,6 +22,7 @@ gem 'redis-rack'
 # Omniauth
 gem 'omniauth-github'
 gem 'omniauth-behance', :github => 'popox/omniauth-behance'
+gem 'omniauth-google-oauth2'
 
 # Mails
 gem 'actionmailer', '4.1.8'
